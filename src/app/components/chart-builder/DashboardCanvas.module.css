@@ -1,0 +1,163 @@
+/* DashboardCanvas CSS Module */
+
+/* ── Resize handles ── */
+.resizeH {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 6px;
+  flex-shrink: 0;
+  transition: background-color 150ms;
+}
+.resizeH:hover { background-color: rgba(90, 140, 255, 0.2); }
+.resizeH[data-resize-handle-active] { background-color: rgba(90, 140, 255, 0.3); }
+.resizeHBar {
+  width: 2px; height: 32px; border-radius: 9999px;
+  background: var(--ds-gray-8, #313B4F); transition: background-color 150ms;
+}
+.resizeH:hover .resizeHBar,
+.resizeH[data-resize-handle-active] .resizeHBar { background: var(--ds-blue-6, #5A8CFF); }
+
+.resizeV {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6px;
+  flex-shrink: 0;
+  transition: background-color 150ms;
+}
+.resizeV:hover { background-color: rgba(90, 140, 255, 0.2); }
+.resizeV[data-resize-handle-active] { background-color: rgba(90, 140, 255, 0.3); }
+.resizeVBar {
+  height: 2px; width: 48px; border-radius: 9999px;
+  background: var(--ds-gray-8, #313B4F); transition: background-color 150ms;
+}
+.resizeV:hover .resizeVBar,
+.resizeV[data-resize-handle-active] .resizeVBar { background: var(--ds-blue-6, #5A8CFF); }
+
+/* ── Root layout ── */
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Left panel ── */
+.sidePanel {
+  background: var(--ds-bg-secondary);
+  display: flex;
+  flex-direction: column;
+}
+.sidePanelHeader {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--ds-border-primary);
+  flex-shrink: 0;
+}
+.sidePanelTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ds-text-primary, #E0E1E2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+.sidePanelEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--ds-gray-6, #677C9C);
+  font-size: 11px;
+  padding: 16px;
+  text-align: center;
+  gap: 8px;
+}
+
+/* ── Canvas toolbar ── */
+.canvasWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.canvasToolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--ds-border-primary);
+  background: var(--ds-bg-secondary);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.divider {
+  width: 1px;
+  height: 16px;
+  background: var(--ds-border-primary);
+  margin: 0 2px;
+}
+.spacer { flex: 1; }
+.zoomLabel {
+  font-size: 10px;
+  color: var(--ds-gray-5, #9AA5B9);
+  font-weight: 500;
+  min-width: 32px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Canvas scroll area ── */
+.canvasScroll {
+  flex: 1;
+  overflow: auto;
+  background: var(--ds-bg-primary);
+  position: relative;
+}
+.canvasInner { position: relative; }
+
+/* ── Grid SVG ── */
+.gridSvg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Marquee ── */
+.marquee {
+  position: absolute;
+  border: 2px dashed var(--ds-blue-6, #5A8CFF);
+  background: rgba(90, 140, 255, 0.06);
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ── Empty state ── */
+.emptyState {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--ds-gray-6, #677C9C);
+  gap: 12px;
+}
+.emptyStateText {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ── Bottom panel placeholder ── */
+.bottomEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--ds-gray-6, #677C9C);
+  font-size: 11px;
+}

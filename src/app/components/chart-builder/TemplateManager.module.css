@@ -1,0 +1,115 @@
+/* TemplateManager CSS Module */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ds-blue-6, #5A8CFF);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.divider {
+  height: 1px;
+  background: var(--ds-border-primary);
+}
+
+/* ── Built-in template button ── */
+.tplBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+.tplBtn:hover {
+  background: var(--ds-bg-secondary);
+}
+.tplIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+.tplContent {
+  flex: 1;
+  min-width: 0;
+}
+.tplName {
+  font-size: 11px;
+  color: var(--ds-text-primary, #E0E1E2);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tplDesc {
+  font-size: 10px;
+  color: var(--ds-gray-6, #677C9C);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── User template row ── */
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.userRow:hover .deleteBtn {
+  opacity: 1;
+}
+.userBtn {
+  composes: tplBtn;
+  flex: 1;
+  min-width: 0;
+}
+.deleteBtn {
+  padding: 2px;
+  border-radius: 4px;
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--ds-gray-6, #677C9C);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 150ms, background-color 150ms, color 150ms;
+}
+.deleteBtn:hover {
+  background: var(--ds-red-9, #2E2230);
+  color: var(--ds-red-5, #EA3943);
+}
+.deleteIcon {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── Save form ── */
+.saveForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--ds-border-primary);
+  background: var(--ds-bg-secondary);
+}
+.saveActions {
+  display: flex;
+  gap: 4px;
+}

@@ -1,0 +1,198 @@
+/* DashboardBar CSS Module */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--ds-border-primary);
+  background: var(--ds-bg-primary);
+  flex-shrink: 0;
+}
+.barIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--ds-blue-6, #5A8CFF);
+  flex-shrink: 0;
+}
+.titleInput {
+  background: transparent;
+  outline: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ds-text-primary, #E0E1E2);
+  min-width: 100px;
+  max-width: 200px;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 0 2px;
+  transition: border-color 150ms;
+}
+.titleInput:focus {
+  border-bottom-color: var(--ds-blue-6, #5A8CFF);
+}
+.divider {
+  width: 1px;
+  height: 16px;
+  background: var(--ds-border-primary);
+  margin: 0 4px;
+}
+.dividerSm {
+  width: 1px;
+  height: 16px;
+  background: var(--ds-border-primary);
+  margin: 0 2px;
+}
+.relative { position: relative; }
+.spacer { flex: 1; }
+.info {
+  font-size: 10px;
+  color: var(--ds-gray-6, #677C9C);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.iconSm {
+  width: 12px;
+  height: 12px;
+}
+.iconMd {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Dropdown ── */
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  z-index: 50;
+}
+.dropdownPanel {
+  border-radius: 8px;
+  border: 1px solid var(--ds-border-primary);
+  background: var(--ds-bg-secondary);
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4), 0 8px 10px -6px rgba(0,0,0,0.3);
+  min-width: 280px;
+  max-height: 420px;
+  overflow: auto;
+}
+.dropdownBody {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dropdownBody3 {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 240px;
+}
+.dropdownTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ds-gray-5, #9AA5B9);
+}
+.ddDivider {
+  height: 1px;
+  background: var(--ds-border-primary);
+  margin: 6px 0;
+}
+.ddSectionLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ds-gray-6, #677C9C);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 4px;
+}
+.ddActions {
+  display: flex;
+  gap: 4px;
+}
+
+/* ── Dashboard / Template list items ── */
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  transition: background-color 150ms;
+}
+.listItem:hover {
+  background: var(--ds-bg-primary);
+}
+.listItem:hover .listDeleteBtn {
+  opacity: 1;
+}
+.listItemBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+  background: none;
+  border: none;
+  color: inherit;
+}
+.listItemIcon {
+  width: 12px;
+  height: 12px;
+  color: var(--ds-blue-6, #5A8CFF);
+  flex-shrink: 0;
+}
+.listItemContent {
+  min-width: 0;
+  flex: 1;
+}
+.listItemName {
+  font-size: 11px;
+  color: var(--ds-text-primary, #E0E1E2);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.listItemMeta {
+  font-size: 9px;
+  color: var(--ds-gray-6, #677C9C);
+}
+.listDeleteBtn {
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--ds-gray-6, #677C9C);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 150ms, background-color 150ms, color 150ms;
+}
+.listDeleteBtn:hover {
+  background: var(--ds-red-9, #2E2230);
+  color: var(--ds-red-5, #EA3943);
+}
+
+/* ── Save template form ── */
+.saveForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--ds-border-primary);
+  background: var(--ds-bg-secondary);
+  margin-bottom: 8px;
+}
+
+.emptyText {
+  font-size: 11px;
+  color: var(--ds-gray-6, #677C9C);
+  text-align: center;
+  padding: 12px 8px;
+}

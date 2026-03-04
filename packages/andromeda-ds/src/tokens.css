@@ -1,0 +1,284 @@
+/* ═══════════════════════════════════════════════════════
+   @andromeda/design-system — CSS Design Tokens
+   Import this file once: import '@andromeda/design-system/styles.css'
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* ═══ Typography ═══ */
+  --ds-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* ═══ Primitive Color Scales ═══ */
+
+  /* Dark scale */
+  --ds-dark-0: #FFFFFF;
+  --ds-dark-1: #F8FAFE;
+  --ds-dark-2: #E0E1E2;
+  --ds-dark-3: #C4C7C9;
+  --ds-dark-4: #2A2E39;
+  --ds-dark-5: #191F2D;
+  --ds-dark-6: #131722;
+  --ds-dark-7: #10141D;
+  --ds-dark-8: #0E1018;
+  --ds-dark-9: #000000;
+
+  /* Blue scale */
+  --ds-blue-0: #E7EFFF;
+  --ds-blue-1: #D0DEFF;
+  --ds-blue-2: #B8CEFF;
+  --ds-blue-3: #A1BDFF;
+  --ds-blue-4: #89ADFF;
+  --ds-blue-5: #729CFF;
+  --ds-blue-6: #5A8CFF;
+  --ds-blue-7: #3B66C9;
+  --ds-blue-8: #2D406C;
+  --ds-blue-9: #202A42;
+
+  /* Orange scale */
+  --ds-orange-0: #FEECE2;
+  --ds-orange-1: #FDDAC6;
+  --ds-orange-2: #FCC7A9;
+  --ds-orange-3: #FBB58D;
+  --ds-orange-4: #FAA270;
+  --ds-orange-5: #F99054;
+  --ds-orange-6: #F87D37;
+  --ds-orange-7: #F7620D;
+  --ds-orange-8: #5C3B30;
+  --ds-orange-9: #30282E;
+
+  /* Yellow scale */
+  --ds-yellow-0: #FEF7E0;
+  --ds-yellow-1: #FCEFC1;
+  --ds-yellow-2: #FBE7A2;
+  --ds-yellow-3: #FAE082;
+  --ds-yellow-4: #F9D863;
+  --ds-yellow-5: #F7D044;
+  --ds-yellow-6: #F6C825;
+  --ds-yellow-7: #E9B80A;
+  --ds-yellow-8: #5C522B;
+  --ds-yellow-9: #30302D;
+
+  /* Red scale */
+  --ds-red-0: #FCE3E4;
+  --ds-red-1: #F9C6C9;
+  --ds-red-2: #F6AAAE;
+  --ds-red-3: #F38E94;
+  --ds-red-4: #F07279;
+  --ds-red-5: #ED555E;
+  --ds-red-6: #EA3943;
+  --ds-red-7: #CD2835;
+  --ds-red-8: #5B2635;
+  --ds-red-9: #2E2230;
+
+  /* Green scale */
+  --ds-green-0: #DDFAEF;
+  --ds-green-1: #BAF4DE;
+  --ds-green-2: #98EFCE;
+  --ds-green-3: #75EABE;
+  --ds-green-4: #53E4AE;
+  --ds-green-5: #31DF9D;
+  --ds-green-6: #1FC989;
+  --ds-green-7: #1BAC75;
+  --ds-green-8: #1B5249;
+  --ds-green-9: #1A3037;
+
+  /* Turquoise scale */
+  --ds-turquoise-0: #E4F9F8;
+  --ds-turquoise-1: #CAF2F1;
+  --ds-turquoise-2: #AFECEA;
+  --ds-turquoise-3: #95E6E3;
+  --ds-turquoise-4: #7AE0DC;
+  --ds-turquoise-5: #60D9D5;
+  --ds-turquoise-6: #45D3CE;
+  --ds-turquoise-7: #2EC2BD;
+  --ds-turquoise-8: #27555E;
+  --ds-turquoise-9: #1E313E;
+
+  /* Purple scale */
+  --ds-purple-0: #F1EFFF;
+  --ds-purple-1: #E2DEFF;
+  --ds-purple-2: #D4CEFF;
+  --ds-purple-3: #C5BDFF;
+  --ds-purple-4: #B7ADFF;
+  --ds-purple-5: #A89CFF;
+  --ds-purple-6: #9A8CFF;
+  --ds-purple-7: #6854FF;
+  --ds-purple-8: #40406C;
+  --ds-purple-9: #262A42;
+
+  /* Gray scale */
+  --ds-gray-0: #E9ECF1;
+  --ds-gray-1: #D4DAE3;
+  --ds-gray-2: #BEC7D5;
+  --ds-gray-3: #A8B4C6;
+  --ds-gray-4: #92A1B8;
+  --ds-gray-5: #7D8FAA;
+  --ds-gray-6: #677C9C;
+  --ds-gray-7: #586A86;
+  --ds-gray-8: #313B4F;
+  --ds-gray-9: #212839;
+
+  /* ═══ Alpha Variants ═══ */
+
+  --ds-blue-6-a10: rgba(90, 140, 255, 0.1);
+  --ds-blue-6-a20: rgba(90, 140, 255, 0.2);
+  --ds-blue-6-a30: rgba(90, 140, 255, 0.3);
+  --ds-blue-6-a50: rgba(90, 140, 255, 0.5);
+
+  --ds-green-6-a10: rgba(31, 201, 137, 0.1);
+  --ds-green-6-a20: rgba(31, 201, 137, 0.2);
+  --ds-green-6-a30: rgba(31, 201, 137, 0.3);
+  --ds-green-6-a50: rgba(31, 201, 137, 0.5);
+
+  --ds-red-6-a10: rgba(234, 57, 67, 0.1);
+  --ds-red-6-a20: rgba(234, 57, 67, 0.2);
+  --ds-red-6-a30: rgba(234, 57, 67, 0.3);
+  --ds-red-6-a50: rgba(234, 57, 67, 0.5);
+
+  --ds-orange-6-a10: rgba(248, 125, 55, 0.1);
+  --ds-orange-6-a20: rgba(248, 125, 55, 0.2);
+  --ds-orange-6-a30: rgba(248, 125, 55, 0.3);
+  --ds-orange-6-a50: rgba(248, 125, 55, 0.5);
+
+  --ds-yellow-6-a10: rgba(246, 200, 37, 0.1);
+  --ds-yellow-6-a20: rgba(246, 200, 37, 0.2);
+  --ds-yellow-6-a30: rgba(246, 200, 37, 0.3);
+  --ds-yellow-6-a50: rgba(246, 200, 37, 0.5);
+
+  --ds-turquoise-6-a10: rgba(69, 211, 206, 0.1);
+  --ds-turquoise-6-a20: rgba(69, 211, 206, 0.2);
+  --ds-turquoise-6-a30: rgba(69, 211, 206, 0.3);
+  --ds-turquoise-6-a50: rgba(69, 211, 206, 0.5);
+
+  --ds-purple-6-a10: rgba(154, 140, 255, 0.1);
+  --ds-purple-6-a20: rgba(154, 140, 255, 0.2);
+  --ds-purple-6-a30: rgba(154, 140, 255, 0.3);
+  --ds-purple-6-a50: rgba(154, 140, 255, 0.5);
+
+  --ds-gray-6-a10: rgba(103, 124, 156, 0.1);
+  --ds-gray-6-a20: rgba(103, 124, 156, 0.2);
+  --ds-gray-6-a30: rgba(103, 124, 156, 0.3);
+  --ds-gray-6-a50: rgba(103, 124, 156, 0.5);
+
+  /* ═══ Semantic Tokens (Dark — default) ═══ */
+
+  /* Background */
+  --ds-bg-primary: var(--ds-dark-6);
+  --ds-bg-secondary: var(--ds-dark-5);
+  --ds-bg-highlight: #28334F;
+  --ds-bg-badge: var(--ds-blue-9);
+  --ds-bg-table-mark-header: var(--ds-dark-4);
+  --ds-bg-table-mark: var(--ds-gray-9);
+
+  /* Text */
+  --ds-text-primary: var(--ds-dark-2);
+  --ds-text-secondary: var(--ds-dark-3);
+  --ds-text-gray-dark: var(--ds-gray-6);
+  --ds-text-gray: var(--ds-gray-4);
+  --ds-text-gray-light: var(--ds-gray-4);
+  --ds-text-gray-lighter: var(--ds-gray-3);
+
+  /* Control */
+  --ds-control-active: var(--ds-blue-6-a30);
+  --ds-control-hover: var(--ds-blue-6-a10);
+  --ds-control-default: var(--ds-dark-6);
+
+  /* Border */
+  --ds-border-secondary: var(--ds-dark-5);
+  --ds-border-primary: var(--ds-dark-4);
+  --ds-border-card: #30394D;
+  --ds-border-hover: var(--ds-blue-6-a30);
+  --ds-border-active: var(--ds-blue-6);
+
+  /* Table-specific */
+  --ds-table-header-bg: #2f3441;
+  --ds-table-forecast-header-bg: var(--ds-dark-4);
+  --ds-table-forecast-cell-bg: #151b27;
+  --ds-table-forecast-text: var(--ds-turquoise-6);
+  --ds-table-sticky-bg: var(--ds-dark-7);
+  --ds-table-sorted-sticky-bg: #343a52;
+
+  /* Notification */
+  --ds-notification-error-bg: var(--ds-red-8);
+  --ds-notification-warning-bg: var(--ds-orange-8);
+  --ds-notification-success-bg: var(--ds-green-8);
+
+  /* Button */
+  --ds-btn-secondary-bg: var(--ds-dark-5);
+  --ds-btn-secondary-hover: var(--ds-blue-9);
+  --ds-btn-destructive-bg: #2E2230;
+  --ds-btn-destructive-hover: var(--ds-red-8);
+  --ds-btn-ghost-hover: var(--ds-blue-6-a10);
+
+  /* Badge / Tag */
+  --ds-tag-default-bg: var(--ds-gray-9);
+  --ds-tag-default-fg: var(--ds-dark-2);
+  --ds-tag-default-border: var(--ds-dark-4);
+  --ds-pill-gray-bg: var(--ds-blue-9);
+  --ds-pill-text: var(--ds-dark-2);
+
+  /* Switch */
+  --ds-switch-off-border: var(--ds-dark-4);
+  --ds-switch-off-thumb: var(--ds-blue-6);
+  --ds-switch-disabled-thumb: var(--ds-gray-8);
+
+  /* Checkbox */
+  --ds-checkbox-border: #3d4867;
+}
+
+/* ═══ Light Theme ═══ */
+[data-mantine-color-scheme="light"] {
+  --ds-bg-primary: var(--ds-dark-1);
+  --ds-bg-secondary: var(--ds-dark-0);
+  --ds-bg-highlight: var(--ds-blue-0);
+  --ds-bg-badge: var(--ds-blue-0);
+  --ds-bg-table-mark-header: var(--ds-gray-1);
+  --ds-bg-table-mark: var(--ds-gray-0);
+
+  --ds-text-primary: var(--ds-dark-6);
+  --ds-text-secondary: var(--ds-dark-4);
+  --ds-text-gray-dark: var(--ds-gray-6);
+  --ds-text-gray: var(--ds-gray-4);
+  --ds-text-gray-light: var(--ds-gray-4);
+  --ds-text-gray-lighter: var(--ds-gray-3);
+
+  --ds-control-active: var(--ds-blue-6-a30);
+  --ds-control-hover: var(--ds-blue-6-a10);
+  --ds-control-default: var(--ds-dark-1);
+
+  --ds-border-secondary: var(--ds-dark-3);
+  --ds-border-primary: var(--ds-gray-0);
+  --ds-border-card: var(--ds-gray-1);
+  --ds-border-hover: var(--ds-blue-6-a30);
+  --ds-border-active: var(--ds-blue-6);
+
+  --ds-table-header-bg: var(--ds-gray-0);
+  --ds-table-forecast-header-bg: var(--ds-turquoise-0);
+  --ds-table-forecast-cell-bg: var(--ds-turquoise-0);
+  --ds-table-forecast-text: var(--ds-turquoise-8);
+  --ds-table-sticky-bg: var(--ds-dark-0);
+  --ds-table-sorted-sticky-bg: var(--ds-blue-0);
+
+  --ds-notification-error-bg: var(--ds-red-0);
+  --ds-notification-warning-bg: var(--ds-orange-0);
+  --ds-notification-success-bg: var(--ds-green-0);
+
+  --ds-btn-secondary-bg: var(--ds-blue-0);
+  --ds-btn-secondary-hover: var(--ds-blue-1);
+  --ds-btn-destructive-bg: var(--ds-red-0);
+  --ds-btn-destructive-hover: var(--ds-red-1);
+  --ds-btn-ghost-hover: var(--ds-blue-6-a10);
+
+  --ds-tag-default-bg: var(--ds-gray-0);
+  --ds-tag-default-fg: var(--ds-dark-6);
+  --ds-tag-default-border: var(--ds-gray-1);
+  --ds-pill-gray-bg: var(--ds-blue-0);
+  --ds-pill-text: var(--ds-dark-6);
+
+  --ds-switch-off-border: var(--ds-gray-2);
+  --ds-switch-off-thumb: var(--ds-blue-6);
+  --ds-switch-disabled-thumb: var(--ds-gray-2);
+
+  --ds-checkbox-border: var(--ds-gray-2);
+
+  color-scheme: light;
+}

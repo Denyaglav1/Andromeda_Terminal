@@ -1,0 +1,11 @@
+/* Explicit layer order: Tailwind preflight < Mantine components < Tailwind utilities.
+   Without this, @layer mantine is declared first (lowest priority) and gets
+   overridden by Tailwind preflight @layer base (border-width:0, etc.). */
+@layer theme, base, mantine;
+
+@import '@mantine/core/styles.layer.css';
+@import '@mantine/notifications/styles.layer.css';
+@import 'tailwindcss' source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';

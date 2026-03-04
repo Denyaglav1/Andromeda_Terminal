@@ -1,0 +1,161 @@
+/* LogosPage CSS Module — replaces Tailwind classes */
+
+.sourceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (min-width: 640px) { .sourceGrid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 768px) { .sourceGrid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1024px) { .sourceGrid { grid-template-columns: repeat(5, 1fr); } }
+
+.companyGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+@media (min-width: 640px) { .companyGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .companyGrid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ─── Source logo card ─── */
+.logoCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--ds-border-primary);
+  background-color: var(--ds-bg-secondary);
+  padding: 16px;
+  transition: border-color 150ms;
+}
+.logoCard:hover {
+  border-color: var(--ds-border-hover);
+}
+
+.logoCardActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.logoCard:hover .logoCardActions {
+  opacity: 1;
+}
+
+/* ─── Company logo card ─── */
+.companyCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--ds-border-primary);
+  background-color: var(--ds-bg-secondary);
+  padding: 8px 12px;
+  transition: border-color 150ms;
+}
+.companyCard:hover {
+  border-color: var(--ds-border-hover);
+}
+
+.companyCardActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 150ms;
+  flex-shrink: 0;
+}
+.companyCard:hover .companyCardActions {
+  opacity: 1;
+}
+
+/* ─── Small action buttons ─── */
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  line-height: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+.actionBtnBlue {
+  background-color: var(--ds-blue-6-a10);
+  color: var(--ds-blue-6);
+}
+.actionBtnBlue:hover {
+  background-color: var(--ds-blue-6-a30);
+}
+.actionBtnGray {
+  background-color: var(--ds-gray-6-a10);
+  color: var(--ds-text-gray-dark);
+  font-family: monospace;
+}
+.actionBtnGray:hover {
+  background-color: var(--ds-gray-6-a30);
+}
+
+/* icon-only action button for company cards */
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+.iconBtnBlue {
+  background-color: var(--ds-blue-6-a10);
+  color: var(--ds-blue-6);
+}
+.iconBtnBlue:hover {
+  background-color: var(--ds-blue-6-a30);
+}
+.iconBtnGray {
+  background-color: var(--ds-gray-6-a10);
+  color: var(--ds-text-gray-dark);
+}
+.iconBtnGray:hover {
+  background-color: var(--ds-gray-6-a30);
+}
+
+/* ─── Table rows hover ─── */
+.tableRow {
+  transition: background-color 150ms;
+}
+.tableRow:hover {
+  background-color: var(--ds-gray-6-a10);
+}
+
+/* ─── Sector pills ─── */
+.pill {
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+.pillActive {
+  background-color: var(--ds-blue-6);
+  color: #fff;
+}
+.pillInactive {
+  background-color: var(--ds-gray-6-a10);
+  color: var(--ds-text-gray-dark);
+}
+.pillInactive:hover {
+  background-color: var(--ds-gray-6-a30);
+}

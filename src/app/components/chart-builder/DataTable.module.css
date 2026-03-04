@@ -1,0 +1,356 @@
+/* DataTable CSS Module */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ── Source tabs bar ── */
+.tabBar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--ds-border-primary);
+  background: var(--ds-bg-primary);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.tabBarLabel {
+  font-size: 10px;
+  color: var(--ds-gray-6, #677C9C);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px dashed var(--ds-border-primary);
+  color: var(--ds-gray-6, #677C9C);
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 150ms, color 150ms, background-color 150ms;
+}
+.addBtn:hover {
+  border-color: rgba(90, 140, 255, 0.4);
+  color: var(--ds-blue-5, #7DA8FF);
+  background: rgba(90, 140, 255, 0.05);
+}
+
+/* ── Tab item ── */
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--ds-border-primary);
+  font-size: 10px;
+  flex-shrink: 0;
+  background: var(--ds-bg-secondary);
+  color: var(--ds-text-primary, #E0E1E2);
+  cursor: pointer;
+  transition: border-color 150ms, background-color 150ms;
+}
+.tab:hover {
+  border-color: rgba(90, 140, 255, 0.2);
+}
+.tab:hover .tabEditBtn,
+.tab:hover .tabDeleteBtn {
+  opacity: 1;
+}
+.tabActive {
+  composes: tab;
+  background: rgba(90, 140, 255, 0.15);
+  border-color: rgba(90, 140, 255, 0.3);
+  color: var(--ds-blue-5, #7DA8FF);
+}
+.tabActive:hover .tabEditBtn,
+.tabActive:hover .tabDeleteBtn {
+  opacity: 1;
+}
+.tabDots {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.tabDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.tabDotsMore {
+  font-size: 7px;
+  color: var(--ds-gray-6, #677C9C);
+}
+.tabIcon {
+  width: 10px;
+  height: 10px;
+  color: var(--ds-gray-6, #677C9C);
+  flex-shrink: 0;
+}
+.tabLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+.tabBadge {
+  font-size: 8px;
+  color: var(--ds-gray-7, #48556E);
+  background: var(--ds-bg-primary);
+  border-radius: 4px;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+.tabFreq {
+  font-size: 8px;
+  color: var(--ds-gray-7, #48556E);
+  flex-shrink: 0;
+}
+.tabEditBtn {
+  opacity: 0;
+  padding: 2px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  color: var(--ds-gray-6, #677C9C);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 150ms, background-color 150ms, color 150ms;
+}
+.tabEditBtn:hover {
+  background: rgba(90, 140, 255, 0.2);
+  color: var(--ds-blue-5, #7DA8FF);
+}
+.tabDeleteBtn {
+  composes: tabEditBtn;
+}
+.tabDeleteBtn:hover {
+  background: var(--ds-red-9, #2E2230);
+  color: var(--ds-red-5, #EA3943);
+}
+
+/* ── Info bar ── */
+.infoBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--ds-border-primary);
+  flex-shrink: 0;
+  background: var(--ds-bg-secondary);
+  color: var(--ds-text-primary, #E0E1E2);
+}
+.infoLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.infoText {
+  font-size: 10px;
+  color: var(--ds-gray-6, #677C9C);
+}
+.infoRight {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Table area ── */
+.tableScroll {
+  flex: 1;
+  overflow: auto;
+}
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  color: var(--ds-gray-6, #677C9C);
+}
+.emptyIcon {
+  width: 32px;
+  height: 32px;
+  color: var(--ds-gray-7, #48556E);
+}
+.emptyText {
+  font-size: 12px;
+}
+.iconSm {
+  width: 12px;
+  height: 12px;
+}
+.iconMd {
+  width: 14px;
+  height: 14px;
+}
+.iconXs {
+  width: 10px;
+  height: 10px;
+}
+
+/* ── Table ── */
+.table {
+  width: 100%;
+  font-size: 12px;
+  line-height: 16px;
+  border-collapse: collapse;
+}
+.thead {
+  background: var(--ds-bg-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.thIndex {
+  padding: 6px;
+  text-align: center;
+  color: var(--ds-gray-6, #677C9C);
+  font-weight: 500;
+  width: 32px;
+  border-right: 1px solid var(--ds-border-primary);
+}
+.th {
+  padding: 6px 8px;
+  text-align: left;
+  font-weight: 500;
+  color: var(--ds-gray-5, #9AA5B9);
+  border-right: 1px solid var(--ds-border-primary);
+  min-width: 80px;
+}
+.th:hover .thDeleteBtn {
+  opacity: 1;
+}
+.thRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.thInput {
+  background: transparent;
+  outline: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ds-gray-5, #9AA5B9);
+  width: 100%;
+  min-width: 0;
+  border: none;
+}
+.thBadgeX {
+  font-size: 9px;
+  background: var(--ds-blue-9, #1A2240);
+  color: var(--ds-blue-4, #A3C1FF);
+  padding: 0 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.thBadgeNum {
+  font-size: 8px;
+  background: rgba(22, 163, 74, 0.15);
+  color: var(--ds-green-5, #4ade80);
+  padding: 0 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.thDeleteBtn {
+  opacity: 0;
+  padding: 2px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  color: var(--ds-gray-7, #48556E);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 150ms, background-color 150ms, color 150ms;
+}
+.thDeleteBtn:hover {
+  background: rgba(234, 57, 67, 0.2);
+  color: var(--ds-red-5, #EA3943);
+}
+.thEmpty {
+  width: 32px;
+}
+
+/* ── Body rows ── */
+.tr {
+  border-bottom: 1px solid var(--ds-border-primary);
+  transition: background-color 100ms;
+}
+.tr:hover {
+  background: var(--ds-bg-primary);
+}
+.tr:hover .rowDeleteBtn {
+  opacity: 1;
+}
+.tdIndex {
+  padding: 4px 6px;
+  text-align: center;
+  color: var(--ds-gray-7, #48556E);
+  font-family: monospace;
+  font-size: 10px;
+  border-right: 1px solid var(--ds-border-primary);
+}
+.td {
+  padding: 4px 8px;
+  border-right: 1px solid var(--ds-border-primary);
+  cursor: text;
+}
+.tdInvalid {
+  composes: td;
+  background: var(--ds-red-9, rgba(127, 29, 29, 0.3));
+}
+.cellInput {
+  background: transparent;
+  outline: none;
+  font-size: 12px;
+  color: var(--ds-text-primary, #E0E1E2);
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--ds-blue-6, #5A8CFF);
+}
+.cellText {
+  font-size: 12px;
+  color: var(--ds-text-primary, #E0E1E2);
+}
+.cellTextInvalid {
+  font-size: 12px;
+  color: var(--ds-red-5, #EA3943);
+}
+.cellTextX {
+  font-size: 12px;
+  color: var(--ds-gray-5, #9AA5B9);
+}
+.cellDash {
+  color: var(--ds-gray-8, #313B4F);
+}
+.tdAction {
+  padding: 4px;
+}
+.rowDeleteBtn {
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--ds-gray-6, #677C9C);
+  cursor: pointer;
+  padding: 2px;
+  transition: opacity 150ms, color 150ms;
+}
+.rowDeleteBtn:hover {
+  color: var(--ds-red-5, #EA3943);
+}
+.emptyRow {
+  padding: 24px 0;
+  text-align: center;
+  color: var(--ds-gray-6, #677C9C);
+  font-size: 11px;
+}

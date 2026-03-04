@@ -1,0 +1,117 @@
+/* ChartCard CSS Module */
+
+.fixed { position: fixed; z-index: 9999; }
+.absolute { position: absolute; }
+.relative { position: relative; }
+
+/* ── Context menu ── */
+.ctxMenu {
+  border-radius: 8px;
+  border: 1px solid var(--ds-border-primary);
+  background: var(--ds-bg-secondary);
+  padding: 4px 0;
+  min-width: 150px;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4), 0 8px 10px -6px rgba(0,0,0,0.3);
+  font-family: 'Inter', sans-serif;
+}
+.ctxBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--ds-text-primary, #E0E1E2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 150ms;
+}
+.ctxBtn:hover {
+  background: var(--ds-bg-primary);
+}
+.ctxBtnDanger {
+  composes: ctxBtn;
+  color: var(--ds-red-5, #EA3943);
+}
+.ctxBtnDanger:hover {
+  background: rgba(242, 54, 69, 0.1);
+}
+.ctxDivider {
+  height: 1px;
+  background: var(--ds-border-primary);
+  margin: 2px 8px;
+}
+.ctxIcon {
+  width: 14px;
+  height: 14px;
+  color: var(--ds-gray-6, #677C9C);
+}
+
+/* ── Floating toolbar ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  margin-bottom: 4px;
+  background: var(--ds-bg-secondary);
+  border: 1px solid var(--ds-border-primary);
+  border-radius: 5px;
+  width: fit-content;
+  height: 26px;
+}
+.toolbarTitle {
+  font-size: 10px;
+  color: var(--ds-text-primary, #E0E1E2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+  padding: 0 4px;
+  font-weight: 500;
+  user-select: none;
+}
+.toolbarBtn {
+  padding: 2px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  color: var(--ds-gray-6, #677C9C);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 150ms, color 150ms;
+}
+.toolbarBtn:hover {
+  background: var(--ds-bg-primary);
+  color: var(--ds-text-primary);
+}
+.toolbarBtnDanger {
+  composes: toolbarBtn;
+}
+.toolbarBtnDanger:hover {
+  background: var(--ds-red-9, #2E2230);
+  color: var(--ds-red-5, #EA3943);
+}
+.toolbarIcon {
+  width: 12px;
+  height: 12px;
+}
+.logoMr {
+  margin-right: 2px;
+}
+
+/* ── Resize handles ── */
+.resizeHandle {
+  position: absolute;
+  background: var(--ds-blue-6, #5A8CFF);
+  border-radius: 2px;
+  z-index: 10;
+  width: 8px;
+  height: 8px;
+  transition: transform 150ms;
+}
+.resizeHandle:hover {
+  transform: scale(1.5);
+}

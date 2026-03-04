@@ -1,0 +1,700 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  --font-family: 'Inter', sans-serif;
+  
+  /* Font weights from Figma */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Typography scale - Headlines */
+  --text-h1: 32px;
+  --leading-h1: 40px;
+  --text-h2: 24px;
+  --leading-h2: 32px;
+  --text-h3: 18px;
+  --leading-h3: 24px;
+  --text-h4: 16px;
+  --leading-h4: 20px;
+  --text-h5: 14px;
+  --leading-h5: 20px;
+  --text-h6: 12px;
+  --leading-h6: 16px;
+
+  /* Typography scale - Body text */
+  --text-big: 18px;
+  --leading-big: 28px;
+  --text-medium: 16px;
+  --leading-medium: 24px;
+  --text-small: 14px;
+  --leading-small: 20px;
+  --text-extrasmall: 12px;
+  --leading-extrasmall: 16px;
+
+  /* Typography scale - Captions */
+  --text-caption: 12px;
+  --leading-caption: 16px;
+  --text-caption-small: 10px;
+  --leading-caption-small: 16px;
+
+  /* Typography scale - Buttons */
+  --text-btn-lg: 18px;
+  --leading-btn-lg: 24px;
+  --text-btn-md: 16px;
+  --leading-btn-md: 20px;
+  --text-btn-sm: 14px;
+  --leading-btn-sm: 20px;
+  --text-btn-xs: 12px;
+  --leading-btn-xs: 16px;
+
+  /* ═══════════════════════════════════════════════
+     DESIGN SYSTEM — Primitive Color Scales (Figma)
+     ═══════════════════════════════════════════════ */
+
+  /* Dark scale */
+  --ds-dark-0: #FFFFFF;
+  --ds-dark-1: #F8FAFE;
+  --ds-dark-2: #E0E1E2;
+  --ds-dark-3: #C4C7C9;
+  --ds-dark-4: #2A2E39;
+  --ds-dark-5: #191F2D;
+  --ds-dark-6: #131722;
+  --ds-dark-7: #10141D;
+  --ds-dark-8: #0E1018;
+  --ds-dark-9: #000000;
+
+  /* Blue scale */
+  --ds-blue-0: #E7EFFF;
+  --ds-blue-1: #D0DEFF;
+  --ds-blue-2: #B8CEFF;
+  --ds-blue-3: #A1BDFF;
+  --ds-blue-4: #89ADFF;
+  --ds-blue-5: #729CFF;
+  --ds-blue-6: #5A8CFF;
+  --ds-blue-7: #3B66C9;
+  --ds-blue-8: #2D406C;
+  --ds-blue-9: #202A42;
+
+  /* Orange scale */
+  --ds-orange-0: #FEECE2;
+  --ds-orange-1: #FDDAC6;
+  --ds-orange-2: #FCC7A9;
+  --ds-orange-3: #FBB58D;
+  --ds-orange-4: #FAA270;
+  --ds-orange-5: #F99054;
+  --ds-orange-6: #F87D37;
+  --ds-orange-7: #F7620D;
+  --ds-orange-8: #5C3B30;
+  --ds-orange-9: #30282E;
+
+  /* Yellow scale */
+  --ds-yellow-0: #FEF7E0;
+  --ds-yellow-1: #FCEFC1;
+  --ds-yellow-2: #FBE7A2;
+  --ds-yellow-3: #FAE082;
+  --ds-yellow-4: #F9D863;
+  --ds-yellow-5: #F7D044;
+  --ds-yellow-6: #F6C825;
+  --ds-yellow-7: #E9B80A;
+  --ds-yellow-8: #5C522B;
+  --ds-yellow-9: #30302D;
+
+  /* Red scale */
+  --ds-red-0: #FCE3E4;
+  --ds-red-1: #F9C6C9;
+  --ds-red-2: #F6AAAE;
+  --ds-red-3: #F38E94;
+  --ds-red-4: #F07279;
+  --ds-red-5: #ED555E;
+  --ds-red-6: #EA3943;
+  --ds-red-7: #CD2835;
+  --ds-red-8: #5B2635;
+  --ds-red-9: #2E2230;
+
+  /* Green scale */
+  --ds-green-0: #DDFAEF;
+  --ds-green-1: #BAF4DE;
+  --ds-green-2: #98EFCE;
+  --ds-green-3: #75EABE;
+  --ds-green-4: #53E4AE;
+  --ds-green-5: #31DF9D;
+  --ds-green-6: #1FC989;
+  --ds-green-7: #1BAC75;
+  --ds-green-8: #1B5249;
+  --ds-green-9: #1A3037;
+
+  /* Turquoise scale */
+  --ds-turquoise-0: #E4F9F8;
+  --ds-turquoise-1: #CAF2F1;
+  --ds-turquoise-2: #AFECEA;
+  --ds-turquoise-3: #95E6E3;
+  --ds-turquoise-4: #7AE0DC;
+  --ds-turquoise-5: #60D9D5;
+  --ds-turquoise-6: #45D3CE;
+  --ds-turquoise-7: #2EC2BD;
+  --ds-turquoise-8: #27555E;
+  --ds-turquoise-9: #1E313E;
+
+  /* Purple scale */
+  --ds-purple-0: #F1EFFF;
+  --ds-purple-1: #E2DEFF;
+  --ds-purple-2: #D4CEFF;
+  --ds-purple-3: #C5BDFF;
+  --ds-purple-4: #B7ADFF;
+  --ds-purple-5: #A89CFF;
+  --ds-purple-6: #9A8CFF;
+  --ds-purple-7: #6854FF;
+  --ds-purple-8: #40406C;
+  --ds-purple-9: #262A42;
+
+  /* Gray scale */
+  --ds-gray-0: #E9ECF1;
+  --ds-gray-1: #D4DAE3;
+  --ds-gray-2: #BEC7D5;
+  --ds-gray-3: #A8B4C6;
+  --ds-gray-4: #92A1B8;
+  --ds-gray-5: #7D8FAA;
+  --ds-gray-6: #677C9C;
+  --ds-gray-7: #586A86;
+  --ds-gray-8: #313B4F;
+  --ds-gray-9: #212839;
+
+  /* ═══════════════════════════════════════════════
+     DESIGN SYSTEM — Color Alpha Variants (Figma)
+     3 opacity levels for each primary accent (-6)
+     Usage: bg-blue-6-a10, text-red-6-a30, border-green-6-a50
+     ═══════════════════════════════════════════════ */
+
+  /* Blue-6 #5A8CFF alpha */
+  --ds-blue-6-a10: rgba(90, 140, 255, 0.1);
+  --ds-blue-6-a20: rgba(90, 140, 255, 0.2);
+  --ds-blue-6-a30: rgba(90, 140, 255, 0.3);
+  --ds-blue-6-a50: rgba(90, 140, 255, 0.5);
+
+  /* Green-6 #1FC989 alpha */
+  --ds-green-6-a10: rgba(31, 201, 137, 0.1);
+  --ds-green-6-a20: rgba(31, 201, 137, 0.2);
+  --ds-green-6-a30: rgba(31, 201, 137, 0.3);
+  --ds-green-6-a50: rgba(31, 201, 137, 0.5);
+
+  /* Red-6 #EA3943 alpha */
+  --ds-red-6-a10: rgba(234, 57, 67, 0.1);
+  --ds-red-6-a20: rgba(234, 57, 67, 0.2);
+  --ds-red-6-a30: rgba(234, 57, 67, 0.3);
+  --ds-red-6-a50: rgba(234, 57, 67, 0.5);
+
+  /* Orange-6 #F87D37 alpha */
+  --ds-orange-6-a10: rgba(248, 125, 55, 0.1);
+  --ds-orange-6-a20: rgba(248, 125, 55, 0.2);
+  --ds-orange-6-a30: rgba(248, 125, 55, 0.3);
+  --ds-orange-6-a50: rgba(248, 125, 55, 0.5);
+
+  /* Yellow-6 #F6C825 alpha */
+  --ds-yellow-6-a10: rgba(246, 200, 37, 0.1);
+  --ds-yellow-6-a20: rgba(246, 200, 37, 0.2);
+  --ds-yellow-6-a30: rgba(246, 200, 37, 0.3);
+  --ds-yellow-6-a50: rgba(246, 200, 37, 0.5);
+
+  /* Turquoise-6 #45D3CE alpha */
+  --ds-turquoise-6-a10: rgba(69, 211, 206, 0.1);
+  --ds-turquoise-6-a20: rgba(69, 211, 206, 0.2);
+  --ds-turquoise-6-a30: rgba(69, 211, 206, 0.3);
+  --ds-turquoise-6-a50: rgba(69, 211, 206, 0.5);
+
+  /* Purple-6 #9A8CFF alpha */
+  --ds-purple-6-a10: rgba(154, 140, 255, 0.1);
+  --ds-purple-6-a20: rgba(154, 140, 255, 0.2);
+  --ds-purple-6-a30: rgba(154, 140, 255, 0.3);
+  --ds-purple-6-a50: rgba(154, 140, 255, 0.5);
+
+  /* Gray-6 #677C9C alpha */
+  --ds-gray-6-a10: rgba(103, 124, 156, 0.1);
+  --ds-gray-6-a20: rgba(103, 124, 156, 0.2);
+  --ds-gray-6-a30: rgba(103, 124, 156, 0.3);
+  --ds-gray-6-a50: rgba(103, 124, 156, 0.5);
+
+  /* ═══════════════════════════════════════════════
+     DESIGN SYSTEM — Color-7 Alpha Variants (Figma)
+     3 opacity levels for each muted accent (-7)
+     Usage: bg-blue-7-a10, text-red-7-a30, border-green-7-a50
+     ═══════════════════════════════════════════════ */
+
+  /* Dark-7 #10141D alpha */
+  --ds-dark-7-a10: rgba(16, 20, 29, 0.1);
+  --ds-dark-7-a30: rgba(16, 20, 29, 0.3);
+  --ds-dark-7-a50: rgba(16, 20, 29, 0.5);
+
+  /* Blue-7 #3B66C9 alpha */
+  --ds-blue-7-a10: rgba(59, 102, 201, 0.1);
+  --ds-blue-7-a30: rgba(59, 102, 201, 0.3);
+  --ds-blue-7-a50: rgba(59, 102, 201, 0.5);
+
+  /* Orange-7 #F7620D alpha */
+  --ds-orange-7-a10: rgba(247, 98, 13, 0.1);
+  --ds-orange-7-a30: rgba(247, 98, 13, 0.3);
+  --ds-orange-7-a50: rgba(247, 98, 13, 0.5);
+
+  /* Yellow-7 #E9B80A alpha */
+  --ds-yellow-7-a10: rgba(233, 184, 10, 0.1);
+  --ds-yellow-7-a30: rgba(233, 184, 10, 0.3);
+  --ds-yellow-7-a50: rgba(233, 184, 10, 0.5);
+
+  /* Red-7 #CD2835 alpha */
+  --ds-red-7-a10: rgba(205, 40, 53, 0.1);
+  --ds-red-7-a30: rgba(205, 40, 53, 0.3);
+  --ds-red-7-a50: rgba(205, 40, 53, 0.5);
+
+  /* Green-7 #1BAC75 alpha */
+  --ds-green-7-a10: rgba(27, 172, 117, 0.1);
+  --ds-green-7-a30: rgba(27, 172, 117, 0.3);
+  --ds-green-7-a50: rgba(27, 172, 117, 0.5);
+
+  /* Turquoise-7 #2EC2BD alpha */
+  --ds-turquoise-7-a10: rgba(46, 194, 189, 0.1);
+  --ds-turquoise-7-a30: rgba(46, 194, 189, 0.3);
+  --ds-turquoise-7-a50: rgba(46, 194, 189, 0.5);
+
+  /* Purple-7 #6854FF alpha */
+  --ds-purple-7-a10: rgba(104, 84, 255, 0.1);
+  --ds-purple-7-a30: rgba(104, 84, 255, 0.3);
+  --ds-purple-7-a50: rgba(104, 84, 255, 0.5);
+
+  /* Gray-7 #586A86 alpha */
+  --ds-gray-7-a10: rgba(88, 106, 134, 0.1);
+  --ds-gray-7-a30: rgba(88, 106, 134, 0.3);
+  --ds-gray-7-a50: rgba(88, 106, 134, 0.5);
+
+  /* ═══════════════════════════════════════
+     DESIGN SYSTEM — Semantic Tokens (dark)
+     ═══════════════════════════════════════ */
+
+  /* Background */
+  --ds-bg-primary: var(--ds-dark-6);           /* #131722 */
+  --ds-bg-secondary: var(--ds-dark-5);         /* #191F2D */
+  --ds-bg-highlight: #28334F;                  /* highlighted row / today */
+  --ds-bg-badge: var(--ds-blue-9);             /* #202A42 - tag/badge bg */
+  --ds-bg-table-mark-header: var(--ds-dark-4); /* #2A2E39 */
+  --ds-bg-table-mark: var(--ds-gray-9);        /* #212839 */
+
+  /* Text */
+  --ds-text-primary: var(--ds-dark-2);         /* #E0E1E2 */
+  --ds-text-secondary: var(--ds-dark-3);       /* #C4C7C9 */
+  --ds-text-gray-dark: var(--ds-gray-6);       /* #677C9C */
+  --ds-text-gray: var(--ds-gray-4);            /* #92A1B8 */
+  --ds-text-gray-light: var(--ds-gray-4);      /* #92A1B8 */
+  --ds-text-gray-lighter: var(--ds-gray-3);    /* #A8B4C6 */
+
+  /* Control */
+  --ds-control-active: var(--ds-blue-6-a30);       /* blue @ 30% */
+  --ds-control-hover: var(--ds-blue-6-a10);        /* blue @ 10% */
+  --ds-control-default: var(--ds-dark-6);          /* #131722 */
+  --ds-control-demo: var(--ds-gray-9);             /* #212839 */
+  --ds-control-white: var(--ds-dark-0);            /* #FFFFFF */
+  --ds-control-black: var(--ds-dark-7);            /* #10141D */
+  --ds-control-full-black: var(--ds-dark-9);       /* #000000 */
+
+  /* Border */
+  --ds-border-secondary: var(--ds-dark-5);         /* #191F2D */
+  --ds-border-primary: var(--ds-dark-4);           /* #2A2E39 */
+  --ds-border-card: #30394D;                       /* card border (carousel, reviews) */
+  --ds-border-hover: var(--ds-blue-6-a30);         /* blue @ 30% */
+  --ds-border-active: var(--ds-blue-6);            /* #5A8CFF */
+
+  /* Gradients */
+  --ds-gradient-card-from: #131722;
+  --ds-gradient-card-to: #252C3C;
+  --ds-gradient-card-active-from: #202A42;
+  --ds-gradient-card-active-to: #131722;
+
+  /* Table-specific */
+  --ds-table-header-bg: #2f3441;
+  --ds-table-forecast-header-bg: var(--ds-dark-4);  /* #2A2E39 */
+  --ds-table-forecast-cell-bg: #151b27;
+  --ds-table-forecast-text: var(--ds-turquoise-6);   /* #45D3CE */
+  --ds-table-sticky-bg: var(--ds-dark-7);            /* #10141D */
+  --ds-table-sorted-sticky-bg: #343a52;
+
+  /* Notification backgrounds */
+  --ds-notification-error-bg: var(--ds-red-8);       /* #5B2635 */
+  --ds-notification-warning-bg: var(--ds-orange-8);  /* #5C3B30 */
+  --ds-notification-success-bg: var(--ds-green-8);   /* #1B5249 */
+
+  /* Button */
+  --ds-btn-secondary-bg: var(--ds-dark-5);
+  --ds-btn-secondary-hover: var(--ds-blue-9);
+  --ds-btn-destructive-bg: #2E2230;
+  --ds-btn-destructive-hover: var(--ds-red-8);
+  --ds-btn-ghost-hover: var(--ds-blue-6-a10);
+
+  /* Badge / Tag */
+  --ds-tag-default-bg: var(--ds-gray-9);
+  --ds-tag-default-fg: var(--ds-dark-2);
+  --ds-tag-default-border: var(--ds-dark-4);
+  --ds-pill-gray-bg: var(--ds-blue-9);
+  --ds-pill-text: var(--ds-dark-2);
+
+  /* Switch */
+  --ds-switch-off-border: var(--ds-dark-4);
+  --ds-switch-off-thumb: var(--ds-blue-6);
+  --ds-switch-disabled-thumb: var(--ds-gray-8);
+
+  /* Checkbox */
+  --ds-checkbox-border: #3d4867;
+}
+
+/* ═══════════════════════════════════════
+   LIGHT THEME — [data-mantine-color-scheme="light"]
+   Semantic tokens remapped per Figma light mode
+   ═══════════════════════════════════════ */
+
+[data-mantine-color-scheme="light"] {
+  /* Background */
+  --ds-bg-primary: var(--ds-dark-1);           /* #F8FAFE */
+  --ds-bg-secondary: var(--ds-dark-0);         /* #FFFFFF */
+  --ds-bg-highlight: var(--ds-blue-0);         /* #E7EFFF */
+  --ds-bg-badge: var(--ds-blue-0);             /* #E7EFFF */
+  --ds-bg-table-mark-header: var(--ds-gray-1); /* #D4DAE3 */
+  --ds-bg-table-mark: var(--ds-gray-0);        /* #E9ECF1 */
+
+  /* Text */
+  --ds-text-primary: var(--ds-dark-6);         /* #131722 */
+  --ds-text-secondary: var(--ds-dark-4);       /* #2A2E39 */
+  --ds-text-gray-dark: var(--ds-gray-6);       /* #677C9C */
+  --ds-text-gray: var(--ds-gray-4);            /* #92A1B8 */
+  --ds-text-gray-light: var(--ds-gray-4);      /* #92A1B8 */
+  --ds-text-gray-lighter: var(--ds-gray-3);    /* #A8B4C6 */
+
+  /* Control */
+  --ds-control-active: var(--ds-blue-6-a30);
+  --ds-control-hover: var(--ds-blue-6-a10);
+  --ds-control-default: var(--ds-dark-1);      /* #F8FAFE */
+  --ds-control-demo: var(--ds-gray-9);         /* #212839 */
+  --ds-control-white: var(--ds-dark-0);        /* #FFFFFF */
+  --ds-control-black: var(--ds-dark-7);        /* #10141D */
+  --ds-control-full-black: var(--ds-dark-9);   /* #000000 */
+
+  /* Border */
+  --ds-border-secondary: var(--ds-dark-3);     /* #C4C7C9 */
+  --ds-border-primary: var(--ds-gray-0);       /* #E9ECF1 */
+  --ds-border-card: var(--ds-gray-1);          /* #D4DAE3 */
+  --ds-border-hover: var(--ds-blue-6-a30);
+  --ds-border-active: var(--ds-blue-6);        /* #5A8CFF */
+
+  /* Gradients — light */
+  --ds-gradient-card-from: #FFFFFF;
+  --ds-gradient-card-to: #E7EFFF;
+  --ds-gradient-card-active-from: #D0DEFF;
+  --ds-gradient-card-active-to: #F8FAFE;
+
+  /* Table-specific — light */
+  --ds-table-header-bg: var(--ds-gray-0);           /* #E9ECF1 */
+  --ds-table-forecast-header-bg: var(--ds-turquoise-0); /* #E4F9F8 */
+  --ds-table-forecast-cell-bg: var(--ds-turquoise-0);   /* #E4F9F8 */
+  --ds-table-forecast-text: var(--ds-turquoise-8);       /* #27555E */
+  --ds-table-sticky-bg: var(--ds-dark-0);           /* #FFFFFF */
+  --ds-table-sorted-sticky-bg: var(--ds-blue-0);    /* #E7EFFF */
+
+  /* Notification backgrounds — light */
+  --ds-notification-error-bg: var(--ds-red-0);       /* #FCE3E4 */
+  --ds-notification-warning-bg: var(--ds-orange-0);  /* #FEECE2 */
+  --ds-notification-success-bg: var(--ds-green-0);   /* #DDFAEF */
+
+  /* Button — light */
+  --ds-btn-secondary-bg: var(--ds-blue-0);           /* #E7EFFF */
+  --ds-btn-secondary-hover: var(--ds-blue-1);        /* #D0DEFF */
+  --ds-btn-destructive-bg: var(--ds-red-0);          /* #FCE3E4 */
+  --ds-btn-destructive-hover: var(--ds-red-1);       /* #F9C6C9 */
+  --ds-btn-ghost-hover: var(--ds-blue-6-a10);
+
+  /* Badge / Tag — light */
+  --ds-tag-default-bg: var(--ds-gray-0);             /* #E9ECF1 */
+  --ds-tag-default-fg: var(--ds-dark-6);             /* #131722 */
+  --ds-tag-default-border: var(--ds-gray-1);         /* #D4DAE3 */
+  --ds-pill-gray-bg: var(--ds-blue-0);               /* #E7EFFF */
+  --ds-pill-text: var(--ds-dark-6);                  /* #131722 */
+
+  /* Switch — light */
+  --ds-switch-off-border: var(--ds-gray-2);          /* #BEC7D5 */
+  --ds-switch-off-thumb: var(--ds-blue-6);
+  --ds-switch-disabled-thumb: var(--ds-gray-2);
+
+  /* Checkbox — light */
+  --ds-checkbox-border: var(--ds-gray-2);            /* #BEC7D5 */
+
+  color-scheme: light;
+}
+
+/* ═══════════════════════════════════════
+   Global Scrollbar — 8px thin, DS colors
+   ═══════════════════════════════════════ */
+
+/* Firefox / standards */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ds-dark-4) transparent;
+}
+
+/* WebKit (Chrome, Safari, Edge) — dark (default) */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--ds-dark-4);
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ds-gray-8);
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Scrollbar for light theme */
+[data-mantine-color-scheme="light"] * {
+  scrollbar-color: var(--ds-gray-2) transparent;
+}
+[data-mantine-color-scheme="light"] *::-webkit-scrollbar-thumb {
+  background-color: var(--ds-gray-2);
+}
+[data-mantine-color-scheme="light"] *::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ds-gray-4);
+}
+
+@theme inline {
+  /* ═══════════════════════════════════════════
+     DS Primitives — use as bg-dark-6, text-blue-5, border-gray-4, etc.
+     ═══════════════════════════════════════════ */
+
+  /* Dark scale: bg-dark-0 ... bg-dark-9 */
+  --color-dark-0: var(--ds-dark-0);
+  --color-dark-1: var(--ds-dark-1);
+  --color-dark-2: var(--ds-dark-2);
+  --color-dark-3: var(--ds-dark-3);
+  --color-dark-4: var(--ds-dark-4);
+  --color-dark-5: var(--ds-dark-5);
+  --color-dark-6: var(--ds-dark-6);
+  --color-dark-7: var(--ds-dark-7);
+  --color-dark-8: var(--ds-dark-8);
+  --color-dark-9: var(--ds-dark-9);
+
+  /* Blue scale: bg-blue-0 ... bg-blue-9 */
+  --color-blue-0: var(--ds-blue-0);
+  --color-blue-1: var(--ds-blue-1);
+  --color-blue-2: var(--ds-blue-2);
+  --color-blue-3: var(--ds-blue-3);
+  --color-blue-4: var(--ds-blue-4);
+  --color-blue-5: var(--ds-blue-5);
+  --color-blue-6: var(--ds-blue-6);
+  --color-blue-7: var(--ds-blue-7);
+  --color-blue-8: var(--ds-blue-8);
+  --color-blue-9: var(--ds-blue-9);
+
+  /* Orange scale: bg-orange-0 ... bg-orange-9 */
+  --color-orange-0: var(--ds-orange-0);
+  --color-orange-1: var(--ds-orange-1);
+  --color-orange-2: var(--ds-orange-2);
+  --color-orange-3: var(--ds-orange-3);
+  --color-orange-4: var(--ds-orange-4);
+  --color-orange-5: var(--ds-orange-5);
+  --color-orange-6: var(--ds-orange-6);
+  --color-orange-7: var(--ds-orange-7);
+  --color-orange-8: var(--ds-orange-8);
+  --color-orange-9: var(--ds-orange-9);
+
+  /* Yellow scale: bg-yellow-0 ... bg-yellow-9 */
+  --color-yellow-0: var(--ds-yellow-0);
+  --color-yellow-1: var(--ds-yellow-1);
+  --color-yellow-2: var(--ds-yellow-2);
+  --color-yellow-3: var(--ds-yellow-3);
+  --color-yellow-4: var(--ds-yellow-4);
+  --color-yellow-5: var(--ds-yellow-5);
+  --color-yellow-6: var(--ds-yellow-6);
+  --color-yellow-7: var(--ds-yellow-7);
+  --color-yellow-8: var(--ds-yellow-8);
+  --color-yellow-9: var(--ds-yellow-9);
+
+  /* Red scale: bg-red-0 ... bg-red-9 */
+  --color-red-0: var(--ds-red-0);
+  --color-red-1: var(--ds-red-1);
+  --color-red-2: var(--ds-red-2);
+  --color-red-3: var(--ds-red-3);
+  --color-red-4: var(--ds-red-4);
+  --color-red-5: var(--ds-red-5);
+  --color-red-6: var(--ds-red-6);
+  --color-red-7: var(--ds-red-7);
+  --color-red-8: var(--ds-red-8);
+  --color-red-9: var(--ds-red-9);
+
+  /* Green scale: bg-green-0 ... bg-green-9 */
+  --color-green-0: var(--ds-green-0);
+  --color-green-1: var(--ds-green-1);
+  --color-green-2: var(--ds-green-2);
+  --color-green-3: var(--ds-green-3);
+  --color-green-4: var(--ds-green-4);
+  --color-green-5: var(--ds-green-5);
+  --color-green-6: var(--ds-green-6);
+  --color-green-7: var(--ds-green-7);
+  --color-green-8: var(--ds-green-8);
+  --color-green-9: var(--ds-green-9);
+
+  /* Turquoise scale: bg-turquoise-0 ... bg-turquoise-9 */
+  --color-turquoise-0: var(--ds-turquoise-0);
+  --color-turquoise-1: var(--ds-turquoise-1);
+  --color-turquoise-2: var(--ds-turquoise-2);
+  --color-turquoise-3: var(--ds-turquoise-3);
+  --color-turquoise-4: var(--ds-turquoise-4);
+  --color-turquoise-5: var(--ds-turquoise-5);
+  --color-turquoise-6: var(--ds-turquoise-6);
+  --color-turquoise-7: var(--ds-turquoise-7);
+  --color-turquoise-8: var(--ds-turquoise-8);
+  --color-turquoise-9: var(--ds-turquoise-9);
+
+  /* Purple scale: bg-purple-0 ... bg-purple-9 */
+  --color-purple-0: var(--ds-purple-0);
+  --color-purple-1: var(--ds-purple-1);
+  --color-purple-2: var(--ds-purple-2);
+  --color-purple-3: var(--ds-purple-3);
+  --color-purple-4: var(--ds-purple-4);
+  --color-purple-5: var(--ds-purple-5);
+  --color-purple-6: var(--ds-purple-6);
+  --color-purple-7: var(--ds-purple-7);
+  --color-purple-8: var(--ds-purple-8);
+  --color-purple-9: var(--ds-purple-9);
+
+  /* Gray scale: bg-gray-0 ... bg-gray-9 */
+  --color-gray-0: var(--ds-gray-0);
+  --color-gray-1: var(--ds-gray-1);
+  --color-gray-2: var(--ds-gray-2);
+  --color-gray-3: var(--ds-gray-3);
+  --color-gray-4: var(--ds-gray-4);
+  --color-gray-5: var(--ds-gray-5);
+  --color-gray-6: var(--ds-gray-6);
+  --color-gray-7: var(--ds-gray-7);
+  --color-gray-8: var(--ds-gray-8);
+  --color-gray-9: var(--ds-gray-9);
+
+  /* ═══════════════════════════════════════
+     DS Alpha Colors — bg-blue-6-a10, text-red-6-a30, border-green-6-a50, etc.
+     Hover = a10, Active = a30, Emphasis = a50
+     ═══════════════════════════════════════ */
+
+  /* Blue-6 alpha */
+  --color-blue-6-a10: var(--ds-blue-6-a10);
+  --color-blue-6-a20: var(--ds-blue-6-a20);
+  --color-blue-6-a30: var(--ds-blue-6-a30);
+  --color-blue-6-a50: var(--ds-blue-6-a50);
+
+  /* Green-6 alpha */
+  --color-green-6-a10: var(--ds-green-6-a10);
+  --color-green-6-a20: var(--ds-green-6-a20);
+  --color-green-6-a30: var(--ds-green-6-a30);
+  --color-green-6-a50: var(--ds-green-6-a50);
+
+  /* Red-6 alpha */
+  --color-red-6-a10: var(--ds-red-6-a10);
+  --color-red-6-a20: var(--ds-red-6-a20);
+  --color-red-6-a30: var(--ds-red-6-a30);
+  --color-red-6-a50: var(--ds-red-6-a50);
+
+  /* Orange-6 alpha */
+  --color-orange-6-a10: var(--ds-orange-6-a10);
+  --color-orange-6-a20: var(--ds-orange-6-a20);
+  --color-orange-6-a30: var(--ds-orange-6-a30);
+  --color-orange-6-a50: var(--ds-orange-6-a50);
+
+  /* Yellow-6 alpha */
+  --color-yellow-6-a10: var(--ds-yellow-6-a10);
+  --color-yellow-6-a20: var(--ds-yellow-6-a20);
+  --color-yellow-6-a30: var(--ds-yellow-6-a30);
+  --color-yellow-6-a50: var(--ds-yellow-6-a50);
+
+  /* Turquoise-6 alpha */
+  --color-turquoise-6-a10: var(--ds-turquoise-6-a10);
+  --color-turquoise-6-a20: var(--ds-turquoise-6-a20);
+  --color-turquoise-6-a30: var(--ds-turquoise-6-a30);
+  --color-turquoise-6-a50: var(--ds-turquoise-6-a50);
+
+  /* Purple-6 alpha */
+  --color-purple-6-a10: var(--ds-purple-6-a10);
+  --color-purple-6-a20: var(--ds-purple-6-a20);
+  --color-purple-6-a30: var(--ds-purple-6-a30);
+  --color-purple-6-a50: var(--ds-purple-6-a50);
+
+  /* Gray-6 alpha */
+  --color-gray-6-a10: var(--ds-gray-6-a10);
+  --color-gray-6-a20: var(--ds-gray-6-a20);
+  --color-gray-6-a30: var(--ds-gray-6-a30);
+  --color-gray-6-a50: var(--ds-gray-6-a50);
+
+  /* ═══════════════════════════════════════
+     DS Alpha Colors-7 — bg-blue-7-a10, text-red-7-a30, border-green-7-a50, etc.
+     Hover = a10, Active = a30, Emphasis = a50
+     ═══════════════════════════════════════ */
+
+  /* Dark-7 alpha */
+  --color-dark-7-a10: var(--ds-dark-7-a10);
+  --color-dark-7-a30: var(--ds-dark-7-a30);
+  --color-dark-7-a50: var(--ds-dark-7-a50);
+
+  /* Blue-7 alpha */
+  --color-blue-7-a10: var(--ds-blue-7-a10);
+  --color-blue-7-a30: var(--ds-blue-7-a30);
+  --color-blue-7-a50: var(--ds-blue-7-a50);
+
+  /* Orange-7 alpha */
+  --color-orange-7-a10: var(--ds-orange-7-a10);
+  --color-orange-7-a30: var(--ds-orange-7-a30);
+  --color-orange-7-a50: var(--ds-orange-7-a50);
+
+  /* Yellow-7 alpha */
+  --color-yellow-7-a10: var(--ds-yellow-7-a10);
+  --color-yellow-7-a30: var(--ds-yellow-7-a30);
+  --color-yellow-7-a50: var(--ds-yellow-7-a50);
+
+  /* Red-7 alpha */
+  --color-red-7-a10: var(--ds-red-7-a10);
+  --color-red-7-a30: var(--ds-red-7-a30);
+  --color-red-7-a50: var(--ds-red-7-a50);
+
+  /* Green-7 alpha */
+  --color-green-7-a10: var(--ds-green-7-a10);
+  --color-green-7-a30: var(--ds-green-7-a30);
+  --color-green-7-a50: var(--ds-green-7-a50);
+
+  /* Turquoise-7 alpha */
+  --color-turquoise-7-a10: var(--ds-turquoise-7-a10);
+  --color-turquoise-7-a30: var(--ds-turquoise-7-a30);
+  --color-turquoise-7-a50: var(--ds-turquoise-7-a50);
+
+  /* Purple-7 alpha */
+  --color-purple-7-a10: var(--ds-purple-7-a10);
+  --color-purple-7-a30: var(--ds-purple-7-a30);
+  --color-purple-7-a50: var(--ds-purple-7-a50);
+
+  /* Gray-7 alpha */
+  --color-gray-7-a10: var(--ds-gray-7-a10);
+  --color-gray-7-a30: var(--ds-gray-7-a30);
+  --color-gray-7-a50: var(--ds-gray-7-a50);
+
+  /* ═══════════════════════════════════════
+     Semantic color aliases — bg-background, text-on-surface, border-edge, etc.
+     These reference --ds-* tokens and auto-adapt to light/dark theme.
+     ═══════════════════════════════════════ */
+
+  --color-background: var(--ds-bg-primary);
+  --color-surface: var(--ds-bg-primary);
+  --color-surface-alt: var(--ds-bg-secondary);
+  --color-on-surface: var(--ds-text-primary);
+  --color-on-surface-muted: var(--ds-text-secondary);
+  --color-on-surface-subtle: var(--ds-text-gray-dark);
+  --color-edge: var(--ds-border-primary);
+  --color-edge-hover: var(--ds-border-hover);
+  --color-edge-active: var(--ds-border-active);
+}

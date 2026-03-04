@@ -1,0 +1,64 @@
+/* InstrumentPicker CSS Module */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--ds-border-primary);
+  background: var(--ds-bg-primary);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.toggleGroup {
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  border: 1px solid var(--ds-border-primary);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.toggleBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ds-gray-6, #677C9C);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms;
+}
+.toggleBtn:hover { background: var(--ds-bg-secondary); }
+.toggleBtnActive {
+  composes: toggleBtn;
+  background: rgba(90, 140, 255, 0.2);
+  color: var(--ds-blue-5, #7DA8FF);
+}
+.iconSm { width: 12px; height: 12px; }
+.indWrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+.indBtn {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--ds-gray-6, #677C9C);
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms, border-color 150ms;
+}
+.indBtn:hover { background: var(--ds-bg-secondary); }
+.indBtnActive {
+  composes: indBtn;
+  background: rgba(90, 140, 255, 0.2);
+  color: var(--ds-blue-5, #7DA8FF);
+  border-color: rgba(90, 140, 255, 0.4);
+}

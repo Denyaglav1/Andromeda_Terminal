@@ -1,0 +1,65 @@
+:root {
+  /* Legacy brand aliases - kept for gradual migration */
+  --color-brand-dark: #131722;
+  --color-brand-header: #191F2D;
+  --color-brand-accent: #5A8CFF;
+  --color-brand-text-secondary: #C4C7C9;
+  --color-brand-border: #2A2E39;
+}
+
+/* Hide scrollbar for DS dropdown segment scroll */
+.ds-dropdown-seg-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar utility (used in TickerTape etc.) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ticker tape marquee animation */
+@keyframes ticker-scroll {
+  0% { transform: translateX(calc(-100% / 3)); }
+  100% { transform: translateX(0); }
+}
+
+.ticker-scroll-container {
+  animation: ticker-scroll 120s linear infinite;
+  width: max-content;
+  will-change: transform;
+}
+
+.ticker-scroll-container:hover {
+  animation-play-state: paused;
+}
+
+/* News slide-in animation */
+@keyframes news-slide-in {
+  0% {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+    background-color: rgba(90, 140, 255, 0.15);
+  }
+  40% {
+    opacity: 1;
+    max-height: 60px;
+    transform: translateY(0);
+    background-color: rgba(90, 140, 255, 0.15);
+  }
+  100% {
+    opacity: 1;
+    max-height: 60px;
+    transform: translateY(0);
+    background-color: transparent;
+  }
+}
+
+@keyframes news-highlight-fade {
+  0%   { background-color: rgba(90, 140, 255, 0.12); }
+  100% { background-color: transparent; }
+}

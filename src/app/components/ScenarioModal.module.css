@@ -1,0 +1,234 @@
+/* ScenarioModal CSS Module — replaces cn() patterns */
+
+/* ─── Navigation pagination buttons ─── */
+.navBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background-color: var(--ds-bg-secondary);
+  transition: background-color 150ms;
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.navBtn:hover {
+  background-color: var(--ds-control-hover);
+}
+.navBtnDisabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ─── Scenario trigger styles ─── */
+.scenarioTriggerBase {
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  width: 96px !important;
+  min-width: 0 !important;
+  max-width: 96px !important;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.scenarioTriggerManual {
+  border-color: rgba(248, 125, 55, 0.3) !important;
+  background-color: rgba(248, 125, 55, 0.2);
+  color: var(--ds-orange-3, #FCC7A9) !important;
+}
+.scenarioTriggerDefault {
+  border-color: rgba(90, 140, 255, 0.2) !important;
+  background-color: rgba(90, 140, 255, 0.1);
+  color: var(--ds-blue-3, #A1BDFF) !important;
+}
+
+/* ─── Modal layout ─── */
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ds-border-primary, #2A2E39);
+  padding: 16px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ds-text-primary, #E0E1E2);
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--ds-text-faint, #677C9C);
+  margin-top: 4px;
+}
+
+.companyHighlight {
+  color: var(--ds-blue-5, #6B9BFF);
+  font-weight: 500;
+}
+
+.iconFaint { color: var(--ds-text-faint, #677C9C); }
+.iconBlue5 { color: var(--ds-blue-5, #6B9BFF); }
+.iconShrink { flex-shrink: 0; }
+
+.body {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+@media (min-width: 768px) {
+  .formGrid { grid-template-columns: 1fr 1fr; }
+}
+
+.infoBox {
+  background: var(--ds-bg-secondary);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--ds-border-primary);
+}
+@media (min-width: 640px) {
+  .infoBox { flex-direction: row; }
+}
+
+.infoContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+}
+
+.infoIcon {
+  color: var(--ds-blue-5, #6B9BFF);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.infoText {
+  font-size: 12px;
+  color: var(--ds-text-faint, #677C9C);
+  line-height: 1.6;
+}
+
+.infoActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .infoActions { width: auto; }
+}
+
+.minW160 { min-width: 160px; }
+
+/* ─── Table section ─── */
+.tableSection { display: flex; flex-direction: column; }
+
+.navRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.navGroup { display: flex; align-items: center; gap: 8px; }
+
+.histLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ds-gray-6, #677C9C);
+}
+
+.navBtnGroup { display: flex; align-items: center; gap: 2px; }
+
+.rangeLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ds-text-primary, #E0E1E2);
+  min-width: 80px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  padding: 0 4px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--ds-border-primary, #2A2E39);
+}
+
+.driverCell { display: flex; flex-direction: column; }
+
+.driverName {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ds-text-primary, #E0E1E2);
+  white-space: nowrap;
+}
+
+.driverUnit {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  line-height: 14px;
+  color: var(--ds-gray-6, #677C9C);
+}
+
+.histValue {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ds-gray-6, #677C9C);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'lnum', 'tnum';
+}
+
+.scenarioCell { width: 96px; }
+
+.inputSurface { background-color: var(--ds-bg-primary); }
+
+.splitPeriodHeader { background-color: rgba(217, 119, 6, 0.15); }
+
+/* ─── Footer ─── */
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.errorMsg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ds-red-5, #F23645);
+  font-size: 12px;
+}

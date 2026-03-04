@@ -1,0 +1,69 @@
+/* Dashboard CSS Module */
+
+.sparkBox {
+  height: 24px;
+  width: 64px;
+  cursor: pointer;
+  transition: opacity 150ms;
+}
+.sparkBox:hover { opacity: 0.8; }
+
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tabsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ds-border-primary, #2A2E39);
+  margin-bottom: 16px;
+}
+
+.scrollControls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 4px;
+}
+
+.tableWrap { padding-bottom: 16px; }
+
+.cellName {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ds-text-primary, #E0E1E2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-feature-settings: 'lnum', 'tnum';
+}
+
+.cellValCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--ds-gray-7, #556677);
+  border-top: 1px solid var(--ds-border-primary, #2A2E39);
+  padding-top: 16px;
+}
+
+.footerLinks { display: flex; gap: 24px; }
+
+.footerLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 150ms;
+}
+.footerLink:hover { color: var(--ds-blue-6, #5A8CFF); }
