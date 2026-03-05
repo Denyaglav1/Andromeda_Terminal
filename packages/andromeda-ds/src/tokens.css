@@ -1,13 +1,64 @@
 /* ═══════════════════════════════════════════════════════
-   @andromeda/design-system — CSS Design Tokens
-   Import this file once: import '@andromeda/design-system/styles.css'
+   @denyaglav1/design-system — CSS Design Tokens
+   Bundled automatically when importing the package.
    ═══════════════════════════════════════════════════════ */
 
 :root {
   /* ═══ Typography ═══ */
   --ds-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* ═══ Primitive Color Scales ═══ */
+  --font-size: 16px;
+  --font-family: 'Inter', sans-serif;
+
+  /* Font weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Typography scale - Headlines */
+  --text-h1: 32px;
+  --leading-h1: 40px;
+  --text-h2: 24px;
+  --leading-h2: 32px;
+  --text-h3: 18px;
+  --leading-h3: 24px;
+  --text-h4: 16px;
+  --leading-h4: 20px;
+  --text-h5: 14px;
+  --leading-h5: 20px;
+  --text-h6: 12px;
+  --leading-h6: 16px;
+
+  /* Typography scale - Body text */
+  --text-big: 18px;
+  --leading-big: 28px;
+  --text-medium: 16px;
+  --leading-medium: 24px;
+  --text-small: 14px;
+  --leading-small: 20px;
+  --text-extrasmall: 12px;
+  --leading-extrasmall: 16px;
+
+  /* Typography scale - Captions */
+  --text-caption: 12px;
+  --leading-caption: 16px;
+  --text-caption-small: 10px;
+  --leading-caption-small: 16px;
+
+  /* Typography scale - Buttons */
+  --text-btn-lg: 18px;
+  --leading-btn-lg: 24px;
+  --text-btn-md: 16px;
+  --leading-btn-md: 20px;
+  --text-btn-sm: 14px;
+  --leading-btn-sm: 20px;
+  --text-btn-xs: 12px;
+  --leading-btn-xs: 16px;
+
+  /* ═══════════════════════════════════════════════
+     Primitive Color Scales (Figma)
+     ═══════════════════════════════════════════════ */
 
   /* Dark scale */
   --ds-dark-0: #FFFFFF;
@@ -117,63 +168,116 @@
   --ds-gray-8: #313B4F;
   --ds-gray-9: #212839;
 
-  /* ═══ Alpha Variants ═══ */
+  /* ═══════════════════════════════════════════════
+     Color Alpha Variants (Figma)
+     3 opacity levels for each primary accent (-6)
+     ═══════════════════════════════════════════════ */
 
+  /* Blue-6 alpha */
   --ds-blue-6-a10: rgba(90, 140, 255, 0.1);
   --ds-blue-6-a20: rgba(90, 140, 255, 0.2);
   --ds-blue-6-a30: rgba(90, 140, 255, 0.3);
   --ds-blue-6-a50: rgba(90, 140, 255, 0.5);
 
+  /* Green-6 alpha */
   --ds-green-6-a10: rgba(31, 201, 137, 0.1);
   --ds-green-6-a20: rgba(31, 201, 137, 0.2);
   --ds-green-6-a30: rgba(31, 201, 137, 0.3);
   --ds-green-6-a50: rgba(31, 201, 137, 0.5);
 
+  /* Red-6 alpha */
   --ds-red-6-a10: rgba(234, 57, 67, 0.1);
   --ds-red-6-a20: rgba(234, 57, 67, 0.2);
   --ds-red-6-a30: rgba(234, 57, 67, 0.3);
   --ds-red-6-a50: rgba(234, 57, 67, 0.5);
 
+  /* Orange-6 alpha */
   --ds-orange-6-a10: rgba(248, 125, 55, 0.1);
   --ds-orange-6-a20: rgba(248, 125, 55, 0.2);
   --ds-orange-6-a30: rgba(248, 125, 55, 0.3);
   --ds-orange-6-a50: rgba(248, 125, 55, 0.5);
 
+  /* Yellow-6 alpha */
   --ds-yellow-6-a10: rgba(246, 200, 37, 0.1);
   --ds-yellow-6-a20: rgba(246, 200, 37, 0.2);
   --ds-yellow-6-a30: rgba(246, 200, 37, 0.3);
   --ds-yellow-6-a50: rgba(246, 200, 37, 0.5);
 
+  /* Turquoise-6 alpha */
   --ds-turquoise-6-a10: rgba(69, 211, 206, 0.1);
   --ds-turquoise-6-a20: rgba(69, 211, 206, 0.2);
   --ds-turquoise-6-a30: rgba(69, 211, 206, 0.3);
   --ds-turquoise-6-a50: rgba(69, 211, 206, 0.5);
 
+  /* Purple-6 alpha */
   --ds-purple-6-a10: rgba(154, 140, 255, 0.1);
   --ds-purple-6-a20: rgba(154, 140, 255, 0.2);
   --ds-purple-6-a30: rgba(154, 140, 255, 0.3);
   --ds-purple-6-a50: rgba(154, 140, 255, 0.5);
 
+  /* Gray-6 alpha */
   --ds-gray-6-a10: rgba(103, 124, 156, 0.1);
   --ds-gray-6-a20: rgba(103, 124, 156, 0.2);
   --ds-gray-6-a30: rgba(103, 124, 156, 0.3);
   --ds-gray-6-a50: rgba(103, 124, 156, 0.5);
 
-  /* ═══ Semantic Tokens (Dark — default) ═══ */
+  /* ═══════════════════════════════════════════════
+     Color-7 Alpha Variants (muted accents)
+     ═══════════════════════════════════════════════ */
+
+  --ds-dark-7-a10: rgba(16, 20, 29, 0.1);
+  --ds-dark-7-a30: rgba(16, 20, 29, 0.3);
+  --ds-dark-7-a50: rgba(16, 20, 29, 0.5);
+
+  --ds-blue-7-a10: rgba(59, 102, 201, 0.1);
+  --ds-blue-7-a30: rgba(59, 102, 201, 0.3);
+  --ds-blue-7-a50: rgba(59, 102, 201, 0.5);
+
+  --ds-orange-7-a10: rgba(247, 98, 13, 0.1);
+  --ds-orange-7-a30: rgba(247, 98, 13, 0.3);
+  --ds-orange-7-a50: rgba(247, 98, 13, 0.5);
+
+  --ds-yellow-7-a10: rgba(233, 184, 10, 0.1);
+  --ds-yellow-7-a30: rgba(233, 184, 10, 0.3);
+  --ds-yellow-7-a50: rgba(233, 184, 10, 0.5);
+
+  --ds-red-7-a10: rgba(205, 40, 53, 0.1);
+  --ds-red-7-a30: rgba(205, 40, 53, 0.3);
+  --ds-red-7-a50: rgba(205, 40, 53, 0.5);
+
+  --ds-green-7-a10: rgba(27, 172, 117, 0.1);
+  --ds-green-7-a30: rgba(27, 172, 117, 0.3);
+  --ds-green-7-a50: rgba(27, 172, 117, 0.5);
+
+  --ds-turquoise-7-a10: rgba(46, 194, 189, 0.1);
+  --ds-turquoise-7-a30: rgba(46, 194, 189, 0.3);
+  --ds-turquoise-7-a50: rgba(46, 194, 189, 0.5);
+
+  --ds-purple-7-a10: rgba(104, 84, 255, 0.1);
+  --ds-purple-7-a30: rgba(104, 84, 255, 0.3);
+  --ds-purple-7-a50: rgba(104, 84, 255, 0.5);
+
+  --ds-gray-7-a10: rgba(88, 106, 134, 0.1);
+  --ds-gray-7-a30: rgba(88, 106, 134, 0.3);
+  --ds-gray-7-a50: rgba(88, 106, 134, 0.5);
+
+  /* ═══════════════════════════════════════
+     Semantic Tokens (dark theme — default)
+     ═══════════════════════════════════════ */
 
   /* Background */
-  --ds-bg-primary: var(--ds-dark-6);
-  --ds-bg-secondary: var(--ds-dark-5);
+  --ds-bg-primary: var(--ds-dark-6);           /* #131722 */
+  --ds-bg-secondary: var(--ds-dark-5);         /* #191F2D */
   --ds-bg-highlight: #28334F;
-  --ds-bg-badge: var(--ds-blue-9);
+  --ds-bg-badge: var(--ds-blue-9);             /* #202A42 */
   --ds-bg-table-mark-header: var(--ds-dark-4);
   --ds-bg-table-mark: var(--ds-gray-9);
 
   /* Text */
-  --ds-text-primary: var(--ds-dark-2);
-  --ds-text-secondary: var(--ds-dark-3);
-  --ds-text-gray-dark: var(--ds-gray-6);
-  --ds-text-gray: var(--ds-gray-4);
+  --ds-text-primary: var(--ds-dark-2);         /* #E0E1E2 */
+  --ds-text-secondary: var(--ds-dark-3);       /* #C4C7C9 */
+  --ds-text-gray-dark: var(--ds-gray-6);       /* #677C9C */
+  --ds-text-gray: var(--ds-gray-4);            /* #92A1B8 */
   --ds-text-gray-light: var(--ds-gray-4);
   --ds-text-gray-lighter: var(--ds-gray-3);
 
@@ -181,13 +285,23 @@
   --ds-control-active: var(--ds-blue-6-a30);
   --ds-control-hover: var(--ds-blue-6-a10);
   --ds-control-default: var(--ds-dark-6);
+  --ds-control-demo: var(--ds-gray-9);
+  --ds-control-white: var(--ds-dark-0);
+  --ds-control-black: var(--ds-dark-7);
+  --ds-control-full-black: var(--ds-dark-9);
 
   /* Border */
   --ds-border-secondary: var(--ds-dark-5);
-  --ds-border-primary: var(--ds-dark-4);
+  --ds-border-primary: var(--ds-dark-4);       /* #2A2E39 */
   --ds-border-card: #30394D;
   --ds-border-hover: var(--ds-blue-6-a30);
   --ds-border-active: var(--ds-blue-6);
+
+  /* Gradients */
+  --ds-gradient-card-from: #131722;
+  --ds-gradient-card-to: #252C3C;
+  --ds-gradient-card-active-from: #202A42;
+  --ds-gradient-card-active-to: #131722;
 
   /* Table-specific */
   --ds-table-header-bg: #2f3441;
@@ -197,7 +311,7 @@
   --ds-table-sticky-bg: var(--ds-dark-7);
   --ds-table-sorted-sticky-bg: #343a52;
 
-  /* Notification */
+  /* Notification backgrounds */
   --ds-notification-error-bg: var(--ds-red-8);
   --ds-notification-warning-bg: var(--ds-orange-8);
   --ds-notification-success-bg: var(--ds-green-8);
@@ -225,32 +339,51 @@
   --ds-checkbox-border: #3d4867;
 }
 
-/* ═══ Light Theme ═══ */
+/* ═══════════════════════════════════════
+   LIGHT THEME — [data-mantine-color-scheme="light"]
+   Semantic tokens remapped per Figma light mode
+   ═══════════════════════════════════════ */
+
 [data-mantine-color-scheme="light"] {
-  --ds-bg-primary: var(--ds-dark-1);
-  --ds-bg-secondary: var(--ds-dark-0);
+  /* Background */
+  --ds-bg-primary: var(--ds-dark-1);           /* #F8FAFE */
+  --ds-bg-secondary: var(--ds-dark-0);         /* #FFFFFF */
   --ds-bg-highlight: var(--ds-blue-0);
   --ds-bg-badge: var(--ds-blue-0);
   --ds-bg-table-mark-header: var(--ds-gray-1);
   --ds-bg-table-mark: var(--ds-gray-0);
 
-  --ds-text-primary: var(--ds-dark-6);
+  /* Text */
+  --ds-text-primary: var(--ds-dark-6);         /* #131722 */
   --ds-text-secondary: var(--ds-dark-4);
   --ds-text-gray-dark: var(--ds-gray-6);
   --ds-text-gray: var(--ds-gray-4);
   --ds-text-gray-light: var(--ds-gray-4);
   --ds-text-gray-lighter: var(--ds-gray-3);
 
+  /* Control */
   --ds-control-active: var(--ds-blue-6-a30);
   --ds-control-hover: var(--ds-blue-6-a10);
   --ds-control-default: var(--ds-dark-1);
+  --ds-control-demo: var(--ds-gray-9);
+  --ds-control-white: var(--ds-dark-0);
+  --ds-control-black: var(--ds-dark-7);
+  --ds-control-full-black: var(--ds-dark-9);
 
+  /* Border */
   --ds-border-secondary: var(--ds-dark-3);
-  --ds-border-primary: var(--ds-gray-0);
+  --ds-border-primary: var(--ds-gray-0);       /* #E9ECF1 */
   --ds-border-card: var(--ds-gray-1);
   --ds-border-hover: var(--ds-blue-6-a30);
   --ds-border-active: var(--ds-blue-6);
 
+  /* Gradients — light */
+  --ds-gradient-card-from: #FFFFFF;
+  --ds-gradient-card-to: #E7EFFF;
+  --ds-gradient-card-active-from: #D0DEFF;
+  --ds-gradient-card-active-to: #F8FAFE;
+
+  /* Table-specific — light */
   --ds-table-header-bg: var(--ds-gray-0);
   --ds-table-forecast-header-bg: var(--ds-turquoise-0);
   --ds-table-forecast-cell-bg: var(--ds-turquoise-0);
@@ -258,26 +391,31 @@
   --ds-table-sticky-bg: var(--ds-dark-0);
   --ds-table-sorted-sticky-bg: var(--ds-blue-0);
 
+  /* Notification backgrounds — light */
   --ds-notification-error-bg: var(--ds-red-0);
   --ds-notification-warning-bg: var(--ds-orange-0);
   --ds-notification-success-bg: var(--ds-green-0);
 
+  /* Button — light */
   --ds-btn-secondary-bg: var(--ds-blue-0);
   --ds-btn-secondary-hover: var(--ds-blue-1);
   --ds-btn-destructive-bg: var(--ds-red-0);
   --ds-btn-destructive-hover: var(--ds-red-1);
   --ds-btn-ghost-hover: var(--ds-blue-6-a10);
 
+  /* Badge / Tag — light */
   --ds-tag-default-bg: var(--ds-gray-0);
   --ds-tag-default-fg: var(--ds-dark-6);
   --ds-tag-default-border: var(--ds-gray-1);
   --ds-pill-gray-bg: var(--ds-blue-0);
   --ds-pill-text: var(--ds-dark-6);
 
+  /* Switch — light */
   --ds-switch-off-border: var(--ds-gray-2);
   --ds-switch-off-thumb: var(--ds-blue-6);
   --ds-switch-disabled-thumb: var(--ds-gray-2);
 
+  /* Checkbox — light */
   --ds-checkbox-border: var(--ds-gray-2);
 
   color-scheme: light;

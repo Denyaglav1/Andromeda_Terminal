@@ -363,7 +363,7 @@ export function DSSelectDropdown({ children, className, maxHeight = 280 }: DSSel
 
   return createPortal(
     <div
-      ref={dropdownRef}
+      ref={dropdownRef as any}
       className={className}
       style={{
         position: 'fixed', zIndex: 9999, backgroundColor: 'var(--ds-bg-primary)', border: '1px solid var(--ds-border-primary)',

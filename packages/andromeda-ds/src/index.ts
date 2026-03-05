@@ -4,7 +4,8 @@
    ═══════════════════════════════════════════════════ */
 
 // ═══ Tokens (CSS) ═══
-// Consumer must import: import '@andromeda/design-system/styles.css';
+// CSS vars (colors, typography, semantic tokens) — bundled into styles.css
+import './tokens.css';
 
 // ═══ Button ═══
 export { DSButton } from './components/ds-button';

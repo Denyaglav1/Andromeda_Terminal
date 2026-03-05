@@ -1,6 +1,6 @@
 {
-  "name": "@andromeda/design-system",
-  "version": "0.1.0",
+  "name": "@denyaglav1/design-system",
+  "version": "0.1.5",
   "description": "Andromeda Design System — React components, CSS tokens, ECharts & Mantine themes",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -17,7 +17,8 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/design-system.css",
+    "./dist/design-system.css": "./dist/design-system.css"
   },
   "files": [
     "dist"
@@ -39,11 +40,21 @@
     "lucide-react": ">=0.400.0"
   },
   "peerDependenciesMeta": {
-    "echarts": { "optional": true },
-    "echarts-for-react": { "optional": true },
-    "@mantine/core": { "optional": true },
-    "@mantine/hooks": { "optional": true },
-    "lucide-react": { "optional": true }
+    "echarts": {
+      "optional": true
+    },
+    "echarts-for-react": {
+      "optional": true
+    },
+    "@mantine/core": {
+      "optional": true
+    },
+    "@mantine/hooks": {
+      "optional": true
+    },
+    "lucide-react": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

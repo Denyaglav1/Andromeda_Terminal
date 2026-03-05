@@ -156,7 +156,7 @@ export function DSCustomDropdownTrigger({ children, placeholder = 'Placeholder',
         </label>
       )}
       <button
-        ref={triggerRef}
+        ref={triggerRef as any}
         id={id}
         type="button"
         disabled={disabled}
@@ -215,7 +215,7 @@ export function DSCustomDropdownPanel({ children, className, minWidth, maxHeight
 
   return createPortal(
     <div
-      ref={panelRef}
+      ref={panelRef as any}
       className={className}
       style={{
         position: 'fixed', zIndex: 9999, backgroundColor: 'var(--ds-bg-primary)',

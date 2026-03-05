@@ -1,0 +1,394 @@
+/* ds-table CSS Module — replaces cn() patterns */
+
+/* ── Sort arrows container ── */
+.sortArrows {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  width: 10px;
+  height: 14px;
+}
+.sortArrowsVisible {
+  opacity: 1;
+  transition: opacity 150ms;
+}
+.sortArrowsHidden {
+  opacity: 0;
+  transition: opacity 150ms;
+}
+
+/* ── Group chevron ── */
+.chevronExpanded {
+  transform: rotate(0deg);
+}
+.chevronCollapsed {
+  transform: rotate(-90deg);
+}
+
+/* ── Header cell ── */
+.headerCell {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  position: relative;
+  height: 24px;
+}
+.headerCellSortable {
+  cursor: pointer;
+  user-select: none;
+}
+.headerCellSortable:hover .sortArrowsHidden {
+  opacity: 0.6;
+}
+
+/* ── Header group cell ── */
+.headerGroupCell {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 24px;
+}
+
+/* ── Body cell ── */
+.bodyCell {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  position: relative;
+}
+
+/* ── Row ── */
+.row {
+  transition: background-color 150ms;
+}
+.rowClickable {
+  cursor: pointer;
+}
+
+/* ── Row hover overlay (inside cell border divs) ── */
+.cellBorder {
+  position: absolute;
+  inset: 0;
+  border-bottom: 1px solid var(--ds-border-primary, #2A2E39);
+  pointer-events: none;
+}
+.cellBorderLeft {
+  border-left: 1px solid var(--ds-border-primary, #2A2E39);
+}
+.row:hover .cellBorderWithHover {
+  background-color: var(--ds-blue-6-a10, rgba(90, 140, 255, 0.1));
+}
+
+/* ── Group title row ── */
+.groupTitle {
+  display: flex;
+  align-items: center;
+  background-color: var(--ds-bg-secondary);
+  border-bottom: 1px solid var(--ds-border-primary);
+}
+.groupTitleCollapsible {
+  cursor: pointer;
+  user-select: none;
+}
+.groupTitleCollapsible:hover {
+  background-color: var(--ds-blue-6-a10, rgba(90, 140, 255, 0.1));
+}
+
+/* ── Ticker cell ── */
+.tickerLink {
+  cursor: pointer;
+}
+.tickerLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Header group border overlay ── */
+.headerGroupBorder {
+  position: absolute;
+  inset: 0;
+  border-bottom: 1px solid var(--ds-border-primary);
+  pointer-events: none;
+}
+.headerGroupBorderLabeled {
+  border-left: 1px solid var(--ds-border-primary);
+  border-right: 1px solid var(--ds-border-primary);
+}
+
+/* ── Header cell border ── */
+.headerBorder {
+  position: absolute;
+  inset: 0;
+  border-bottom: 1px solid var(--ds-border-primary, #2A2E39);
+  pointer-events: none;
+}
+.headerBorderLeft {
+  border-left: 1px solid var(--ds-border-primary, #2A2E39);
+}
+
+/* ── Sticky overlay ── */
+.stickyOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Dynamic overlay ── */
+.dynOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Group chevron icon ── */
+.chevronIcon {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  transition: transform 150ms;
+  color: var(--ds-gray-6, #677C9C);
+}
+
+/* ── Group header label span ── */
+.groupHeaderLabel {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ds-gray-6, #677C9C);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 12px;
+  position: relative;
+}
+
+/* ── Header text content wrapper ── */
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  min-width: 0;
+}
+
+/* ── Header text span ── */
+.headerText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Header wrapper ── */
+.headerWrapper {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+/* ── Group title inner ── */
+.groupTitleInner {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+
+/* ── Group title text ── */
+.groupTitleText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ds-gray-6, #677C9C);
+}
+.groupTitleTextCollapsible {
+  margin-left: 4px;
+}
+
+/* ── Justify helpers ── */
+.justifyCenter { justify-content: center; }
+.justifyStart { justify-content: flex-start; }
+.justifyEnd { justify-content: flex-end; }
+
+/* ── Group header centered bg ── */
+.groupCellCenterBg {
+  background-color: var(--ds-bg-secondary);
+}
+.groupCellSurfaceBg {
+  background-color: var(--ds-bg-primary);
+}
+
+/* ── Table root ── */
+.tableRoot {
+  width: 100%;
+}
+
+/* ── Empty state ── */
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+  color: var(--ds-gray-6, #677C9C);
+  font-size: 14px;
+}
+
+/* ── Cell text: dash placeholder ── */
+.cellDash {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ds-gray-6, #677C9C);
+  font-feature-settings: 'lnum', 'tnum';
+}
+
+/* ── Cell text: forecast ── */
+.cellForecast {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  font-feature-settings: 'lnum', 'tnum';
+}
+
+/* ── Cell text: regular value ── */
+.cellValue {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ds-text-primary, #E0E1E2);
+  font-feature-settings: 'lnum', 'tnum';
+}
+
+/* ── Sub-components ── */
+
+/* DSTableCellTicker */
+.tickerRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tickerIcon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+.tickerText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ds-blue-6, #5A8CFF);
+  white-space: nowrap;
+  font-feature-settings: 'lnum', 'tnum';
+}
+
+/* DSTableCellPrice */
+.priceRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.priceTrendIcon {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+}
+.priceText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ds-text-primary, #E0E1E2);
+  font-feature-settings: 'lnum', 'tnum';
+}
+
+/* DSTableCellNumber */
+.numberDash {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ds-gray-6, #677C9C);
+  font-feature-settings: 'lnum', 'tnum';
+}
+.numberValue {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  font-feature-settings: 'lnum', 'tnum';
+}
+.numberValueRegular {
+  color: var(--ds-text-primary, #E0E1E2);
+}
+
+/* DSTableCellPctChange */
+.pctRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2px;
+}
+.pctIcon {
+  flex-shrink: 0;
+}
+.pctText {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ds-gray-6, #677C9C);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'lnum', 'tnum';
+}
+
+/* DSTableCellEditable */
+.editableRoot {
+  width: 100%;
+}
+.editableInput {
+  width: 100%;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 4px;
+  text-align: right;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  background-color: var(--ds-bg-primary);
+  border: 1px solid var(--ds-border-primary, #2A2E39);
+  color: var(--ds-text-primary, #E0E1E2);
+  transition: border-color 150ms, color 150ms;
+  outline: none;
+  font-feature-settings: 'lnum', 'tnum';
+}
+.editableInput::placeholder {
+  color: var(--ds-gray-8, #313B4F);
+}
+.editableInput:focus {
+  border-color: var(--ds-blue-6, #5A8CFF);
+}
+.editableInputHighlighted {
+  border-color: rgba(217, 119, 6, 0.4) !important;
+  color: #F59E0B !important;
+  font-weight: 500;
+}
+.editableInputReadOnly {
+  opacity: 0.6;
+  cursor: default;
+  background-color: transparent;
+  border-color: transparent;
+}
