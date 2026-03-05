@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { RouterProvider } from 'react-router';
@@ -14,8 +14,8 @@ export { COMPANIES } from './types';
 registerAndromedaTheme();
 
 // Simple Error Boundary
-class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
-  constructor(props: {children: React.ReactNode}) {
+class ErrorBoundary extends React.Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.state = { hasError: false, error: null };
   }
@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
     if (this.state.hasError) {
       return (
         <div style={{
-          padding: 32,
+          padding: 24,
           color: 'var(--ds-red-6)',
           backgroundColor: 'var(--ds-bg-primary)',
           minHeight: '100vh',

@@ -10,6 +10,7 @@ import { ChartBuilderSpec } from './components/ChartBuilderSpec';
 import { ChartBuilderPage } from './components/chart-builder/ChartBuilderPage';
 import { LandingPage } from './components/LandingPage';
 import { HomePage } from './components/HomePage';
+import { IndicesPage } from './components/indices/IndicesPage';
 
 const LazyTicketsPage = React.lazy(() =>
   import('./components/tickets/TicketsPage').then(m => ({ default: m.TicketsPage }))
@@ -82,5 +83,9 @@ export const router = createBrowserRouter([
   {
     path: '/components/:id',
     Component: ComponentDetailPage,
+  },
+  {
+    path: '/indices',
+    Component: IndicesPage,
   },
 ]);

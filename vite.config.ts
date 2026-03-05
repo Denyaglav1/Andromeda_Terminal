@@ -16,6 +16,7 @@ export default defineConfig({
     alias: {
       // Alias @ to the src directory
       '@': path.resolve(__dirname, './src'),
+      '@denyaglav1/design-system': path.resolve(__dirname, './packages/andromeda-ds/src'),
     },
   },
 

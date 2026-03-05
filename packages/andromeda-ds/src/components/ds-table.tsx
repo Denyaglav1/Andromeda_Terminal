@@ -23,7 +23,7 @@ const cx = (...args: (string | false | null | undefined)[]) => args.filter(Boole
 const FORECAST_COLOR = 'var(--ds-table-forecast-text, #45D3CE)';
 const FORECAST_HEADER_BG = 'var(--ds-table-forecast-header-bg, #2a2e39)';
 const FORECAST_CELL_BG = 'var(--ds-table-forecast-cell-bg, #151b27)';
-const SORT_BG       = 'rgba(90, 140, 255, 0.06)';
+const SORT_BG = 'rgba(90, 140, 255, 0.06)';
 const SORT_HEADER_BG = 'rgba(90, 140, 255, 0.12)';
 const TABLE_HEADER_BG = 'var(--ds-table-header-bg, #2f3441)';
 const TABLE_STICKY_BG = 'var(--ds-table-sticky-bg, #10141D)';
@@ -33,7 +33,7 @@ const TABLE_SORTED_STICKY_BG = 'var(--ds-table-sorted-sticky-bg, #343a52)';
 
 function SortArrows({ direction, className }: { direction?: 'asc' | 'desc' | null; className?: string }) {
   const activeColor = 'var(--ds-blue-6, #5A8CFF)';
-  const idleColor   = 'var(--ds-gray-8, #313B4F)';
+  const idleColor = 'var(--ds-gray-8, #313B4F)';
   return (
     <div className={cx(tblStyles.sortArrows, className)} style={{ width: 10, height: 14 }}>
       {/* ▲ up arrow */}
@@ -238,7 +238,7 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
   const gridStyle: CSSProperties = useMemo(() => ({ display: 'grid', gridTemplateColumns: gridTemplate }), [gridTemplate]);
 
   /* Row height */
-  const rowH = compact ? 28 : 48;
+  const rowH = compact ? 32 : 48;
 
   /* Sticky helper */
   const stickyProps = useCallback((colIdx: number, isHeader: boolean): CSSProperties | undefined => {
@@ -292,7 +292,7 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
         const bg = isSorted
           ? (isHeaderSticky ? TABLE_SORTED_STICKY_BG : SORT_HEADER_BG)
           : isMarked ? 'var(--ds-bg-primary, #131722)'
-          : isForecast ? FORECAST_HEADER_BG : TABLE_HEADER_BG;
+            : isForecast ? FORECAST_HEADER_BG : TABLE_HEADER_BG;
 
         const alignCls = col.align === 'right' ? tblStyles.justifyEnd
           : col.align === 'center' ? tblStyles.justifyCenter : tblStyles.justifyStart;

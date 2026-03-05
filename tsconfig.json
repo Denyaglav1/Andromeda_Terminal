@@ -19,10 +19,18 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@denyaglav1/design-system": [
+        "./packages/andromeda-ds/src"
+      ],
+      "@denyaglav1/design-system/*": [
+        "./packages/andromeda-ds/src/*"
       ]
     },
     "types": [
@@ -36,6 +44,7 @@
   },
   "include": [
     "src",
+    "packages/andromeda-ds/src",
     "*.ts",
     "*.mjs"
   ],

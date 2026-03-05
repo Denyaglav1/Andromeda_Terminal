@@ -53,7 +53,6 @@
   height: 24px;
 }
 
-/* ── Body cell ── */
 .bodyCell {
   display: flex;
   align-items: center;
@@ -61,6 +60,7 @@
   padding-top: 6px;
   padding-bottom: 6px;
   position: relative;
+  min-width: 0;
 }
 
 /* ── Row ── */
@@ -188,10 +188,12 @@
   white-space: nowrap;
 }
 
-/* ── Header wrapper ── */
 .headerWrapper {
   flex-shrink: 0;
   width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 40;
 }
 
 /* ── Group title inner ── */

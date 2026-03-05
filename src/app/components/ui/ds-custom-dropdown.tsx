@@ -61,8 +61,8 @@ function CheckIcon({ size = 10 }: { size?: number }) {
 interface DropdownCtx {
   isOpen: boolean;
   setIsOpen: (v: boolean) => void;
-  triggerRef: React.RefObject<HTMLButtonElement | null>;
-  panelRef: React.RefObject<HTMLDivElement | null>;
+  triggerRef: React.RefObject<HTMLButtonElement | null> | any;
+  panelRef: React.RefObject<HTMLDivElement | null> | any;
 }
 
 const DropdownContext = createContext<DropdownCtx>({
@@ -218,7 +218,7 @@ export function DSCustomDropdownPanel({ children, className, minWidth, maxHeight
       ref={panelRef}
       className={className}
       style={{
-        position: 'fixed', zIndex: 9999, backgroundColor: 'var(--ds-bg-primary)',
+        position: 'fixed', zIndex: 9999, backgroundColor: 'var(--ds-bg-secondary)',
         borderRadius: 8, overflow: 'hidden',
         border: '1px solid var(--ds-border-primary)', boxShadow: '0 4px 16px 0 rgba(0,0,0,0.08)',
         top: pos.openUp ? undefined : pos.top,
@@ -254,11 +254,33 @@ export function DSCustomDropdownHeader({
   segments, segmentValue, onSegmentChange, children, className,
 }: DSCustomDropdownHeaderProps) {
   const { setIsOpen } = useContext(DropdownContext);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => { setIsDragging(false); };
+  const handleMouseUp = () => { setIsDragging(false); };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
 
   return (
     <div
       className={className}
-      style={{ backgroundColor: 'var(--ds-bg-secondary)', borderBottom: '1px solid var(--ds-border-primary)', display: 'flex', flexDirection: 'column', padding: '4px 12px 12px', gap: 0 }}
+      style={{ backgroundColor: 'var(--ds-bg-secondary)', borderBottom: '1px solid var(--ds-border-primary)', display: 'flex', flexDirection: 'column', padding: '12px', gap: 0, width: '100%', minWidth: 0 }}
     >
       {title && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0' }}>
@@ -295,7 +317,26 @@ export function DSCustomDropdownHeader({
       )}
 
       {segments && segments.length > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 3, paddingTop: 8, overflowX: 'auto', scrollbarWidth: 'none' }}>
+        <div
+          ref={scrollRef}
+          className="ds-hide-scrollbar"
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 3, paddingTop: 8,
+            overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' as const,
+            width: '100%', minWidth: 0, cursor: isDragging ? 'grabbing' : 'pointer',
+            userSelect: isDragging ? 'none' : 'auto'
+          }}
+          onWheel={(e) => {
+            if (e.currentTarget) {
+              e.currentTarget.scrollLeft += e.deltaY;
+            }
+          }}
+        >
+          <style dangerouslySetInnerHTML={{ __html: '.ds-hide-scrollbar::-webkit-scrollbar { display: none; }' }} />
           {segments.map(seg => {
             const isActive = segmentValue === seg.value;
             return (
@@ -328,7 +369,7 @@ export function DSCustomDropdownHeader({
 export interface DSCustomDropdownContentProps { children: ReactNode; maxHeight?: number; className?: string; }
 
 export function DSCustomDropdownContent({ children, maxHeight = 280, className }: DSCustomDropdownContentProps) {
-  return <div className={className} style={{ overflow: 'auto', maxHeight }}>{children}</div>;
+  return <div className={className} style={{ overflowY: 'auto', maxHeight, backgroundColor: 'var(--ds-bg-secondary)' }}>{children}</div>;
 }
 
 /* ═══════ Group ═══════ */
@@ -354,6 +395,7 @@ export function DSCustomDropdownGroup({ title, children, className }: DSCustomDr
 
 export interface DSCustomDropdownItemProps {
   children: ReactNode;
+  subtitle?: string;
   checkbox?: boolean;
   checked?: boolean;
   indeterminate?: boolean;
@@ -369,7 +411,7 @@ export interface DSCustomDropdownItemProps {
 }
 
 export function DSCustomDropdownItem({
-  children, checkbox = false, checked = false, indeterminate = false,
+  children, subtitle, checkbox = false, checked = false, indeterminate = false,
   expandable = false, expanded = false, onClick, onExpand, badge, rightContent,
   selected = false, disabled = false, className,
 }: DSCustomDropdownItemProps) {
@@ -383,15 +425,15 @@ export function DSCustomDropdownItem({
       onMouseLeave={() => setHovered(false)}
       className={className}
       style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 8,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px',
         borderRadius: 4, transition: 'background-color 150ms ease',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.4 : 1,
-        backgroundColor: selected ? 'rgba(90,140,255,0.3)' : hovered ? 'rgba(90,140,255,0.15)' : 'transparent',
+        backgroundColor: selected ? 'var(--ds-blue-6-a30)' : hovered ? 'var(--ds-blue-6-a10)' : 'transparent',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, minWidth: 0, width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, paddingTop: subtitle ? 2 : 0 }}>
           {checkbox && (
             <DSCustomDropdownCheckbox checked={checked} indeterminate={indeterminate} onClick={e => { e.stopPropagation(); onClick?.(); }} />
           )}
@@ -406,8 +448,15 @@ export function DSCustomDropdownItem({
             </button>
           )}
         </div>
-        <div style={{ fontSize: 14, lineHeight: '20px', fontWeight: 400, color: 'var(--ds-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, ...tnum }}>
-          {children}
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+          <div style={{ fontSize: 14, lineHeight: '20px', fontWeight: 400, color: 'var(--ds-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, ...tnum }}>
+            {children}
+          </div>
+          {subtitle && (
+            <div style={{ fontSize: 12, lineHeight: '16px', fontWeight: 400, color: 'var(--ds-text-gray-dark)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2, ...tnum }}>
+              {subtitle}
+            </div>
+          )}
         </div>
       </div>
       {(badge || rightContent) && (

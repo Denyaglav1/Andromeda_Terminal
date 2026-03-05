@@ -59,7 +59,7 @@ export function DocShell({ breadcrumbs, children, sidebar }: DocShellProps) {
               <ThemeToggleInline theme={colorScheme} onToggle={toggleColorScheme} />
             </div>
 
-            <main style={{ flex: 1, padding: '32px 32px' }}>
+            <main style={{ flex: 1, padding: '24px' }}>
               {children}
             </main>
 
@@ -68,7 +68,7 @@ export function DocShell({ breadcrumbs, children, sidebar }: DocShellProps) {
         </div>
       ) : (
         <>
-          <main style={{ flex: 1, width: '100%', maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+          <main style={{ flex: 1, width: '100%', maxWidth: 1200, margin: '0 auto', padding: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, paddingBottom: 12, margin: '0 -24px', padding: '0 24px 12px', backgroundColor: 'var(--ds-bg-primary)', backdropFilter: 'blur(8px)', zIndex: 10, position: 'sticky', top: 0 }}>
               {breadcrumbRow(24)}
               <ThemeToggleInline theme={colorScheme} onToggle={toggleColorScheme} />

@@ -86,6 +86,22 @@ const MAIN_SERVICES: ServiceCard[] = [
       </svg>
     ),
   },
+  {
+    id: 'indices',
+    title: 'Индексы СПБ',
+    description: 'Котировки индексов СПБ Биржи, исторические данные и аналитика (SPB100 и др.)',
+    href: '/indices',
+    gradientFrom: 'rgba(234,57,67,0.2)',
+    gradientTo: 'rgba(50,20,30,0.4)',
+    accentColor: 'var(--ds-red-6)',
+    tag: 'Рынки',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <path d="M4 22L10 14L16 18L24 6" stroke="var(--ds-red-6)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M24 6V12M24 6H18" stroke="var(--ds-red-6)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
 ];
 
 const TOOL_SERVICES: ServiceCard[] = [
@@ -362,7 +378,7 @@ export function LandingPage() {
         component="main"
         style={{
           flex: 1,
-          padding: 32,
+          padding: 24,
           maxWidth: 1280,
           margin: '0 auto',
           width: '100%',

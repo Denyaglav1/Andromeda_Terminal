@@ -96,6 +96,9 @@ export const andromedaTheme = createTheme({
     ActionIcon: { defaultProps: { radius: 'sm' } },
     Menu: { defaultProps: { radius: 'sm' } },
     Notification: { defaultProps: { radius: 'md' } },
+    Group: { defaultProps: { gap: 'lg' } }, // lg is 16px in this theme
+    Stack: { defaultProps: { gap: 'lg' } },
+    Grid: { defaultProps: { gutter: 'lg' } },
   },
 });
 

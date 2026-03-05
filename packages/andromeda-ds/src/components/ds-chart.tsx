@@ -1,5 +1,6 @@
 import React, { useMemo, useSyncExternalStore } from 'react';
 import ReactECharts from 'echarts-for-react';
+import * as echarts from 'echarts';
 import type { EChartsOption, SeriesOption } from 'echarts';
 import { DSLegend, type DSLegendItem } from './ds-legend';
 
@@ -76,18 +77,20 @@ function ChartWithLegend({
   showLegend = true,
   legendItems,
   className,
+  style,
   children,
 }: {
   showLegend?: boolean;
   legendItems: DSLegendItem[];
   className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }) {
   return (
-    <div className={className} style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%' }}>
+    <div className={className} style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%', ...style }}>
       {children}
       {showLegend && legendItems.length > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
           <DSLegend items={legendItems} mode="inline" />
         </div>
       )}
@@ -107,7 +110,7 @@ export interface DSChartSeries {
 interface BaseChartProps {
   data: Record<string, any>[];
   xKey?: string;
-  height?: number;
+  height?: number | string;
   showGrid?: boolean;
   gridDash?: string;
   showLegend?: boolean;
@@ -115,6 +118,11 @@ interface BaseChartProps {
   className?: string;
   xLabel?: string;
   yLabel?: string;
+  yAxisPosition?: 'left' | 'right';
+  yAxisMin?: number | 'auto';
+  yAxisMax?: number | 'auto';
+  referenceValue?: number;
+  yAxisLabelFormatter?: string | ((value: number, index: number) => string);
 }
 
 /* ─── Shared option builder ─── */
@@ -141,12 +149,16 @@ function baseCartesianOption(
     },
     yAxis: {
       type: 'value',
+      position: props.yAxisPosition || 'left',
+      min: props.yAxisMin === 'auto' ? (val: any) => (val.min * 0.999).toFixed(2) : props.yAxisMin,
+      max: props.yAxisMax === 'auto' ? (val: any) => (val.max * 1.001).toFixed(2) : props.yAxisMax,
+      scale: true,
       name: yLabel,
       nameLocation: 'middle',
       nameGap: 50,
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { color: axisLabelColor },
+      axisLabel: { color: axisLabelColor, margin: 8, formatter: props.yAxisLabelFormatter },
       splitLine: showGrid ? { show: true, lineStyle: { color: borderColor, type: 'dashed', opacity: 0.5 } } : { show: false },
     },
     tooltip: showTooltip ? { trigger: 'axis' } : undefined,
@@ -244,21 +256,40 @@ export function DSAreaChart({
         data: data.map(d => d[s.dataKey]),
         itemStyle: { color },
         lineStyle: { width: s.strokeWidth || 2 },
-        areaStyle: { opacity: 0.15 },
+        areaStyle: {
+          opacity: 0.2,
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: color },
+            { offset: 1, color: 'rgba(0,0,0,0)' }
+          ])
+        },
         stack: stacked ? 'stack' : undefined,
-        symbol: 'none',
+        symbol: data.length < 20 ? 'circle' : 'none',
+        symbolSize: 4,
+        markLine: rest.referenceValue !== undefined ? {
+          symbol: 'none',
+          label: { show: false },
+          data: [{ yAxis: rest.referenceValue, lineStyle: { type: 'dashed', color: '#F87D37', opacity: 0.6 } }]
+        } : undefined,
         smooth: false,
       };
     }),
-  }), [data, series, stacked, chartColors, rest.xKey, rest.showGrid, rest.showLegend, rest.showTooltip, rest.xLabel, rest.yLabel]);
+  }), [data, series, stacked, chartColors, rest.xKey, rest.showGrid, rest.showLegend, rest.showTooltip, rest.xLabel, rest.yLabel, rest.yAxisPosition, rest.yAxisMin, rest.yAxisMax, rest.referenceValue]);
 
   return (
     <ChartWithLegend
       showLegend={rest.showLegend}
       legendItems={legendFromSeries(series)}
       className={className}
+      style={height === '100%' ? { height: '100%', flex: 1, minHeight: 0 } : undefined}
     >
-      <ReactECharts option={option} style={{ height }} theme="andromeda" notMerge />
+      {height === '100%' ? (
+        <div style={{ flex: 1, position: 'relative', width: '100%', minHeight: 0 }}>
+          <ReactECharts option={option} style={{ height: '100%', width: '100%', position: 'absolute', inset: 0 }} theme="andromeda" notMerge />
+        </div>
+      ) : (
+        <ReactECharts option={option} style={{ height, width: '100%' }} theme="andromeda" notMerge />
+      )}
     </ChartWithLegend>
   );
 }

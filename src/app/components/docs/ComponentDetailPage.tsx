@@ -82,7 +82,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function ButtonDetails() {
   const variants = ['primary', 'secondary', 'outline', 'ghost', 'destructive'] as const;
   const sizes = ['xl', 'lg', 'md', 'sm'] as const;
-  const PlusIcon = () => (<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>);
+  const PlusIcon = () => (<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>);
 
   return (
     <div>
@@ -192,7 +192,7 @@ function ButtonDetails() {
 function InputDetails() {
   const [val, setVal] = useState('Hello');
   const sizes = ['lg', 'md', 'sm', 'xs', 'xxs'] as const;
-  const SearchIcon = () => (<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.2"/><path d="M9.5 9.5L13 13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>);
+  const SearchIcon = () => (<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.2" /><path d="M9.5 9.5L13 13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>);
 
   return (
     <div>
@@ -356,7 +356,7 @@ function TabsDetails() {
   const [tab2, setTab2] = useState('a');
   const [tab3, setTab3] = useState('a');
   const [tab4, setTab4] = useState('a');
-  const StarIcon = () => (<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.4 3.5 14.7l.9-5L.8 6.2l5-.7L8 1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/></svg>);
+  const StarIcon = () => (<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.4 3.5 14.7l.9-5L.8 6.2l5-.7L8 1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" /></svg>);
 
   return (
     <div>
@@ -390,7 +390,7 @@ function TabsDetails() {
 
       <DocSection title="States" description="default (no border), hover (2px edge-hover), active (3px blue-6), disabled (opacity 20%).">
         <DocPreview>
-          <DSTabs size="sm" value="active" onChange={() => {}}>
+          <DSTabs size="sm" value="active" onChange={() => { }}>
             <DSTab value="default">Default</DSTab>
             <DSTab value="active">Active</DSTab>
             <DSTab value="dis" disabled>Disabled</DSTab>
@@ -504,10 +504,10 @@ function SelectDetails() {
       <DocSection title="States" description="enable, filled, disabled, error, success.">
         <DocPreview>
           <div className={s.grid2}>
-            <DSSelect size="sm" value="" onChange={() => {}} options={opts} placeholder="Empty" label="Default" />
-            <DSSelect size="sm" value="opt1" onChange={() => {}} options={opts} placeholder="Select" label="Filled" />
-            <DSSelect size="sm" value="" onChange={() => {}} options={opts} placeholder="Select" label="Disabled" disabled />
-            <DSSelect size="sm" value="" onChange={() => {}} options={opts} placeholder="Select" label="Error" error="Required field" />
+            <DSSelect size="sm" value="" onChange={() => { }} options={opts} placeholder="Empty" label="Default" />
+            <DSSelect size="sm" value="opt1" onChange={() => { }} options={opts} placeholder="Select" label="Filled" />
+            <DSSelect size="sm" value="" onChange={() => { }} options={opts} placeholder="Select" label="Disabled" disabled />
+            <DSSelect size="sm" value="" onChange={() => { }} options={opts} placeholder="Select" label="Error" error="Required field" />
           </div>
         </DocPreview>
       </DocSection>
@@ -532,6 +532,9 @@ function CustomDropdownDetails() {
   const [sel, setSel] = useState<string[]>(['Revenue']);
   const [search, setSearch] = useState('');
   const [segTab, setSegTab] = useState('Все');
+
+  const [openSub, setOpenSub] = useState(false);
+  const [selSub, setSelSub] = useState<string>('LKOH');
 
   const SEGMENTS = [
     { value: 'Все', label: 'Все' },
@@ -607,6 +610,55 @@ function CustomDropdownDetails() {
         </DocPreview>
       </DocSection>
 
+      <DocSection title="With Subtitles & Horizontal Scroll" description="Вариант с подписями меньшим шрифтом для каждого пункта (свойство subtitle). Сегменты прокручиваются свайпом (без видимого скроллбара).">
+        <DocPreview>
+          <div className={s.maxW300}>
+            <DSCustomDropdown isOpen={openSub} onOpenChange={setOpenSub}>
+              <DSCustomDropdownTrigger placeholder="Выберите инструмент">
+                {selSub}
+              </DSCustomDropdownTrigger>
+              <DSCustomDropdownPanel minWidth={340}>
+                <DSCustomDropdownHeader
+                  title="Инструменты"
+                  segments={[
+                    { value: 'tab1', label: 'Очень длинный сегмент 1' },
+                    { value: 'tab2', label: 'Очень длинный сегмент 2' },
+                    { value: 'tab3', label: 'Очень длинный сегмент 3' },
+                    { value: 'tab4', label: 'Очень длинный сегмент 4' },
+                  ]}
+                  segmentValue="tab1"
+                />
+                <DSCustomDropdownContent maxHeight={240}>
+                  <div style={{ padding: 4, display: 'flex', flexDirection: 'column' }}>
+                    <DSCustomDropdownItem
+                      subtitle="Нефтяная компания Роснефть"
+                      selected={selSub === 'ROSN'}
+                      onClick={() => { setSelSub('ROSN'); setOpenSub(false); }}
+                    >
+                      ROSN
+                    </DSCustomDropdownItem>
+                    <DSCustomDropdownItem
+                      subtitle="Газпром нефть"
+                      selected={selSub === 'SIBN'}
+                      onClick={() => { setSelSub('SIBN'); setOpenSub(false); }}
+                    >
+                      SIBN
+                    </DSCustomDropdownItem>
+                    <DSCustomDropdownItem
+                      subtitle="Нефтяная компания ЛУКОЙЛ"
+                      selected={selSub === 'LKOH'}
+                      onClick={() => { setSelSub('LKOH'); setOpenSub(false); }}
+                    >
+                      LKOH
+                    </DSCustomDropdownItem>
+                  </div>
+                </DSCustomDropdownContent>
+              </DSCustomDropdownPanel>
+            </DSCustomDropdown>
+          </div>
+        </DocPreview>
+      </DocSection>
+
       <DocSection title="Composable Parts">
         <DocSpecTable rows={[
           { prop: 'DSCustomDropdown', value: 'Root context provider', token: 'isOpen, onOpenChange' },
@@ -615,7 +667,7 @@ function CustomDropdownDetails() {
           { prop: 'DSCustomDropdownHeader', value: 'Title + close + search + segments', token: 'title, showSearch, segments' },
           { prop: 'DSCustomDropdownContent', value: 'Scrollable body area', token: 'maxHeight' },
           { prop: 'DSCustomDropdownGroup', value: 'Group with optional title', token: 'title, children' },
-          { prop: 'DSCustomDropdownItem', value: 'Selectable item', token: 'checkbox, checked, selected, onClick' },
+          { prop: 'DSCustomDropdownItem', value: 'Selectable item', token: 'subtitle, checkbox, checked, selected, onClick' },
           { prop: 'DSCustomDropdownFooter', value: 'Action footer', token: 'children' },
           { prop: 'DSCustomDropdownFooterButton', value: 'Footer CTA button', token: "variant: 'ghost' | 'primary'" },
         ]} />
@@ -785,26 +837,34 @@ function TableDetails() {
     { id: 'y2022', header: '2022', align: 'right', flex: true, minWidth: '80px', sortable: true, sortType: 'number' },
     { id: 'y2023', header: '2023', align: 'right', flex: true, minWidth: '80px', sortable: true, sortType: 'number' },
     { id: 'y2024', header: '2024', align: 'right', flex: true, minWidth: '80px', sortable: true, sortType: 'number' },
-    { id: 'y2025f', header: '2025F', align: 'right', flex: true, minWidth: '80px', sortable: true, sortType: 'number', forecast: true,
-      render: (v: any) => <DSTableCellNumber value={v} forecast /> },
+    {
+      id: 'y2025f', header: '2025F', align: 'right', flex: true, minWidth: '80px', sortable: true, sortType: 'number', forecast: true,
+      render: (v: any) => <DSTableCellNumber value={v} forecast />
+    },
   ];
   const groups: DSTableRowGroup[] = [
-    { id: 'pnl', title: 'P&L', collapsible: true, rows: [
-      { id: '1', name: 'Revenue', y2022: 11200, y2023: 11500, y2024: 12800, y2025f: 13650 },
-      { id: '2', name: 'EBITDA', y2022: 6400, y2023: 6800, y2024: 7450, y2025f: 8100 },
-    ]},
-    { id: 'cf', title: 'Cash Flow', collapsible: true, rows: [
-      { id: '3', name: 'FCF', y2022: 3500, y2023: 3800, y2024: 4200, y2025f: 4600 },
-    ]},
+    {
+      id: 'pnl', title: 'P&L', collapsible: true, rows: [
+        { id: '1', name: 'Revenue', y2022: 11200, y2023: 11500, y2024: 12800, y2025f: 13650 },
+        { id: '2', name: 'EBITDA', y2022: 6400, y2023: 6800, y2024: 7450, y2025f: 8100 },
+      ]
+    },
+    {
+      id: 'cf', title: 'Cash Flow', collapsible: true, rows: [
+        { id: '3', name: 'FCF', y2022: 3500, y2023: 3800, y2024: 4200, y2025f: 4600 },
+      ]
+    },
   ];
 
   // Pct change demo data
   const pctColumns: DSTableColumn[] = [
     { id: 'name', header: 'Metric', align: 'left', width: 140, sticky: true },
-    { id: 'y2023', header: '2023', align: 'right', flex: true, minWidth: '80px',
+    {
+      id: 'y2023', header: '2023', align: 'right', flex: true, minWidth: '80px',
       render: (v: any) => <DSTableCellNumber value={v} />,
     },
-    { id: 'y2024', header: '2024', align: 'right', flex: true, minWidth: '80px',
+    {
+      id: 'y2024', header: '2024', align: 'right', flex: true, minWidth: '80px',
       render: (v: any, row: any) => (
         <div className={s.flexColEnd}>
           <DSTableCellNumber value={v} />
@@ -812,7 +872,8 @@ function TableDetails() {
         </div>
       ),
     },
-    { id: 'y2025f', header: '2025F', align: 'right', flex: true, minWidth: '80px', forecast: true,
+    {
+      id: 'y2025f', header: '2025F', align: 'right', flex: true, minWidth: '80px', forecast: true,
       render: (v: any, row: any) => (
         <div className={s.flexColEnd}>
           <DSTableCellNumber value={v} forecast />
@@ -978,7 +1039,7 @@ function NotificationDetails() {
               description="Do you want to proceed with the scenario update?"
               closable={false}
               primaryAction={{ label: 'Confirm', onClick: () => notify.success('Confirmed!') }}
-              secondaryAction={{ label: 'Cancel', onClick: () => {} }}
+              secondaryAction={{ label: 'Cancel', onClick: () => { } }}
             />
           </div>
         </DocPreview>
@@ -1710,10 +1771,10 @@ function SectionHeaderDetails() {
       <DocSection title="With Action" description="Опциональная ссылка-действие справа (action + onAction).">
         <DocPreview>
           <div className={s.flexCol4Full}>
-            <DSSectionHeader action="Смотреть все" onAction={() => {}}>
+            <DSSectionHeader action="Смотреть все" onAction={() => { }}>
               ЛИДЕРЫ РОСТА
             </DSSectionHeader>
-            <DSSectionHeader action="12 событий →" onAction={() => {}}>
+            <DSSectionHeader action="12 событий →" onAction={() => { }}>
               ПРЕДСТОЯЩИЕ СОБЫТИЯ
             </DSSectionHeader>
           </div>
@@ -1722,7 +1783,7 @@ function SectionHeaderDetails() {
 
       <DocSection title="Theme Comparison" description="Заголовок секции в тёмной и светлой теме.">
         <DocPreviewDual>
-          <DSSectionHeader action="Смотреть все" onAction={() => {}}>
+          <DSSectionHeader action="Смотреть все" onAction={() => { }}>
             ЛИДЕРЫ РОСТА
           </DSSectionHeader>
         </DocPreviewDual>
@@ -1731,7 +1792,7 @@ function SectionHeaderDetails() {
       <DocSection title="Usage Context" description="Используется в HomePage для заголовков секций: Лидеры роста/падения, Обзоры рынков, Бегущая строка, Предстоящие события.">
         <DocPreview>
           <div className={s.usageContextBox}>
-            <DSSectionHeader action="Смотреть все" onAction={() => {}}>
+            <DSSectionHeader action="Смотреть все" onAction={() => { }}>
               ЛИДЕРЫ РОСТА
             </DSSectionHeader>
             <div className={s.usageContextGrid}>
