@@ -4,19 +4,8 @@ import httpx
 from sqlalchemy.orm import Session
 import datetime
 
-# Ensure the backend directory is in the path for direct execution
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.append(current_dir)
-
-try:
-    # Try relative import (when run as -m backend.scraper)
-    from . import models
-    from .database import SessionLocal
-except (ImportError, ValueError):
-    # Try absolute import (when run as python backend/scraper.py or from within backend folder)
-    import models
-    from database import SessionLocal
+from backend import models
+from backend.database import SessionLocal
 
 # Base URLs for SPB Exchange Indices API
 API_BASE = "https://indexapi.spbexchange.ru/indexes/v1"
@@ -90,7 +79,7 @@ def get_or_create_ticker(db: Session, ticker_code: str, name: str):
 
 def update_db_with_scrape(db: Session):
     # Ensure tables exist with the latest schema
-    from database import engine
+    from backend.database import engine
     models.Base.metadata.create_all(bind=engine)
     
     print(f"[{datetime.datetime.now()}] Starting full SPB indices scrape...")

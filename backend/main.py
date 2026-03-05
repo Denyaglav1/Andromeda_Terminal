@@ -5,10 +5,7 @@ from sqlalchemy.orm import Session
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 
-try:
-    from . import models, database, scraper
-except (ImportError, ValueError):
-    import models, database, scraper
+from backend import models, database, scraper
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
