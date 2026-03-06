@@ -10,13 +10,16 @@ try:
 except ImportError:
     import models, database, scraper
 
-# Create database tables
-models.Base.metadata.create_all(bind=database.engine)
-
 scheduler = BackgroundScheduler()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Create database tables inside lifespan to avoid blocking module import
+    try:
+        models.Base.metadata.create_all(bind=database.engine)
+    except Exception as e:
+        print(f"Database sync error: {e}")
+
     # Startup: start scheduler to run every 15 minutes
     scheduler.add_job(
         scraper.update_db_with_scrape, 
@@ -26,10 +29,11 @@ async def lifespan(app: FastAPI):
         id='scrape_job',
         replace_existing=True
     )
-    # Trigger one run immediately but in a separate thread to NOT block startup
+    # Trigger one run immediately (using 'date' trigger with no run_date means NOW)
+    # This runs in a background thread of the BackgroundScheduler
     scheduler.add_job(
         scraper.update_db_with_scrape,
-        trigger=None, # Run once immediately
+        trigger='date', 
         args=[database.SessionLocal()],
         id='initial_scrape',
         replace_existing=True
