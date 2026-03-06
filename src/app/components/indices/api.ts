@@ -44,7 +44,14 @@ export interface IndexTicker {
     name: string;
 }
 
-const API_BASE = (import.meta.env.VITE_API_URL as string) || 'http://127.0.0.1:8000/api';
+const VITE_API_URL = import.meta.env.VITE_API_URL as string;
+const API_BASE = VITE_API_URL || '/api';
+
+console.log('--- API CONFIG DEBUG ---');
+console.log('VITE_API_URL from env:', VITE_API_URL);
+console.log('Final API_BASE used:', API_BASE);
+console.log('Build Mode:', import.meta.env.MODE);
+console.log('------------------------');
 
 export function useIndicesList() {
     const [indices, setIndices] = useState<IndexTicker[]>([]);
