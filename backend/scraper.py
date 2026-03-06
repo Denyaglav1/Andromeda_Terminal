@@ -211,8 +211,12 @@ def update_db_with_scrape(db: Session):
                     db.add(doc)
         
         db.commit() # Commit after each ticker to save progress
-        
-    print(f"[{datetime.datetime.now()}] Full scrape completed.")
+def run_scrape_job():
+    db = SessionLocal()
+    try:
+        update_db_with_scrape(db)
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     import argparse

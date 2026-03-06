@@ -34,18 +34,16 @@ async def lifespan(app: FastAPI):
 
     # Startup: start scheduler
     scheduler.add_job(
-        scraper.update_db_with_scrape, 
+        scraper.run_scrape_job, 
         'interval', 
         minutes=15, 
-        args=[database.SessionLocal()],
         id='scrape_job',
         replace_existing=True
     )
     # Trigger one full scrape in background
     scheduler.add_job(
-        scraper.update_db_with_scrape,
+        scraper.run_scrape_job,
         trigger='date', 
-        args=[database.SessionLocal()],
         id='initial_scrape',
         replace_existing=True
     )
