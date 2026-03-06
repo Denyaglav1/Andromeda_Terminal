@@ -30,3 +30,4 @@ storybook-static/
 
 # Temp files
 *.local
+sql_app.db 
