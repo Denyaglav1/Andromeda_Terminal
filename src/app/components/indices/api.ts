@@ -45,7 +45,11 @@ export interface IndexTicker {
 }
 
 const VITE_API_URL = import.meta.env.VITE_API_URL as string;
-const API_BASE = VITE_API_URL || '/api';
+// If VITE_API_URL is set, ensure it doesn't leave out the /api suffix if the backend expects it
+let API_BASE = VITE_API_URL || '/api';
+if (VITE_API_URL && !VITE_API_URL.endsWith('/api')) {
+    API_BASE = VITE_API_URL.endsWith('/') ? `${VITE_API_URL}api` : `${VITE_API_URL}/api`;
+}
 
 console.log('--- API CONFIG DEBUG ---');
 console.log('VITE_API_URL from env:', VITE_API_URL);

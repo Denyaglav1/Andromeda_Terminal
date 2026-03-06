@@ -14,13 +14,25 @@ scheduler = BackgroundScheduler()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create database tables inside lifespan to avoid blocking module import
+    # Create database tables inside lifespan
     try:
         models.Base.metadata.create_all(bind=database.engine)
+        
+        # Seed basic tickers immediately to ensure API doesn't return empty list
+        db = database.SessionLocal()
+        try:
+            if db.query(models.IndexTicker).count() == 0:
+                print("Seeding initial tickers...")
+                for ticker_code in scraper.KNOWN_INDICES:
+                    # Provide a friendly name fallback
+                    db.add(models.IndexTicker(ticker=ticker_code, name=ticker_code))
+                db.commit()
+        finally:
+            db.close()
     except Exception as e:
-        print(f"Database sync error: {e}")
+        print(f"Startup/Seeding error: {e}")
 
-    # Startup: start scheduler to run every 15 minutes
+    # Startup: start scheduler
     scheduler.add_job(
         scraper.update_db_with_scrape, 
         'interval', 
@@ -29,8 +41,7 @@ async def lifespan(app: FastAPI):
         id='scrape_job',
         replace_existing=True
     )
-    # Trigger one run immediately (using 'date' trigger with no run_date means NOW)
-    # This runs in a background thread of the BackgroundScheduler
+    # Trigger one full scrape in background
     scheduler.add_job(
         scraper.update_db_with_scrape,
         trigger='date', 
