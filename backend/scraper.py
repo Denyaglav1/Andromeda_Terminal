@@ -86,7 +86,10 @@ def get_or_create_ticker(db: Session, ticker_code: str, name: str):
 
 def update_db_with_scrape(db: Session):
     # Ensure tables exist with the latest schema
-    from backend.database import engine
+    try:
+        from backend.database import engine
+    except ImportError:
+        from database import engine
     models.Base.metadata.create_all(bind=engine)
     
     print(f"[{datetime.datetime.now()}] Starting full SPB indices scrape...")
