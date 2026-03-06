@@ -111,6 +111,15 @@ def update_db_with_scrape(db: Session):
         db_ticker = get_or_create_ticker(db, ticker_code, str(name))
         
         # 1. Save current state
+        # Extract real timestamp from the API if available (bar_unixtime)
+        last_bar = meta.get("last_bar", {})
+        bar_time = last_bar.get("bar_unixtime") if isinstance(last_bar, dict) else None
+        
+        if bar_time:
+            data_ts = datetime.datetime.fromtimestamp(bar_time)
+        else:
+            data_ts = datetime.datetime.utcnow()
+
         # Safely extract values with fallback to None
         def safe_get_float(d, key):
             val = d.get(key)
@@ -121,7 +130,7 @@ def update_db_with_scrape(db: Session):
 
         current_data = models.IndexData(
             ticker_id=db_ticker.id,
-            timestamp=datetime.datetime.utcnow(),
+            timestamp=data_ts,
             current_value=safe_get_float(meta, "current_price"),
             open_value=safe_get_float(meta, "last_open"),
             prev_close=safe_get_float(meta, "prev_last"),
