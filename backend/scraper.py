@@ -34,6 +34,9 @@ def fetch_index_metadata(ticker: str):
     url = f"{API_BASE}/websiteview?index_code={ticker}&lang=ru&bar_size=1"
     try:
         response = httpx.get(url, headers=get_spb_headers(), verify=False, timeout=10.0)
+        print(f"DEBUG: Metadata fetch for {ticker} - Status: {response.status_code}")
+        if response.status_code != 200:
+            print(f"DEBUG: Response body: {response.text[:200]}")
         response.raise_for_status()
         return response.json()
     except Exception as e:
