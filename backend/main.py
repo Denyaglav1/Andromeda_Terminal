@@ -5,7 +5,10 @@ from sqlalchemy.orm import Session
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from backend import models, database, scraper
+try:
+    from backend import models, database, scraper
+except ImportError:
+    import models, database, scraper
 
 # Create database tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -23,33 +26,16 @@ async def lifespan(app: FastAPI):
         id='scrape_job',
         replace_existing=True
     )
+    # Trigger one run immediately but in a separate thread to NOT block startup
+    scheduler.add_job(
+        scraper.update_db_with_scrape,
+        trigger=None, # Run once immediately
+        args=[database.SessionLocal()],
+        id='initial_scrape',
+        replace_existing=True
+    )
     scheduler.start()
     
-    # Run once at startup to populate initial data
-    db = database.SessionLocal()
-    try:
-        scraper.update_db_with_scrape(db)
-        
-        # Fallback: if scraper failed and DB is still empty, add a dummy ticker
-        if db.query(models.IndexTicker).count() == 0:
-            print("Scraper failed to get initial data, seeding dummy SPB100")
-            dummy_ticker = models.IndexTicker(ticker="SPB100", name="SPB100 Выбор миллионов")
-            db.add(dummy_ticker)
-            db.commit()
-            db.refresh(dummy_ticker)
-            
-            dummy_data = models.IndexData(
-                ticker_id=dummy_ticker.id,
-                current_value=751.32, absolute_change=13.19, percent_change=1.79,
-                open_value=738.13, prev_close=751.32, day_max=752.71, day_min=738.13
-            )
-            db.add(dummy_data)
-            db.commit()
-    except Exception as e:
-        print(f"Startup error: {e}")
-    finally:
-        db.close()
-        
     yield
     
     # Shutdown

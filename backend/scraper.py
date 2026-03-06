@@ -4,8 +4,12 @@ import httpx
 from sqlalchemy.orm import Session
 import datetime
 
-from backend import models
-from backend.database import SessionLocal
+try:
+    from backend import models
+    from backend.database import SessionLocal
+except ImportError:
+    import models
+    from database import SessionLocal
 
 # Base URLs for SPB Exchange Indices API
 API_BASE = "https://indexapi.spbexchange.ru/indexes/v1"

@@ -1,7 +1,10 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 import datetime
-from backend.database import Base
+try:
+    from backend.database import Base
+except ImportError:
+    from database import Base
 
 class IndexTicker(Base):
     __tablename__ = "index_tickers"
