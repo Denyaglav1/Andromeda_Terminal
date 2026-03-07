@@ -1,93 +1,239 @@
 .pageRoot {
-    background-color: var(--ds-bg-primary);
+    background-color: #0c1017;
+    /* Deep terminal navy */
     min-height: 100vh;
-    padding: 24px;
-    color: var(--ds-text-primary);
+    color: #f1f1f1;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
-.headerSection {
-    margin-bottom: 32px;
+/* Global Navigation Mock */
+.globalNav {
+    height: 48px;
+    background-color: #0c1017;
+    border-bottom: 1px solid #1a1f2b;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 24px;
 }
 
-.tickerLabel {
-    color: var(--ds-text-secondary);
-    font-weight: 400;
-    margin-left: 12px;
-    font-size: 0.5em;
-}
-
-.pricePaper {
-    background-color: var(--ds-bg-secondary);
-    border: 1px solid var(--ds-border-color);
-    border-radius: 8px;
-}
-
-.labelUpper {
-    color: var(--ds-text-secondary);
-    text-transform: uppercase;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-}
-
-.card {
-    background-color: var(--ds-bg-secondary);
-    border-radius: 12px;
-    border: 1px solid var(--ds-border-color);
-    overflow: hidden;
-}
-
-.sectionTitle {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #fff;
-}
-
-.infoText {
-    line-height: 1.6;
-    color: var(--ds-text-primary);
+.logoArea {
+    font-weight: 800;
+    letter-spacing: 1px;
     font-size: 14px;
 }
 
-.indicatorRow {
+.navItem {
+    font-size: 12px;
+    color: #8a94a6;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.navItemActive {
+    color: #5a8cff;
+}
+
+.tickerBadge {
+    background: #151a24;
+    border: 1px solid #232a38;
+    border-radius: 4px;
+    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.searchBar {
+    background: #151a24;
+    border: 1px solid #232a38;
+    border-radius: 4px;
+    padding: 4px 12px;
+    flex: 1;
+    max-width: 400px;
+    color: #8a94a6;
+    font-size: 12px;
+}
+
+/* Main Layout */
+.contentArea {
+    flex: 1;
+    padding: 16px;
+}
+
+.pageHeader {
+    margin-bottom: 16px;
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: flex-end;
 }
 
-.indicatorRow:last-child {
-    border-bottom: none;
+.companyTitle {
+    font-size: 24px;
+    font-weight: 700;
 }
 
-.indicatorName {
+.updateTime {
+    font-size: 10px;
+    color: #4b5563;
+}
+
+.badge {
+    background: #1a1f2b;
+    color: #8a94a6;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Grids and Cards */
+.card {
+    background: #0f141c;
+    border: 1px solid #1a1f2b;
+    border-radius: 4px;
+    /* Sharper terminal corners */
+    height: 100%;
+}
+
+.cardHeader {
+    padding: 12px 16px;
+    border-bottom: 1px solid #1a1f2b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cardTitle {
     font-size: 12px;
-    color: var(--ds-text-secondary);
+    font-weight: 600;
+    color: #f1f1f1;
+}
+
+.cardBody {
+    padding: 16px;
+}
+
+/* Left components tabs */
+.tabsList {
+    display: flex;
+    border-bottom: 1px solid #1a1f2b;
+    padding: 0 16px;
+}
+
+.tabItem {
+    padding: 12px 16px;
+    font-size: 11px;
+    color: #8a94a6;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+.tabItemActive {
+    color: #f1f1f1;
+    border-bottom: 2px solid #5a8cff;
+}
+
+/* Indicators Side Table */
+.indicatorsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.indicatorsTable tr td {
+    padding: 4px 0;
+    font-size: 11px;
+}
+
+.indicatorLabel {
+    color: #8a94a6;
 }
 
 .indicatorValue {
-    font-size: 14px;
+    text-align: right;
     font-weight: 600;
 }
 
-.forecastCard {
-    background: linear-gradient(135deg, var(--ds-bg-secondary) 0%, #0a192f 100%);
-    border: 1px solid var(--ds-blue-9);
+.indicatorChangeNeg {
+    color: #ef4444;
 }
 
-.tableContainer {
-    margin-top: 8px;
+.indicatorChangePos {
+    color: #10b981;
 }
 
-/* Transitions and Hovers */
-.backButton {
-    transition: opacity 0.2s ease;
+/* Section Dividers */
+.sectionSubTitle {
+    font-size: 10px;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    margin-top: 16px;
 }
 
-.backButton:hover {
-    opacity: 0.8;
+/* Ownership Widget */
+.ownershipBar {
+    height: 24px;
+    background: #1a1f2b;
+    border-radius: 4px;
+    display: flex;
+    overflow: hidden;
+    margin-bottom: 12px;
 }
 
-.divider {
-    border-color: rgba(255, 255, 255, 0.1);
+.ownershipPart {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Footer */
+.footer {
+    padding: 16px;
+    border-top: 1px solid #1a1f2b;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #4b5563;
+}
+
+.footerLinks {
+    display: flex;
+    gap: 16px;
+}
+
+/* Typography Overrides */
+.muted {
+    color: #8a94a6;
+}
+
+.small {
+    font-size: 10px;
+}
+
+.linkStyle {
+    color: #5a8cff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.linkStyle:hover {
+    text-decoration: underline;
+}
+
+.newsItem {
+    padding: 12px 0;
+    border-bottom: 1px solid #1a1f2b;
+}
+
+.newsItem:last-child {
+    border-bottom: none;
 }
