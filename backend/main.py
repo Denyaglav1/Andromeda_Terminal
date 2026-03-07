@@ -156,12 +156,10 @@ def get_index_data(ticker: str, timeframe: str = "1D", db: Session = Depends(dat
             "history": [{"value": h.current_value, "timestamp": h.timestamp.isoformat()} for h in sorted(history, key=lambda x: x.timestamp)]
         }
     except Exception as e:
-        from backend import database
-        from backend import models
         import traceback
-        print(f"Error in get_index_data: {e}")
+        print(f"Error in get_index_data for {ticker}: {e}")
         traceback.print_exc()
-        return {"error": str(e), "detail": "Internal Server Error"}
+        return {"error": "Internal Server Error", "detail": str(e)}
 
 @app.get("/api/indices/{ticker}/composition")
 def get_index_composition(ticker: str, db: Session = Depends(database.get_db)):

@@ -1,15 +1,14 @@
 # changelog.md
 
-## [1.2.0] - 2026-03-07
-### Fixed / Исправлено
-- Chart tail visualization (no more straight lines to "today"). / Визуализация хвоста графика (больше нет прямых линий к «сегодня»).
-- Backend import errors in Railway environment. / Ошибки импорта бэкенда в среде Railway.
-- 503 Service Unavailable on production. / Ошибка 503 Service Unavailable на проде.
-
+## [1.2.1] - 2026-03-07
 ### Added / Добавлено
-- `GEMINI.md` Operating Protocol. / Операционный протокол `GEMINI.md`.
-- Project management artifacts in `/docs`. / Артефакты управления проектом в папке `/docs`.
-- Standardized `__init__.py` for backend. / Стандартизированный `__init__.py` для бэкенда.
+- Comprehensive bilingual documentation (`/docs`). / Полная двуязычная документация (`/docs`).
+### Refactored / Рефакторинг
+- Modularized `scraper.py` and improved error handling in `main.py`. / Модульное разделение `scraper.py` и улучшение обработки ошибок в `main.py`.
+- Centralized SPB API interaction logic. / Централизация логики взаимодействия с API СПБ.
+- Cleaned up redundant database initialization. / Очистка дублирующейся инициализации базы данных.
+
+## [1.2.0] - 2026-03-07
 
 ## [1.1.0] - 2026-03-06
 ### Added / Добавлено
