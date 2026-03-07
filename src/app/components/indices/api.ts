@@ -44,9 +44,59 @@ export interface IndexTicker {
     name: string;
 }
 
+export interface Bond {
+    ticker: string;
+    name: string;
+    currency: string;
+    volume: number;
+    yield_val: number;
+    duration: number;
+    coupon: number;
+    option?: string;
+    maturity_date: string;
+    placement_date?: string;
+}
+
+export interface Financial {
+    period: string;
+    revenue: number | null;
+    ebitda: number | null;
+    net_profit: number | null;
+    fcf: number | null;
+    net_debt: number | null;
+}
+
+export interface CompanyIndicators {
+    pe: number | null;
+    ev_ebitda: number | null;
+    roe: number | null;
+    net_debt_ebitda: number | null;
+    div_yield: number | null;
+    next_record_date: string | null;
+    next_div_per_share: number | null;
+    mkt_cap: number | null;
+    free_float: number | null;
+}
+
+export interface CompanyData {
+    ticker: string;
+    name: string;
+    full_name: string | null;
+    description: string | null;
+    sector: string | null;
+    region: string | null;
+    website: string | null;
+    logo_bg: string | null;
+    logo_color: string | null;
+    logo_text: string | null;
+    financials: Financial[];
+    bonds: Bond[];
+    indicators: CompanyIndicators | null;
+}
+
 const VITE_API_URL = import.meta.env.VITE_API_URL as string;
-// If VITE_API_URL is set, ensure it doesn't leave out the /api suffix if the backend expects it
-let API_BASE = VITE_API_URL || '/api';
+// Default to port 8000 for backend
+let API_BASE = VITE_API_URL || 'http://localhost:8000/api';
 if (VITE_API_URL && !VITE_API_URL.endsWith('/api')) {
     API_BASE = VITE_API_URL.endsWith('/') ? `${VITE_API_URL}api` : `${VITE_API_URL}/api`;
 }
@@ -84,7 +134,6 @@ export function useIndexData(ticker: string | null, timeframe: string = '1D') {
     useEffect(() => {
         if (!ticker) return;
         setLoading(true);
-        // Map timeframe to request params if needed
         fetch(`${API_BASE}/indices/${ticker}?timeframe=${timeframe}&limit=200`, { cache: 'no-store' })
             .then(res => res.json())
             .then(result => {
@@ -146,3 +195,14 @@ export function useIndexDocuments(ticker: string | null) {
     return { documents, loading };
 }
 
+export async function getCompanyData(ticker: string): Promise<CompanyData | null> {
+    try {
+        const res = await fetch(`${API_BASE}/companies/${ticker}`, { cache: 'no-store' });
+        if (res.ok) {
+            return await res.json();
+        }
+    } catch (err) {
+        console.error(`Failed to fetch company data for ${ticker}`, err);
+    }
+    return null;
+}

@@ -63,3 +63,69 @@ class IndexDocument(Base):
     start_date = Column(DateTime, nullable=True)
 
     ticker_info = relationship("IndexTicker", back_populates="documents")
+
+class Company(Base):
+    __tablename__ = "companies"
+    id = Column(Integer, primary_key=True, index=True)
+    ticker = Column(String, unique=True, index=True)
+    name = Column(String)
+    full_name = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    sector = Column(String, nullable=True)
+    region = Column(String, nullable=True)
+    website = Column(String, nullable=True)
+    logo_bg = Column(String, nullable=True)
+    logo_color = Column(String, nullable=True)
+    logo_text = Column(String, nullable=True)
+
+    # Relations
+    financials = relationship("CompanyFinancial", back_populates="company", cascade="all, delete-orphan")
+    bonds = relationship("Bond", back_populates="company", cascade="all, delete-orphan")
+    indicators = relationship("CompanyIndicator", uselist=False, back_populates="company", cascade="all, delete-orphan")
+
+class CompanyFinancial(Base):
+    __tablename__ = "company_financials"
+    id = Column(Integer, primary_key=True, index=True)
+    company_id = Column(Integer, ForeignKey("companies.id"))
+    period = Column(String) # e.g. "2021", "2024 Q1"
+    revenue = Column(Float, nullable=True)
+    ebitda = Column(Float, nullable=True)
+    net_profit = Column(Float, nullable=True)
+    fcf = Column(Float, nullable=True)
+    net_debt = Column(Float, nullable=True)
+
+    company = relationship("Company", back_populates="financials")
+
+class Bond(Base):
+    __tablename__ = "bonds"
+    id = Column(Integer, primary_key=True, index=True)
+    company_id = Column(Integer, ForeignKey("companies.id"))
+    ticker = Column(String)
+    name = Column(String)
+    currency = Column(String)
+    volume = Column(Float)
+    yield_val = Column(Float)
+    duration = Column(Float)
+    coupon = Column(Float)
+    option = Column(String, nullable=True)
+    maturity_date = Column(DateTime, nullable=True)
+    placement_date = Column(DateTime, nullable=True)
+
+    company = relationship("Company", back_populates="bonds")
+
+class CompanyIndicator(Base):
+    __tablename__ = "company_indicators"
+    id = Column(Integer, primary_key=True, index=True)
+    company_id = Column(Integer, ForeignKey("companies.id"))
+    
+    pe = Column(Float, nullable=True)
+    ev_ebitda = Column(Float, nullable=True)
+    roe = Column(Float, nullable=True)
+    net_debt_ebitda = Column(Float, nullable=True)
+    div_yield = Column(Float, nullable=True)
+    next_record_date = Column(DateTime, nullable=True)
+    next_div_per_share = Column(Float, nullable=True)
+    mkt_cap = Column(Float, nullable=True)
+    free_float = Column(Float, nullable=True) # %
+
+    company = relationship("Company", back_populates="indicators")

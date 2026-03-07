@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useEffect, useCallback } from 'react';
+import { Link } from 'react-router';
 import type { TickerQuote } from './data/home-types';
 import { formatPrice, formatChange } from './data/useRealtimePrices';
 
@@ -40,27 +41,29 @@ const priceTextStyle: React.CSSProperties = {
 
 const TickerChip = React.memo(function TickerChip({ t }: { t: TickerQuote }) {
   return (
-    <div style={chipStyle}>
-      <span style={tickerTextStyle} data-field="ticker">
-        {t.ticker}
-      </span>
-      <span style={priceTextStyle} data-field="price">
-        {formatPrice(t.price)}
-      </span>
-      <span
-        style={{
-          fontSize: 12,
-          lineHeight: '16px',
-          fontWeight: 600,
-          whiteSpace: 'nowrap',
-          fontFeatureSettings: "'lnum', 'tnum'",
-          color: t.changePercent >= 0 ? 'var(--ds-green-6)' : 'var(--ds-red-6)',
-        }}
-        data-field="change"
-      >
-        {formatChange(t.changePercent)}
-      </span>
-    </div>
+    <Link to={`/companies/${t.ticker}`} style={{ textDecoration: 'none' }}>
+      <div style={chipStyle}>
+        <span style={tickerTextStyle} data-field="ticker">
+          {t.ticker}
+        </span>
+        <span style={priceTextStyle} data-field="price">
+          {formatPrice(t.price)}
+        </span>
+        <span
+          style={{
+            fontSize: 12,
+            lineHeight: '16px',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+            fontFeatureSettings: "'lnum', 'tnum'",
+            color: t.changePercent >= 0 ? 'var(--ds-green-6)' : 'var(--ds-red-6)',
+          }}
+          data-field="change"
+        >
+          {formatChange(t.changePercent)}
+        </span>
+      </div>
+    </Link>
   );
 });
 

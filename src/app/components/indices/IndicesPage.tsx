@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, useMemo } from 'react';
-import { Box, Group, Stack, Text, Grid, GridCol, Paper, Loader, Popover } from '@mantine/core';
+import { Box, Group, Stack, Text, Grid, GridCol, Paper, Loader, Popover, Anchor } from '@mantine/core';
+import { Link } from 'react-router';
 import { Header } from '../Header';
 import { useIndicesList, useIndexData, useIndexComposition, useIndexDocuments, IndexDocument, IndexTicker } from './api';
 import { FileText, Download, ExternalLink, Calendar, ChevronRight } from 'lucide-react';
@@ -235,7 +236,16 @@ export function IndicesPage() {
                                                     data={composition}
                                                     compact={true}
                                                     columns={[
-                                                        { id: 'ticker', header: 'Тикер', width: '80px', render: (val: string) => <Text style={{ color: 'var(--ds-blue-5)' }}>{val}</Text> },
+                                                        {
+                                                            id: 'ticker',
+                                                            header: 'Тикер',
+                                                            width: '80px',
+                                                            render: (val: string) => (
+                                                                <Anchor component={Link} to={`/companies/${val}`} style={{ color: 'var(--ds-blue-6)', fontWeight: 600 }}>
+                                                                    {val}
+                                                                </Anchor>
+                                                            )
+                                                        },
                                                         { id: 'asset_name', header: 'Название актива', flex: true, render: (val: string) => <Text truncate style={{ maxWidth: '100%', color: 'var(--ds-text-primary)' }}>{val}</Text> },
                                                         {
                                                             id: 'weight',

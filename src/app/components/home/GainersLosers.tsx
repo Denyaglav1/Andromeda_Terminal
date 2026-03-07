@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Box, Stack, Text, UnstyledButton, Divider } from '@mantine/core';
+import { Link } from 'react-router';
+import { Box, Stack, Text, UnstyledButton, Divider, Anchor } from '@mantine/core';
 import { DSTabs, DSTab } from '../ui/ds-tabs';
 import { DSSegmentButton, DSSegment } from '../ui/ds-segment-button';
 import { DSSectionHeader } from '../ui/ds-section-header';
@@ -55,7 +56,9 @@ function BarRow({ item, maxPct, isGainer, isLast }: { item: GainerLoser; maxPct:
       </Text>
 
       {/* Company name */}
-      <Text
+      <Anchor
+        component={Link}
+        to={`/companies/${item.ticker}`}
         style={{
           flex: 1,
           fontSize: 10,
@@ -66,10 +69,11 @@ function BarRow({ item, maxPct, isGainer, isLast }: { item: GainerLoser; maxPct:
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
           cursor: 'pointer',
+          textDecoration: 'none',
         }}
       >
         {item.name}
-      </Text>
+      </Anchor>
     </Box>
   );
 }

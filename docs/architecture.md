@@ -1,4 +1,5 @@
 # architecture.md
+# Project Architecture / Архитектура проекта
 
 ## System Modules / Модули системы
 - **Backend (FastAPI)**: Serves the REST API. / **Бэкенд (FastAPI)**: обеспечивает работу REST API.
@@ -14,12 +15,21 @@
 ## Domain Rules / Правила домена
 - All timestamps in the database use UTC. / Все временные метки в базе данных используют UTC.
 - Every index must have a unique ticker (e.g., SPB100). / У каждого индекса должен быть уникальный тикер (например, SPB100).
-- Historical data should be deduplicated by day for long-term views. / Исторические данные должны дедуплицироваться по дням для долгосрочного отображения.
+- [NEW] Companies are identified by their MOEX/SPB ticker. / [НОВОЕ] Компании идентифицируются по их тикерам MOEX/SPB.
+- [NEW] Financial data follows a strict schema (Revenue, EBITDA, etc.). / [НОВОЕ] Финансовые данные следуют строгой схеме (Выручка, EBITDA и т.д.).
 
 ## Storage Decisions / Решения по хранению данных
 - **SQLite**: Used for its simplicity and single-file portability. / **SQLite**: используется за простоту и портативность в виде одного файла.
 - **SQLAlchemy**: ORM layer to allow switching to PostgreSQL via environment variables. / **SQLAlchemy**: слой ORM для возможности переключения на PostgreSQL через переменные окружения.
+- [NEW] `Company` table stored metadata; `CompanyFinancials` stores time-series metrics. / [НОВОЕ] Таблица `Company` хранит метаданные; `CompanyFinancials` хранит временные показатели.
 
 ## Integration Points / Точки интеграции
 - **SPB Exchange API**: External data source. / **API СПБ Биржи**: внешний источник данных.
+- **Figma API**: Source for design tokens and assets. / **Figma API**: источник дизайн-токенов и ассетов.
 - **Railway**: Orchestration and hosting platform. / **Railway**: платформа оркестрации и хостинга.
+
+## Frontend Components / Фронтенд-компоненты
+- **Dashboard**: High-level overview. / **Дашборд**: высокоуровневый обзор.
+- [NEW] **CompanyPage**: Detailed view for a specific company. / [НОВОЕ] **CompanyPage**: Детальное представление конкретной компании.
+- [NEW] **FinancialsTable**: Specialized table for P&L, BS, CF. / [НОВОЕ] **FinancialsTable**: Специализированная таблица для P&L, BS, CF.
+- [NEW] **BondsTable**: List of tradable bonds for the company. / [НОВОЕ] **BondsTable**: Список торгуемых облигаций компании.

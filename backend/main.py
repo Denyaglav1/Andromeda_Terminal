@@ -4,6 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
+from pydantic import BaseModel
+from typing import List, Optional, Any
+
+print(f"--- API STARTING/RELOADING AT {datetime.datetime.now()} ---")
 
 try:
     from backend import models, database, scraper
@@ -54,7 +58,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     scheduler.shutdown()
 
-app = FastAPI(title="Andromeda Indices API", lifespan=lifespan)
+app = FastAPI(title="Andromeda Indices API V2 - RELOADED", lifespan=lifespan)
 
 # Allow CORS for frontend
 app.add_middleware(
@@ -189,3 +193,83 @@ def get_index_documents(ticker: str, db: Session = Depends(database.get_db)):
                   .all()
                   
     return documents
+
+# ── COMPANY DATA SCHEMAS ──
+
+class BondSchema(BaseModel):
+    ticker: str
+    name: str
+    currency: str
+    volume: float
+    yield_val: float
+    duration: float
+    coupon: float
+    option: Optional[str]
+    maturity_date: Optional[datetime.datetime]
+    placement_date: Optional[datetime.datetime]
+
+    class Config:
+        from_attributes = True
+
+class FinancialSchema(BaseModel):
+    period: str
+    revenue: Optional[float]
+    ebitda: Optional[float]
+    net_profit: Optional[float]
+    fcf: Optional[float]
+    net_debt: Optional[float]
+
+    class Config:
+        from_attributes = True
+
+class CompanyIndicatorSchema(BaseModel):
+    pe: Optional[float]
+    ev_ebitda: Optional[float]
+    roe: Optional[float]
+    net_debt_ebitda: Optional[float]
+    div_yield: Optional[float]
+    next_record_date: Optional[datetime.datetime]
+    next_div_per_share: Optional[float]
+    mkt_cap: Optional[float]
+    free_float: Optional[float]
+
+    class Config:
+        from_attributes = True
+
+class CompanySchema(BaseModel):
+    ticker: str
+    name: str
+    full_name: Optional[str]
+    description: Optional[str]
+    sector: Optional[str]
+    region: Optional[str]
+    website: Optional[str]
+    logo_bg: Optional[str]
+    logo_color: Optional[str]
+    logo_text: Optional[str]
+    financials: List[FinancialSchema]
+    bonds: List[BondSchema]
+    indicators: Optional[CompanyIndicatorSchema]
+
+    class Config:
+        from_attributes = True
+
+# ── COMPANY ENDPOINTS ──
+
+@app.get("/api/companies", response_model=List[CompanySchema])
+async def list_companies(db: Session = Depends(database.get_db)):
+    """List all companies with basic info and relations."""
+    return db.query(models.Company).all()
+
+@app.get("/api/companies/{ticker}", response_model=CompanySchema)
+async def get_company_details(ticker: str, db: Session = Depends(database.get_db)):
+    """Get detailed info for a specific company by ticker."""
+    company = db.query(models.Company).filter(models.Company.ticker == ticker.upper()).first()
+    if not company:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Company not found")
+    return company
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

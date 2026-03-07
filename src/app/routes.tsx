@@ -11,6 +11,7 @@ import { ChartBuilderPage } from './components/chart-builder/ChartBuilderPage';
 import { LandingPage } from './components/LandingPage';
 import { HomePage } from './components/HomePage';
 import { IndicesPage } from './components/indices/IndicesPage';
+import { CompanyPage } from './components/companies/CompanyPage';
 
 const LazyTicketsPage = React.lazy(() =>
   import('./components/tickets/TicketsPage').then(m => ({ default: m.TicketsPage }))
@@ -87,5 +88,9 @@ export const router = createBrowserRouter([
   {
     path: '/indices',
     Component: IndicesPage,
+  },
+  {
+    path: '/companies/:ticker',
+    Component: CompanyPage,
   },
 ]);
