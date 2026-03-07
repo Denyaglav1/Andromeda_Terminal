@@ -9,7 +9,7 @@
 - [x] Translate all documentation to Russian (Bilingual) / Перевести всю документацию на русский язык (двуязычный формат)
 
 ## Immediate Tasks / Текущие задачи
-- [x] Final project-wide audit and minor fixes / Финальный аудит всего проекта и мелкие исправления
+- [x] Fix production import crash (ModuleNotFoundError: backend) / Исправить сбой импорта на проде (ModuleNotFoundError: backend)
 - [ ] Implement global error boundary in Frontend. / Реализовать глобальный обработчик ошибок (error boundary) во фронтенде.
 - [ ] Add basic unit tests for Scraper logic. / Добавить базовые юнит-тесты для логики скрапера.
 - [ ] Create simple "About" page with project credits. / Создать простую страницу «О проекте» с указанием авторов.

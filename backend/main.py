@@ -5,7 +5,10 @@ from sqlalchemy.orm import Session
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from backend import models, database, scraper
+try:
+    from backend import models, database, scraper
+except ImportError:
+    import models, database, scraper
 
 scheduler = BackgroundScheduler()
 
