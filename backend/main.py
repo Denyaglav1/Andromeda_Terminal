@@ -10,9 +10,9 @@ from typing import List, Optional, Any
 print(f"--- API STARTING/RELOADING AT {datetime.datetime.now()} ---")
 
 try:
-    from backend import models, database, scraper
+    from backend import models, database, scraper, seed_companies
 except ImportError:
-    import models, database, scraper
+    import models, database, scraper, seed_companies
 
 scheduler = BackgroundScheduler()
 
@@ -31,6 +31,12 @@ async def lifespan(app: FastAPI):
                     # Provide a friendly name fallback
                     db.add(models.IndexTicker(ticker=ticker_code, name=ticker_code))
                 db.commit()
+            
+            # Automated seeding for companies (SBER, etc.)
+            if db.query(models.Company).count() == 0:
+                print("Companies table empty. Starting automated seeding...")
+                seed_companies.seed_data()
+                print("Automated seeding completed.")
         finally:
             db.close()
     except Exception as e:

@@ -21,6 +21,7 @@
     - [x] 5.6. Frontend: Implement Bonds Table & Sidebar Indicators. / Фронтенд: Реализовать таблицу облигаций и сайдбар с показателями.
     - [x] 5.7. Frontend: Integrate navigation (Indices -> Company Page). / Фронтенд: Интегрировать навигацию (Индексы -> Страница компании).
     - [x] 5.8. Frontend: Integrate navigation (Home -> Company Page). / Фронтенд: Интегрировать навигацию (Главная -> Страница компании).
+    - [x] 5.9. Backend: Automate database seeding in production. / Бэкенд: Автоматизировать наполнение БД в продакшене.
 - [ ] Implement global error boundary in Frontend. / Реализовать глобальный обработчик ошибок (error boundary) во фронтенде.
 - [ ] Add basic unit tests for Scraper logic. / Добавить базовые юнит-тесты для логики скрапера.
 
