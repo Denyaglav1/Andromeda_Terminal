@@ -5,10 +5,7 @@ from sqlalchemy.orm import Session
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 
-try:
-    from backend import models, database, scraper
-except ImportError:
-    import models, database, scraper
+from backend import models, database, scraper
 
 scheduler = BackgroundScheduler()
 
@@ -159,6 +156,8 @@ def get_index_data(ticker: str, timeframe: str = "1D", db: Session = Depends(dat
             "history": [{"value": h.current_value, "timestamp": h.timestamp.isoformat()} for h in sorted(history, key=lambda x: x.timestamp)]
         }
     except Exception as e:
+        from backend import database
+        from backend import models
         import traceback
         print(f"Error in get_index_data: {e}")
         traceback.print_exc()
