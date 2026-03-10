@@ -30,4 +30,7 @@ storybook-static/
 
 # Temp files
 *.local
-sql_app.db 
+sql_app.db
+
+# Figma sync state
+.figma-sync-state.json

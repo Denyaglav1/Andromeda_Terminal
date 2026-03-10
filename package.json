@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "serve dist -s -l ${PORT:-3000}"
+    "start": "serve dist -s -l ${PORT:-3000}",
+    "figma:sync": "python scripts/figma-sync.py",
+    "figma:check": "python scripts/figma-sync.py --check",
+    "figma:export": "python scripts/figma-sync.py --export"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

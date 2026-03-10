@@ -1,0 +1,14 @@
+{
+    "include": [
+        "backend"
+    ],
+    "extraPaths": [
+        "backend"
+    ],
+    "pythonVersion": "3.13",
+    "pythonPlatform": "Windows",
+    "venvPath": ".",
+    "venv": ".venv",
+    "reportMissingImports": "warning",
+    "reportMissingModuleSource": "warning"
+}

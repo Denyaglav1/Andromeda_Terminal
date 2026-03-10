@@ -1,5 +1,14 @@
 # changelog.md
 
+## [1.2.2] - 2026-03-10
+### Fixed / Исправлено
+- Removed unused `beautifulsoup4` and `requests` from `requirements.txt`. / Удалены неиспользуемые зависимости из `requirements.txt`.
+- Added missing blank line between functions in `scraper.py` (PEP 8). / Добавлена пустая строка между функциями в `scraper.py`.
+- Fixed deprecated `color` prop on Mantine `Text` components → `c` (Mantine v8). / Исправлен устаревший проп `color` на `c` в Mantine v8.
+- Fixed corrupted acceptance criteria line in `docs/spec.md`. / Исправлена битая строка в `docs/spec.md`.
+### Updated / Обновлено
+- Rebuilt backlog in `docs/tasks.md` (Epics 6–9). / Пересобран бэклог в `docs/tasks.md` (Эпики 6–9).
+
 ## [1.2.1] - 2026-03-07
 ### Added / Добавлено
 - Comprehensive bilingual documentation (`/docs`). / Полная двуязычная документация (`/docs`).

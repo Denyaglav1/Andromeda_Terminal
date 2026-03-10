@@ -31,7 +31,7 @@ New Objective: Implement one-to-one Figma designs for "Company Details" view.
 
 ## Acceptance Criteria / Критерии приемки
 - Company data matches Figma design exactly. / Данные компании в точности соответствуют дизайну Figma.
-- API provides- [NEW] How to handle 40 companies' logo storage? / [НОВОЕ] Как организовать хранение логотипов для 40 компаний? MOEX.
+- API provides company data from MOEX/SPB tickers. / API предоставляет данные компаний по тикерам MOEX/SPB.
 - Bilingual switch works for all new components. / Переключатель языков работает для всех новых компонентов.
 
 ## Minimum Test Strategy / Минимальная стратегия тестирования

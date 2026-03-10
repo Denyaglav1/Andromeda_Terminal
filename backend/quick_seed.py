@@ -9,10 +9,10 @@ sys.path.append(project_root)
 sys.path.append(backend_dir)
 
 try:
+    from backend import database, models
+except ImportError:
     import database
     import models
-except ImportError:
-    from backend import database, models
 
 def quick_seed():
     print("--- Quick Seed Start ---")

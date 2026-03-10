@@ -87,7 +87,7 @@ const GlobalHeader = () => (
             </Group>
             <div className={cl.tickerBadge}>
                 <Text size="xs" fw={700}>Ticker</Text>
-                <Text size="xs" fw={700} color="#10b981">3 123,43 ₽ +0,65%</Text>
+                <Text size="xs" fw={700} c="#10b981">3 123,43 ₽ +0,65%</Text>
                 <TrendingUp size={12} color="#10b981" />
             </div>
         </Group>
@@ -100,7 +100,7 @@ const GlobalHeader = () => (
         <Group gap="md">
             <Group gap={4}>
                 <ActionIcon variant="transparent" color="blue"><TrendingUp size={16} /></ActionIcon>
-                <Text size="xs" fw={600} color="blue">ЭЙЛЕР</Text>
+                <Text size="xs" fw={600} c="blue">ЭЙЛЕР</Text>
             </Group>
             <Group gap={4}>
                 <ActionIcon variant="transparent" color="#5A8CFF"><ArrowUpRight size={16} /></ActionIcon>
@@ -158,7 +158,7 @@ export function CompanyPage() {
             columns.push({
                 id: f.period, header: f.period, align: 'right', width: 100,
                 render: (val, row) => (
-                    <Text size="xs" fw={f.period.includes('Q') ? 700 : 400} color={f.period.includes('Q') ? '#10b981' : undefined}>
+                    <Text size="xs" fw={f.period.includes('Q') ? 700 : 400} c={f.period.includes('Q') ? '#10b981' : undefined}>
                         {val != null ? val.toLocaleString('ru-RU') : '-'}
                     </Text>
                 )
@@ -171,7 +171,7 @@ export function CompanyPage() {
         { id: 'ticker', header: 'Тикер', sticky: true, width: 120, render: (val) => <Text size="xs" className={cl.linkStyle} fw={600}>{val}</Text> },
         { id: 'currency', header: 'Валюта', width: 80, align: 'center' },
         { id: 'volume', header: 'Объем', align: 'right', render: (val) => val.toLocaleString('ru-RU') },
-        { id: 'yield_val', header: 'Дох-ть, %', align: 'right', render: (val) => <Text size="xs" color="#10b981">{val.toFixed(2).replace('.', ',')}</Text> },
+        { id: 'yield_val', header: 'Дох-ть, %', align: 'right', render: (val) => <Text size="xs" c="#10b981">{val.toFixed(2).replace('.', ',')}</Text> },
         { id: 'current_yield', header: 'Текущая дох-ть, %', align: 'right', render: () => '97,15' },
         { id: 'duration', header: 'Дюрация', align: 'right', render: (val) => val.toFixed(2) },
         { id: 'coupon', header: 'Купон, %', align: 'right', render: (val) => val.toFixed(2) },
@@ -220,13 +220,13 @@ export function CompanyPage() {
                                         <Group gap={8}>
                                             <Text size="xs" fw={700}>SBER</Text>
                                             <div style={{ width: 24, height: 2, background: '#5A8CFF' }} />
-                                            <Text size="xs" color="#8a94a6">747,5</Text>
-                                            <Text size="xs" color="#5A8CFF">305,4</Text>
+                                            <Text size="xs" c="#8a94a6">747,5</Text>
+                                            <Text size="xs" c="#5A8CFF">305,4</Text>
                                         </Group>
                                         <Group gap={8}>
                                             <Text size="xs" fw={700}>SBERP</Text>
                                             <div style={{ width: 24, height: 2, background: '#ef4444' }} />
-                                            <Text size="xs" color="#8a94a6">305,1</Text>
+                                            <Text size="xs" c="#8a94a6">305,1</Text>
                                         </Group>
                                     </Group>
                                     <ActionIcon variant="subtle" size="sm"><ChevronDown size={14} /></ActionIcon>

@@ -7,11 +7,22 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
-    from backend.database import SessionLocal, engine
-    from backend.models import Company, CompanyFinancial, Bond, CompanyIndicator, Base
+    from backend import database
 except ImportError:
-    from database import SessionLocal, engine
-    from models import Company, CompanyFinancial, Bond, CompanyIndicator, Base
+    import database
+
+try:
+    from backend import models
+except ImportError:
+    import models
+
+SessionLocal = database.SessionLocal
+engine = database.engine
+Company = models.Company
+CompanyFinancial = models.CompanyFinancial
+Bond = models.Bond
+CompanyIndicator = models.CompanyIndicator
+Base = models.Base
 
 def seed_data():
     print("Starting seed_data...")
@@ -93,7 +104,7 @@ def seed_data():
         ) )
 
         # 2. GENERATE OTHER COMPANIES (Expanded to 40 total)
-        others = [
+        others: list[tuple[str, str, str, str]] = [
             ("GAZP", "Газпром", "Energy", "#003DA5"),
             ("LKOH", "ЛУКОЙЛ", "Energy", "#E30611"),
             ("ROSN", "Роснефть", "Energy", "#FFCA30"),

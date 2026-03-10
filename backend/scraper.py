@@ -30,7 +30,7 @@ KNOWN_INDICES = [
     "SPBIRUS", "SPBIRUS2", "SPBISEC", "SPBISEM", "SPBISEM10", "SPBISI"
 ]
 
-def spb_get(url: str, params: dict = None):
+def spb_get(url: str, params: dict | None = None):
     try:
         # If params is None, httpx handles it, but let's be explicit for the linter
         request_params = params if params is not None else {}
@@ -198,6 +198,7 @@ def update_db_with_scrape(db: Session):
         save_documents(db, db_ticker.id, ticker_code)
         
         db.commit() # Commit after each ticker to save progress
+
 def run_scrape_job():
     db = SessionLocal()
     try:
