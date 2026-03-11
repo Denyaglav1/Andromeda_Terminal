@@ -734,6 +734,7 @@ function CustomDropdownDetails() {
 
 /* ── Editable Table Demo (used inside TableDetails) ── */
 function EditableTableDemoSection() {
+  const [rowH, setRowH] = useState(40);
   const [editValues, setEditValues] = useState<Record<string, Record<string, string>>>({
     brent: { '2025': '72.40', '2026F': '78.50', '2027F': '82.10', '2028F': '' },
     usd_rub: { '2025': '92.80', '2026F': '95.00', '2027F': '', '2028F': '' },
@@ -795,8 +796,15 @@ function EditableTableDemoSection() {
   return (
     <DocSection title="Editable Table (DSTableCellEditable)" description="Вариант таблицы с инлайн-редактируемыми ячейками для ввода данных (сценарный анализ, драйверы). Исторические колонки — read-only, прогнозные — редактируемые. Ручные правки подсвечиваются оранжевым (highlighted). Высота инпута 24px, текст 12px, выравнивание по правому краю, tabular-nums.">
       <DocPreview>
+        <div style={{ marginBottom: 12 }}>
+          <DSTabs size="xs" value={String(rowH)} onChange={v => setRowH(Number(v))}>
+            <DSTab value="24">24px</DSTab>
+            <DSTab value="32">32px</DSTab>
+            <DSTab value="40">40px</DSTab>
+          </DSTabs>
+        </div>
         <div className={s.tableWrap}>
-          <DSTable columns={editCols} data={editData} rowKeyField="id" stickyFirstColumn />
+          <DSTable columns={editCols} data={editData} rowKeyField="id" stickyFirstColumn rowHeight={rowH} />
         </div>
       </DocPreview>
       <div className={s.spacer4} />
@@ -945,6 +953,7 @@ const RICH_DATA = [
 ];
 
 function RichCellsTableSection() {
+  const [rowH, setRowH] = useState(40);
   const [ratings, setRatings] = useState<Record<string, string>>({
     '1': '5', '2': '3', '3': '5', '4': '4', '5': '3', '6': '5', '7': '2',
   });
@@ -1014,8 +1023,15 @@ function RichCellsTableSection() {
       description="Расширенные ячейки с компонентами из дизайн-системы. Двустрочная ячейка с аватаром (логотип компании через цветной инициал): Title 14px/500 + Subtitle 12px/gray-6. Статус консенсуса — DSBadge variant=pill. Управляемый рейтинг аналитика — DSSelect size=xs. Метки сектора — DSTag size=sm. Sticky-колонка по-прежнему поддерживает все перечисленные возможности."
     >
       <DocPreview>
+        <div style={{ marginBottom: 12 }}>
+          <DSTabs size="xs" value={String(rowH)} onChange={v => setRowH(Number(v))}>
+            <DSTab value="24">24px</DSTab>
+            <DSTab value="32">32px</DSTab>
+            <DSTab value="40">40px</DSTab>
+          </DSTabs>
+        </div>
         <div className={s.tableWrap}>
-          <DSTable columns={columns} data={RICH_DATA} rowKeyField="id" stickyFirstColumn />
+          <DSTable columns={columns} data={RICH_DATA} rowKeyField="id" stickyFirstColumn rowHeight={rowH} />
         </div>
       </DocPreview>
       <div className={s.spacer4} />
@@ -1054,6 +1070,23 @@ function RichCellsTableSection() {
   ),
 }`}</DocCode>
     </DocSection>
+  );
+}
+
+/* ── Row height tabs wrapper ── */
+function TableHeightDemo({ children }: { children: (rowHeight: number) => React.ReactNode }) {
+  const [h, setH] = useState(40);
+  return (
+    <div>
+      <div style={{ marginBottom: 12 }}>
+        <DSTabs size="xs" value={String(h)} onChange={v => setH(Number(v))}>
+          <DSTab value="24">24px</DSTab>
+          <DSTab value="32">32px</DSTab>
+          <DSTab value="40">40px</DSTab>
+        </DSTabs>
+      </div>
+      {children(h)}
+    </div>
   );
 }
 
@@ -1154,13 +1187,17 @@ function TableDetails() {
     <div>
       <DocSection title="Grouped Table with Forecast" description="CSS Grid layout. Группировка, сортировка, sticky-колонки, прогнозные ячейки.">
         <DocPreview>
-          <DSTable columns={columns} data={groups} grouped rowKeyField="id" stickyFirstColumn compact />
+          <TableHeightDemo>
+            {(h) => <DSTable columns={columns} data={groups} grouped rowKeyField="id" stickyFirstColumn rowHeight={h} />}
+          </TableHeightDemo>
         </DocPreview>
       </DocSection>
 
       <DocSection title="Percentage Change Indicator" description="Компонент DSTableCellPctChange отображает процентное изменение период-к-периоду со стрелкой динамики. Зелёная ▲ для роста, красная ▼ для снижения. Текст процента серый (gray-6).">
         <DocPreview>
-          <DSTable columns={pctColumns} data={pctData} rowKeyField="id" stickyFirstColumn />
+          <TableHeightDemo>
+            {(h) => <DSTable columns={pctColumns} data={pctData} rowKeyField="id" stickyFirstColumn rowHeight={h} />}
+          </TableHeightDemo>
         </DocPreview>
       </DocSection>
 
@@ -1171,9 +1208,13 @@ function TableDetails() {
         description="Используй stickyFirstColumn когда в таблице много колонок и нужен горизонтальный скролл. Первая колонка фиксируется слева и не уходит за экран — пользователь всегда видит контекст строки. Оберни таблицу в контейнер с overflow-x: auto. Sticky-шапка работает автоматически через position: sticky; top: 0 на headerWrapper."
       >
         <DocPreview>
-          <div className={s.tableWrap}>
-            <DSTable columns={SCREENER_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn />
-          </div>
+          <TableHeightDemo>
+            {(h) => (
+              <div className={s.tableWrap}>
+                <DSTable columns={SCREENER_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn rowHeight={h} />
+              </div>
+            )}
+          </TableHeightDemo>
         </DocPreview>
         <div className={s.spacer4} />
         <DocCode>{`// Оберни таблицу в overflow-контейнер
@@ -1194,9 +1235,13 @@ function TableDetails() {
         description="stickyEnd фиксирует колонку справа — удобно для колонки действий (⋮ меню, кнопки). Колонка всегда видна при горизонтальном скролле. Задай stickyEnd: true и stickyEndOffset: 0 в описании колонки. Фон sticky-ячеек автоматически непрозрачный, чтобы контент под ними не просвечивал."
       >
         <DocPreview>
-          <div className={s.tableWrap}>
-            <DSTable columns={STICKY_RIGHT_COLS} data={SCREENER_DATA} rowKeyField="id" />
-          </div>
+          <TableHeightDemo>
+            {(h) => (
+              <div className={s.tableWrap}>
+                <DSTable columns={STICKY_RIGHT_COLS} data={SCREENER_DATA} rowKeyField="id" rowHeight={h} />
+              </div>
+            )}
+          </TableHeightDemo>
         </DocPreview>
         <div className={s.spacer4} />
         <DocCode>{`{
@@ -1212,9 +1257,13 @@ function TableDetails() {
         description="Проп zebra добавляет чередование фона строк — нечётные строки получают слегка осветлённый фон. Sticky-колонки всегда принимают фон соответствующей строки (прозрачный или zebra), не выбиваясь из ритма таблицы. При горизонтальном скролле sticky-ячейки получают непрозрачный фон, чтобы контент под ними не просвечивал."
       >
         <DocPreview>
-          <div className={s.tableWrap}>
-            <DSTable columns={SCREENER_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn zebra />
-          </div>
+          <TableHeightDemo>
+            {(h) => (
+              <div className={s.tableWrap}>
+                <DSTable columns={SCREENER_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn zebra rowHeight={h} />
+              </div>
+            )}
+          </TableHeightDemo>
         </DocPreview>
         <div className={s.spacer4} />
         <DocCode>{`<DSTable
@@ -1232,9 +1281,13 @@ function TableDetails() {
         description="Можно зафиксировать колонку одновременно слева (sticky: true или stickyFirstColumn) и справа (stickyEnd: true). Типичный сценарий: слева — идентификатор строки (тикер, название), справа — колонка действий. При скролле между ними видно содержимое таблицы, обе крайние колонки остаются на месте."
       >
         <DocPreview>
-          <div className={s.tableWrap}>
-            <DSTable columns={BOTH_STICKY_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn />
-          </div>
+          <TableHeightDemo>
+            {(h) => (
+              <div className={s.tableWrap}>
+                <DSTable columns={BOTH_STICKY_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn rowHeight={h} />
+              </div>
+            )}
+          </TableHeightDemo>
         </DocPreview>
         <div className={s.spacer4} />
         <DocCode>{`const columns: DSTableColumn[] = [

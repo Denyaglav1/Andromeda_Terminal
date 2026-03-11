@@ -129,6 +129,8 @@ export interface DSTableProps<T = any> {
   compact?: boolean;
   hoverHighlight?: boolean;
   zebra?: boolean;
+  /** Override row height in px. Overrides compact. */
+  rowHeight?: number;
 }
 
 /* ═══════════ Helpers ═══════════ */
@@ -188,6 +190,7 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
   compact = false,
   hoverHighlight = true,
   zebra = false,
+  rowHeight: rowHeightProp,
 }: DSTableProps<T>) {
   /* Scroll tracking for sticky column shadow */
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -250,7 +253,7 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
   const gridStyle: CSSProperties = useMemo(() => ({ display: 'grid', gridTemplateColumns: gridTemplate }), [gridTemplate]);
 
   /* Row height */
-  const rowH = compact ? 28 : 48;
+  const rowH = rowHeightProp ?? (compact ? 28 : 48);
 
   /* Sticky helper */
   const stickyProps = useCallback((colIdx: number, isHeader: boolean): CSSProperties | undefined => {
