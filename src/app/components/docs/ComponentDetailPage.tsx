@@ -799,8 +799,6 @@ function EditableTableDemoSection() {
       <DocPreview>
         <div style={{ marginBottom: 12 }}>
           <DSTabs size="xs" value={String(rowH)} onChange={v => setRowH(Number(v))}>
-            <DSTab value="24">24px</DSTab>
-            <DSTab value="32">32px</DSTab>
             <DSTab value="40">40px</DSTab>
             <DSTab value="48">48px</DSTab>
           </DSTabs>
@@ -1011,8 +1009,6 @@ function RichCellsTableSection() {
       <DocPreview>
         <div style={{ marginBottom: 12 }}>
           <DSTabs size="xs" value={String(rowH)} onChange={v => setRowH(Number(v))}>
-            <DSTab value="24">24px</DSTab>
-            <DSTab value="32">32px</DSTab>
             <DSTab value="40">40px</DSTab>
             <DSTab value="48">48px</DSTab>
           </DSTabs>
