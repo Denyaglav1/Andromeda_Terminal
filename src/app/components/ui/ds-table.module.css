@@ -1,5 +1,10 @@
 /* ds-table CSS Module — replaces cn() patterns */
 
+/* ── Zebra striping ── */
+.zebraOdd {
+  background-color: var(--ds-table-zebra-odd);
+}
+
 /* ── Sort arrows container ── */
 .sortArrows {
   position: relative;
@@ -61,6 +66,8 @@
   padding-top: 6px;
   padding-bottom: 6px;
   position: relative;
+  overflow: hidden;
+  min-width: 0;
 }
 
 /* ── Row ── */
@@ -186,6 +193,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 
 /* ── Header wrapper ── */
@@ -230,6 +238,7 @@
 /* ── Table root ── */
 .tableRoot {
   width: 100%;
+  overflow-x: auto;
 }
 
 /* ── Empty state ── */
@@ -251,6 +260,10 @@
   line-height: 20px;
   color: var(--ds-gray-6, #677C9C);
   font-feature-settings: 'lnum', 'tnum';
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 /* ── Cell text: forecast ── */
@@ -260,6 +273,10 @@
   font-size: 14px;
   line-height: 20px;
   font-feature-settings: 'lnum', 'tnum';
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 /* ── Cell text: regular value ── */
@@ -270,6 +287,10 @@
   line-height: 20px;
   color: var(--ds-text-primary, #E0E1E2);
   font-feature-settings: 'lnum', 'tnum';
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 /* ── Sub-components ── */
@@ -279,6 +300,8 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  min-width: 0;
+  overflow: hidden;
 }
 .tickerIcon {
   flex-shrink: 0;
@@ -292,6 +315,9 @@
   line-height: 20px;
   color: var(--ds-blue-6, #5A8CFF);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
   font-feature-settings: 'lnum', 'tnum';
 }
 

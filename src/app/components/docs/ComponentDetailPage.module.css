@@ -139,9 +139,9 @@
 
 /* ── Table wrapper ── */
 .tableWrap {
-  overflow-x: auto;
   border-radius: 8px;
   border: 1px solid var(--ds-border-primary, #2A2E39);
+  overflow: hidden;
 }
 
 /* ── Empty state ── */

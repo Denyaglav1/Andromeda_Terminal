@@ -2,6 +2,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useRef,
   type ReactNode,
   type CSSProperties,
 } from 'react';
@@ -26,8 +27,10 @@ const FORECAST_CELL_BG = 'var(--ds-table-forecast-cell-bg, #151b27)';
 const SORT_BG       = 'rgba(90, 140, 255, 0.06)';
 const SORT_HEADER_BG = 'rgba(90, 140, 255, 0.12)';
 const TABLE_HEADER_BG = 'var(--ds-table-header-bg, #2f3441)';
-const TABLE_STICKY_BG = 'var(--ds-table-sticky-bg, #10141D)';
+const TABLE_STICKY_BG = 'var(--ds-bg-primary, #131722)';
 const TABLE_SORTED_STICKY_BG = 'var(--ds-table-sorted-sticky-bg, #343a52)';
+const ZEBRA_ODD_BG = 'var(--ds-table-zebra-odd)';
+const ZEBRA_ODD_STICKY_BG = 'var(--ds-table-zebra-odd-sticky)';
 
 /* ── Sort direction arrows ── */
 
@@ -125,6 +128,7 @@ export interface DSTableProps<T = any> {
   showLastBorder?: boolean;
   compact?: boolean;
   hoverHighlight?: boolean;
+  zebra?: boolean;
 }
 
 /* ═══════════ Helpers ═══════════ */
@@ -183,7 +187,15 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
   showLastBorder = false,
   compact = false,
   hoverHighlight = true,
+  zebra = false,
 }: DSTableProps<T>) {
+  /* Scroll tracking for sticky column shadow */
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const handleScroll = useCallback(() => {
+    if (scrollRef.current) setIsScrolled(scrollRef.current.scrollLeft > 0);
+  }, []);
+
   /* Sort */
   const [intSortCol, setIntSortCol] = useState<string | null>(null);
   const [intSortDir, setIntSortDir] = useState<SortDirection>('asc');
@@ -288,11 +300,15 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
         const isForecast = col.forecast;
         const hasBorderLeft = col.groupBorderLeft || (col.group && ci > 0 && columns[ci - 1].group !== col.group);
         const isHeaderSticky = col.sticky || (stickyFirstColumn && ci === 0) || col.stickyEnd;
+        const isHeaderStickyLeft = col.sticky || (stickyFirstColumn && ci === 0);
         /* Always opaque bg for header cells; use pre-computed opaque value for sorted */
         const bg = isSorted
           ? (isHeaderSticky ? TABLE_SORTED_STICKY_BG : SORT_HEADER_BG)
           : isMarked ? 'var(--ds-bg-primary, #131722)'
           : isForecast ? FORECAST_HEADER_BG : TABLE_HEADER_BG;
+        const headerRightShadow = isScrolled && isHeaderStickyLeft
+          ? 'inset -1px 0 0 var(--ds-border-primary, #2A2E39)'
+          : undefined;
 
         const alignCls = col.align === 'right' ? tblStyles.justifyEnd
           : col.align === 'center' ? tblStyles.justifyCenter : tblStyles.justifyStart;
@@ -302,7 +318,7 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
             className={cx(tblStyles.headerCell, alignCls,
               col.sortable && tblStyles.headerCellSortable,
               !isHeaderSticky && col.headerClassName)}
-            style={{ backgroundColor: bg, ...stickyProps(ci, true) }}
+            style={{ backgroundColor: bg, ...(headerRightShadow ? { boxShadow: headerRightShadow } : {}), ...stickyProps(ci, true) }}
             onClick={col.sortable ? () => handleSort(col.id) : undefined}
             role={col.sortable ? 'button' : undefined}
             tabIndex={col.sortable ? 0 : undefined}
@@ -314,10 +330,14 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
             )}
             <div aria-hidden="true" className={cx(tblStyles.headerBorder, hasBorderLeft && tblStyles.headerBorderLeft)} />
             <div className={tblStyles.headerContent}>
+              {/* For right-aligned columns put arrow before text so text stays flush-right */}
+              {col.sortable && col.align === 'right' && (
+                <SortArrows direction={dir} className={isSorted ? tblStyles.sortArrowsVisible : tblStyles.sortArrowsHidden} />
+              )}
               <span className={tblStyles.headerText}
                 style={{ color: col.forecast ? FORECAST_COLOR : 'var(--ds-text-primary, #E0E1E2)' }}
               >{col.header}</span>
-              {col.sortable && (
+              {col.sortable && col.align !== 'right' && (
                 <SortArrows direction={dir} className={isSorted ? tblStyles.sortArrowsVisible : tblStyles.sortArrowsHidden} />
               )}
             </div>
@@ -358,10 +378,23 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
     if (isSorted) bg = SORT_BG;
     else if (isMarked) bg = 'var(--ds-bg-primary, #131722)';
     else if (isForecast) bg = FORECAST_CELL_BG;
-    const isSticky = col.sticky || (stickyFirstColumn && colIdx === 0) || col.stickyEnd;
+    const isStickyLeft = col.sticky || (stickyFirstColumn && colIdx === 0);
+    const isStickyRight = col.stickyEnd;
+    const isSticky = isStickyLeft || isStickyRight;
+    const isOddZebra = zebra && rowIdx % 2 === 1;
 
-    // For sticky cells, always ensure an opaque base background
-    const stickyBaseBg = isSticky ? (bg || TABLE_STICKY_BG) : bg;
+    // Right sticky always needs opaque bg (content scrolls under from the left at any scroll position)
+    // Left sticky only needs opaque bg when scrolled (content arrives from right)
+    const needsOpaqueBg = isStickyRight || isScrolled;
+    const stickyFallback = needsOpaqueBg
+      ? (isOddZebra ? ZEBRA_ODD_STICKY_BG : TABLE_STICKY_BG)
+      : undefined;
+    const stickyBaseBg = isSticky ? (bg || stickyFallback) : bg;
+
+    // Right border on sticky-left cells when scrolled
+    const stickyRightShadow = isScrolled && isStickyLeft
+      ? 'inset -1px 0 0 var(--ds-border-primary, #2A2E39)'
+      : undefined;
 
     // Dynamic per-cell className / style
     const dynCls = col.getCellClassName ? col.getCellClassName(value, row, rowIdx) : '';
@@ -383,8 +416,8 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
 
     return (
       <div key={col.id}
-        className={cx(tblStyles.bodyCell, alignCls, col.cellClassName, dynCls)}
-        style={{ height: rowH, ...(stickyBaseBg ? { backgroundColor: stickyBaseBg } : {}), ...stickyProps(colIdx, false), ...dynRestStyle }}
+        className={cx(tblStyles.bodyCell, alignCls, col.cellClassName, dynCls, isOddZebra && !bg && (!isSticky || (!isScrolled && !isStickyRight)) && tblStyles.zebraOdd)}
+        style={{ height: rowH, ...(stickyBaseBg ? { backgroundColor: stickyBaseBg } : {}), ...(stickyRightShadow ? { boxShadow: stickyRightShadow } : {}), ...stickyProps(colIdx, false), ...dynRestStyle }}
       >
         {/* Overlay for semi-transparent backgrounds on sticky cells */}
         {dynOverlayBg && <div className={tblStyles.dynOverlay} style={{ backgroundColor: dynOverlayBg }} />}
@@ -438,7 +471,7 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
   };
 
   return (
-    <div className={cx(tblStyles.tableRoot, className)}>
+    <div ref={scrollRef} onScroll={handleScroll} className={cx(tblStyles.tableRoot, className)}>
       {renderHeader()}
       {renderBody()}
     </div>

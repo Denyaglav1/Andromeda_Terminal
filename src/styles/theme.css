@@ -316,6 +316,8 @@
   --ds-table-forecast-text: var(--ds-turquoise-6);   /* #45D3CE */
   --ds-table-sticky-bg: var(--ds-dark-7);            /* #10141D */
   --ds-table-sorted-sticky-bg: #343a52;
+  --ds-table-zebra-odd: rgba(255, 255, 255, 0.025);  /* subtle light overlay — dark theme */
+  --ds-table-zebra-odd-sticky: #181e2c;              /* opaque equiv for sticky cells — dark theme */
 
   /* Notification backgrounds */
   --ds-notification-error-bg: var(--ds-red-8);       /* #5B2635 */
@@ -396,6 +398,8 @@
   --ds-table-forecast-text: var(--ds-turquoise-8);       /* #27555E */
   --ds-table-sticky-bg: var(--ds-dark-0);           /* #FFFFFF */
   --ds-table-sorted-sticky-bg: var(--ds-blue-0);    /* #E7EFFF */
+  --ds-table-zebra-odd: rgba(0, 0, 0, 0.035);       /* subtle dark overlay — light theme */
+  --ds-table-zebra-odd-sticky: #EFF1F7;             /* opaque equiv for sticky cells — light theme */
 
   /* Notification backgrounds — light */
   --ds-notification-error-bg: var(--ds-red-0);       /* #FCE3E4 */

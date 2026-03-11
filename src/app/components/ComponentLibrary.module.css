@@ -73,6 +73,12 @@
   overflow: hidden;
 }
 
+.tableScrollBox {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
 .flexColGap2Full {
   display: flex;
   flex-direction: column;

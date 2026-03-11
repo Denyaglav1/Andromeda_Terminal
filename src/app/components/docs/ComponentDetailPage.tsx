@@ -7,7 +7,7 @@ import { DSInput } from '../ui/ds-input';
 import { DSCheckbox } from '../ui/ds-checkbox';
 import { DSTabs, DSTab } from '../ui/ds-tabs';
 import { DSSegmentButton, DSSegment } from '../ui/ds-segment-button';
-import { DSTable, DSTableCellEditable, DSTableCellNumber, DSTableCellPctChange, type DSTableColumn, type DSTableRowGroup } from '../ui/ds-table';
+import { DSTable, DSTableCellEditable, DSTableCellNumber, DSTableCellPctChange, DSTableCellTicker, DSTableCellPrice, type DSTableColumn, type DSTableRowGroup } from '../ui/ds-table';
 import { DSSelect } from '../ui/ds-select';
 import { Notification, notify } from '../ui/notification';
 import {
@@ -831,6 +831,267 @@ function EditableTableDemoSection() {
   );
 }
 
+/* ── Shared data for scroll/sticky/zebra examples ── */
+const SCREENER_COLS: DSTableColumn[] = [
+  { id: 'ticker',      header: 'Тикер',       align: 'left',  width: 90,  sticky: true,
+    render: (v: any) => <DSTableCellTicker>{v}</DSTableCellTicker>,
+  },
+  { id: 'name',        header: 'Компания',    align: 'left',  width: 150 },
+  { id: 'price',       header: 'Цена',        align: 'right', width: 95,  sortable: true, sortType: 'number',
+    render: (v: any, row: any) => <DSTableCellPrice value={v} trend={row.trend} />,
+  },
+  { id: 'chg1d',       header: '1д, %',      align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'chg1w',       header: '1н, %',      align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'chg1m',       header: '1м, %',      align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'chg1y',       header: '1г, %',      align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'mktcap',      header: 'Кап, млрд',  align: 'right', width: 105, sortable: true, sortType: 'number' },
+  { id: 'revenue',     header: 'Выр, млрд',  align: 'right', width: 105, sortable: true, sortType: 'number' },
+  { id: 'pe',          header: 'P/E',         align: 'right', width: 75,  sortable: true, sortType: 'number' },
+  { id: 'pb',          header: 'P/B',         align: 'right', width: 75,  sortable: true, sortType: 'number' },
+  { id: 'ev_ebitda',   header: 'EV/EBITDA',   align: 'right', width: 100, sortable: true, sortType: 'number' },
+  { id: 'ebitda_margin', header: 'EBITDA%',   align: 'right', width: 90,  sortable: true, sortType: 'number' },
+  { id: 'div',         header: 'Дивиденд',    align: 'right', width: 95,  sortable: true, sortType: 'number' },
+  { id: 'roe',         header: 'ROE, %',      align: 'right', width: 85,  sortable: true, sortType: 'number' },
+  { id: 'sector',      header: 'Сектор',      align: 'left',  width: 120 },
+];
+const SCREENER_DATA = [
+  { id: '1', ticker: 'SBER', name: 'Сбербанк',         price: 297.5,  trend: 'up',   chg1d:  1.2, chg1w:  3.1, chg1m:  8.4, chg1y:  22.1, mktcap: 6700, revenue: 3200, pe:  4.8, pb: 0.9, ev_ebitda:  3.2, ebitda_margin: 58.2, div:  6.8, roe: 21.4, sector: 'Финансы' },
+  { id: '2', ticker: 'GAZP', name: 'Газпром',           price: 148.3,  trend: 'down', chg1d: -0.8, chg1w: -2.4, chg1m: -5.1, chg1y: -18.3, mktcap: 3500, revenue: 8900, pe:  3.1, pb: 0.4, ev_ebitda:  2.1, ebitda_margin: 24.1, div:  5.2, roe: 12.1, sector: 'Энергетика' },
+  { id: '3', ticker: 'LKOH', name: 'ЛУКОЙЛ',            price: 7180.0, trend: 'up',   chg1d:  0.5, chg1w:  1.8, chg1m:  4.2, chg1y:  14.7, mktcap: 4900, revenue: 7600, pe:  5.6, pb: 1.1, ev_ebitda:  3.8, ebitda_margin: 18.4, div:  9.4, roe: 19.8, sector: 'Энергетика' },
+  { id: '4', ticker: 'YNDX', name: 'Яндекс',            price: 4250.0, trend: 'up',   chg1d:  2.1, chg1w:  5.6, chg1m: 12.3, chg1y:  41.2, mktcap: 1600, revenue:  890, pe: 28.4, pb: 4.2, ev_ebitda: 15.1, ebitda_margin: 22.6, div:  0.0, roe: 14.3, sector: 'Технологии' },
+  { id: '5', ticker: 'GMKN', name: 'Норильский никель', price: 13100,  trend: 'down', chg1d: -1.4, chg1w: -3.2, chg1m: -7.8, chg1y:  -9.4, mktcap: 2000, revenue: 1450, pe:  8.2, pb: 3.6, ev_ebitda:  5.4, ebitda_margin: 49.3, div: 11.2, roe: 42.1, sector: 'Металлы' },
+  { id: '6', ticker: 'NVTK', name: 'НоваТЭК',           price: 975.6,  trend: 'up',   chg1d:  0.3, chg1w:  0.9, chg1m:  2.1, chg1y:   8.5, mktcap: 2900, revenue: 1200, pe:  6.1, pb: 1.8, ev_ebitda:  4.2, ebitda_margin: 42.1, div:  4.1, roe: 28.7, sector: 'Энергетика' },
+  { id: '7', ticker: 'ROSN', name: 'Роснефть',          price: 512.4,  trend: 'down', chg1d: -0.5, chg1w: -1.1, chg1m:  0.8, chg1y:   5.2, mktcap: 5400, revenue: 9100, pe:  4.3, pb: 0.8, ev_ebitda:  3.1, ebitda_margin: 21.8, div:  7.6, roe: 18.2, sector: 'Энергетика' },
+  { id: '8', ticker: 'MGNT', name: 'Магнит',            price: 4820.0, trend: 'up',   chg1d:  0.7, chg1w:  2.3, chg1m:  6.1, chg1y:  17.9, mktcap:  490, revenue: 2300, pe:  9.8, pb: 2.1, ev_ebitda:  6.2, ebitda_margin: 11.4, div:  8.1, roe: 22.6, sector: 'Потребление' },
+];
+const STICKY_RIGHT_COLS: DSTableColumn[] = [
+  { id: 'ticker',    header: 'Тикер',      align: 'left',  width: 90 },
+  { id: 'name',      header: 'Компания',   align: 'left',  width: 150 },
+  { id: 'price',     header: 'Цена',       align: 'right', width: 95,  sortable: true, sortType: 'number' },
+  { id: 'chg1d',     header: '1д, %',     align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'chg1w',     header: '1н, %',     align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'chg1m',     header: '1м, %',     align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'mktcap',    header: 'Кап, млрд', align: 'right', width: 105, sortable: true, sortType: 'number' },
+  { id: 'pe',        header: 'P/E',        align: 'right', width: 75,  sortable: true, sortType: 'number' },
+  { id: 'ev_ebitda', header: 'EV/EBITDA',  align: 'right', width: 100, sortable: true, sortType: 'number' },
+  { id: 'div',       header: 'Дивиденд',   align: 'right', width: 95,  sortable: true, sortType: 'number' },
+  { id: 'roe',       header: 'ROE, %',     align: 'right', width: 85,  sortable: true, sortType: 'number' },
+  { id: 'action',    header: '',           align: 'center', width: 52, stickyEnd: true, stickyEndOffset: 0,
+    render: () => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ cursor: 'pointer', color: 'var(--ds-gray-6,#677C9C)' }}>
+        <circle cx="8" cy="3"  r="1.3" fill="currentColor" />
+        <circle cx="8" cy="8"  r="1.3" fill="currentColor" />
+        <circle cx="8" cy="13" r="1.3" fill="currentColor" />
+      </svg>
+    ),
+  },
+];
+
+/* ── Company avatar (initials + color) for rich-cell demo ── */
+function CompanyAvatar({ ticker }: { ticker: string }) {
+  const PALETTE = ['#5A8CFF', '#45D3CE', '#089981', '#EA3943', '#F59E0B', '#A855F7', '#EC4899'];
+  const color = PALETTE[ticker.charCodeAt(0) % PALETTE.length];
+  return (
+    <div style={{
+      width: 28, height: 28, borderRadius: 6, flexShrink: 0,
+      background: color + '22', border: `1px solid ${color}55`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 11, fontWeight: 700, color, fontFamily: 'Inter, sans-serif',
+      letterSpacing: '-0.5px',
+    }}>
+      {ticker.slice(0, 2)}
+    </div>
+  );
+}
+
+const CONSENSUS_MAP: Record<string, { color: 'green' | 'blue' | 'orange' | 'red'; label: string }> = {
+  buy:         { color: 'green',  label: 'Покупать' },
+  overweight:  { color: 'blue',   label: 'Выше рынка' },
+  hold:        { color: 'orange', label: 'Держать' },
+  underweight: { color: 'red',    label: 'Ниже рынка' },
+  sell:        { color: 'red',    label: 'Продавать' },
+};
+
+const RATING_OPTIONS = [
+  { value: '1', label: 'Продавать' },
+  { value: '2', label: 'Ниже рынка' },
+  { value: '3', label: 'Держать' },
+  { value: '4', label: 'Выше рынка' },
+  { value: '5', label: 'Покупать' },
+];
+
+const RICH_DATA = [
+  { id: '1', ticker: 'SBER', name: 'Сбербанк',         sector: 'Финансы',     consensus: 'buy',         analysts: 18, target: 340,   upside: 14.3, tags: ['Дивиденды', 'Топ-пик'] },
+  { id: '2', ticker: 'GAZP', name: 'Газпром',           sector: 'Энергетика',  consensus: 'hold',        analysts: 14, target: 145,   upside: -2.2, tags: ['Газ'] },
+  { id: '3', ticker: 'LKOH', name: 'ЛУКОЙЛ',            sector: 'Нефть и газ', consensus: 'buy',         analysts: 16, target: 8200,  upside: 14.2, tags: ['Дивиденды'] },
+  { id: '4', ticker: 'YNDX', name: 'Яндекс',            sector: 'Технологии',  consensus: 'overweight',  analysts: 12, target: 5100,  upside: 20.0, tags: ['Рост', 'Техно'] },
+  { id: '5', ticker: 'GMKN', name: 'Норильский никель', sector: 'Металлы',     consensus: 'hold',        analysts: 11, target: 12800, upside: -2.3, tags: ['Металлы'] },
+  { id: '6', ticker: 'NVTK', name: 'НоваТЭК',           sector: 'СПГ',         consensus: 'buy',         analysts: 13, target: 1150,  upside: 17.9, tags: ['СПГ', 'Дивиденды'] },
+  { id: '7', ticker: 'ROSN', name: 'Роснефть',          sector: 'Нефть и газ', consensus: 'underweight', analysts: 10, target: 490,   upside: -4.4, tags: ['Нефть'] },
+];
+
+function RichCellsTableSection() {
+  const [ratings, setRatings] = useState<Record<string, string>>({
+    '1': '5', '2': '3', '3': '5', '4': '4', '5': '3', '6': '5', '7': '2',
+  });
+
+  const columns: DSTableColumn[] = [
+    {
+      id: 'company', header: 'Компания', align: 'left', width: 210, sticky: true,
+      render: (_: any, row: any) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, overflow: 'hidden' }}>
+          <CompanyAvatar ticker={row.ticker} />
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ds-text-primary)', lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {row.name}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--ds-gray-6, #677C9C)', lineHeight: '16px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {row.sector}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: 'consensus', header: 'Консенсус', align: 'left', width: 130,
+      render: (v: any) => {
+        const cfg = CONSENSUS_MAP[v as string];
+        if (!cfg) return null;
+        return <DSBadge variant="pill" color={cfg.color} size="s">{cfg.label}</DSBadge>;
+      },
+    },
+    {
+      id: 'analysts', header: 'Аналитики', align: 'right', width: 100, sortable: true, sortType: 'number',
+    },
+    {
+      id: 'target', header: 'Цель, ₽', align: 'right', width: 100, sortable: true, sortType: 'number',
+    },
+    {
+      id: 'upside', header: 'Потенциал', align: 'right', width: 105, sortable: true, sortType: 'number',
+      getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+      render: (v: any) => <span>{v >= 0 ? '+' : ''}{v}%</span>,
+    },
+    {
+      id: 'rating', header: 'Рейтинг', align: 'left', width: 155,
+      render: (_: any, row: any) => (
+        <DSSelect
+          value={ratings[row.id] || ''}
+          onChange={(v) => setRatings(prev => ({ ...prev, [row.id]: v }))}
+          options={RATING_OPTIONS}
+          size="xs"
+        />
+      ),
+    },
+    {
+      id: 'tags', header: 'Теги', align: 'left', flex: true, minWidth: '120px',
+      render: (_: any, row: any) => (
+        <div style={{ display: 'flex', gap: 4, overflow: 'hidden' }}>
+          {(row.tags as string[]).map((tag: string) => (
+            <DSTag key={tag} size="sm">{tag}</DSTag>
+          ))}
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <DocSection
+      title="Rich Cells — Two-line, Badge, Select, Tags"
+      description="Расширенные ячейки с компонентами из дизайн-системы. Двустрочная ячейка с аватаром (логотип компании через цветной инициал): Title 14px/500 + Subtitle 12px/gray-6. Статус консенсуса — DSBadge variant=pill. Управляемый рейтинг аналитика — DSSelect size=xs. Метки сектора — DSTag size=sm. Sticky-колонка по-прежнему поддерживает все перечисленные возможности."
+    >
+      <DocPreview>
+        <div className={s.tableWrap}>
+          <DSTable columns={columns} data={RICH_DATA} rowKeyField="id" stickyFirstColumn />
+        </div>
+      </DocPreview>
+      <div className={s.spacer4} />
+      <DocCode>{`// Двустрочная ячейка с аватаром
+{ id: 'company', width: 210, sticky: true,
+  render: (_, row) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <CompanyAvatar ticker={row.ticker} />
+      <div>
+        <div style={{ fontSize: 14, fontWeight: 500 }}>{row.name}</div>
+        <div style={{ fontSize: 12, color: 'var(--ds-gray-6)' }}>{row.sector}</div>
+      </div>
+    </div>
+  ),
+},
+
+// Бейдж-консенсус
+{ id: 'consensus',
+  render: (v) => <DSBadge variant="pill" color={colorMap[v]} size="s">{labelMap[v]}</DSBadge>,
+},
+
+// Выпадающий список (управляемый)
+{ id: 'rating',
+  render: (_, row) => (
+    <DSSelect value={ratings[row.id]} onChange={(v) => setRatings(p => ({...p, [row.id]: v}))}
+      options={RATING_OPTIONS} size="xs" />
+  ),
+},
+
+// Теги
+{ id: 'tags',
+  render: (_, row) => (
+    <div style={{ display: 'flex', gap: 4 }}>
+      {row.tags.map(tag => <DSTag key={tag} size="sm">{tag}</DSTag>)}
+    </div>
+  ),
+}`}</DocCode>
+    </DocSection>
+  );
+}
+
+const BOTH_STICKY_COLS: DSTableColumn[] = [
+  { id: 'ticker',      header: 'Тикер',       align: 'left',  width: 90,  sticky: true,
+    render: (v: any) => <DSTableCellTicker>{v}</DSTableCellTicker>,
+  },
+  { id: 'name',        header: 'Компания',    align: 'left',  width: 150 },
+  { id: 'price',       header: 'Цена',        align: 'right', width: 95,  sortable: true, sortType: 'number',
+    render: (v: any, row: any) => <DSTableCellPrice value={v} trend={row.trend} />,
+  },
+  { id: 'chg1d',       header: '1д, %',      align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'chg1w',       header: '1н, %',      align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'chg1m',       header: '1м, %',      align: 'right', width: 80,  sortable: true, sortType: 'number',
+    getCellStyle: (v: any) => ({ color: v >= 0 ? 'var(--ds-green-5,#089981)' : 'var(--ds-red-5,#EA3943)' }),
+  },
+  { id: 'mktcap',      header: 'Кап, млрд',  align: 'right', width: 105, sortable: true, sortType: 'number' },
+  { id: 'pe',          header: 'P/E',         align: 'right', width: 75,  sortable: true, sortType: 'number' },
+  { id: 'pb',          header: 'P/B',         align: 'right', width: 75,  sortable: true, sortType: 'number' },
+  { id: 'ev_ebitda',   header: 'EV/EBITDA',   align: 'right', width: 100, sortable: true, sortType: 'number' },
+  { id: 'div',         header: 'Дивиденд',    align: 'right', width: 95,  sortable: true, sortType: 'number' },
+  { id: 'roe',         header: 'ROE, %',      align: 'right', width: 85,  sortable: true, sortType: 'number' },
+  { id: 'sector',      header: 'Сектор',      align: 'left',  width: 120 },
+  { id: 'action',      header: '',            align: 'center', width: 52, stickyEnd: true, stickyEndOffset: 0,
+    render: () => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ cursor: 'pointer', color: 'var(--ds-gray-6,#677C9C)' }}>
+        <circle cx="8" cy="3"  r="1.3" fill="currentColor" />
+        <circle cx="8" cy="8"  r="1.3" fill="currentColor" />
+        <circle cx="8" cy="13" r="1.3" fill="currentColor" />
+      </svg>
+    ),
+  },
+];
+
 function TableDetails() {
   const columns: DSTableColumn[] = [
     { id: 'name', header: 'Metric', align: 'left', width: 140, sticky: true, sortable: true, sortType: 'text' },
@@ -904,6 +1165,91 @@ function TableDetails() {
       </DocSection>
 
       <EditableTableDemoSection />
+
+      <DocSection
+        title="Sticky Left Column + Horizontal Scroll"
+        description="Используй stickyFirstColumn когда в таблице много колонок и нужен горизонтальный скролл. Первая колонка фиксируется слева и не уходит за экран — пользователь всегда видит контекст строки. Оберни таблицу в контейнер с overflow-x: auto. Sticky-шапка работает автоматически через position: sticky; top: 0 на headerWrapper."
+      >
+        <DocPreview>
+          <div className={s.tableWrap}>
+            <DSTable columns={SCREENER_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn />
+          </div>
+        </DocPreview>
+        <div className={s.spacer4} />
+        <DocCode>{`// Оберни таблицу в overflow-контейнер
+<div style={{ overflowX: 'auto' }}>
+  <DSTable
+    columns={columns}
+    data={data}
+    stickyFirstColumn   // фиксирует первую колонку слева
+  />
+</div>
+
+// В колонке: sticky: true вместо stickyFirstColumn
+{ id: 'ticker', header: 'Тикер', width: 90, sticky: true }`}</DocCode>
+      </DocSection>
+
+      <DocSection
+        title="Sticky Right Column + Horizontal Scroll"
+        description="stickyEnd фиксирует колонку справа — удобно для колонки действий (⋮ меню, кнопки). Колонка всегда видна при горизонтальном скролле. Задай stickyEnd: true и stickyEndOffset: 0 в описании колонки. Фон sticky-ячеек автоматически непрозрачный, чтобы контент под ними не просвечивал."
+      >
+        <DocPreview>
+          <div className={s.tableWrap}>
+            <DSTable columns={STICKY_RIGHT_COLS} data={SCREENER_DATA} rowKeyField="id" />
+          </div>
+        </DocPreview>
+        <div className={s.spacer4} />
+        <DocCode>{`{
+  id: 'action', header: '', align: 'center', width: 60,
+  stickyEnd: true,        // фиксирует колонку справа
+  stickyEndOffset: 0,     // отступ от правого края
+  render: () => <ActionsMenu />,
+}`}</DocCode>
+      </DocSection>
+
+      <DocSection
+        title="Zebra Striping"
+        description="Проп zebra добавляет чередование фона строк — нечётные строки получают слегка осветлённый фон. Sticky-колонки всегда принимают фон соответствующей строки (прозрачный или zebra), не выбиваясь из ритма таблицы. При горизонтальном скролле sticky-ячейки получают непрозрачный фон, чтобы контент под ними не просвечивал."
+      >
+        <DocPreview>
+          <div className={s.tableWrap}>
+            <DSTable columns={SCREENER_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn zebra />
+          </div>
+        </DocPreview>
+        <div className={s.spacer4} />
+        <DocCode>{`<DSTable
+  columns={columns}
+  data={data}
+  stickyFirstColumn
+  zebra   // нечётные строки подсвечиваются; sticky-колонка совпадает с фоном строки
+/>`}</DocCode>
+      </DocSection>
+
+      <RichCellsTableSection />
+
+      <DocSection
+        title="Sticky Left + Sticky Right одновременно"
+        description="Можно зафиксировать колонку одновременно слева (sticky: true или stickyFirstColumn) и справа (stickyEnd: true). Типичный сценарий: слева — идентификатор строки (тикер, название), справа — колонка действий. При скролле между ними видно содержимое таблицы, обе крайние колонки остаются на месте."
+      >
+        <DocPreview>
+          <div className={s.tableWrap}>
+            <DSTable columns={BOTH_STICKY_COLS} data={SCREENER_DATA} rowKeyField="id" stickyFirstColumn />
+          </div>
+        </DocPreview>
+        <div className={s.spacer4} />
+        <DocCode>{`const columns: DSTableColumn[] = [
+  // Левая sticky — через stickyFirstColumn или sticky: true
+  { id: 'ticker', header: 'Тикер', width: 90, sticky: true },
+
+  // ... средние колонки скроллируются ...
+
+  // Правая sticky — через stickyEnd: true
+  { id: 'action', header: '', width: 52, stickyEnd: true, stickyEndOffset: 0,
+    render: () => <ActionsMenu /> },
+];
+
+<DSTable columns={columns} data={data} stickyFirstColumn />`}</DocCode>
+      </DocSection>
 
       <DocSection title="Features">
         <DocSpecTable rows={[
