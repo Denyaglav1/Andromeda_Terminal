@@ -1070,6 +1070,7 @@ function TableHeightDemo({ children }: { children: (rowHeight: number) => React.
           <DSTab value="24">24px</DSTab>
           <DSTab value="32">32px</DSTab>
           <DSTab value="40">40px</DSTab>
+          <DSTab value="48">48px</DSTab>
         </DSTabs>
       </div>
       {children(h)}

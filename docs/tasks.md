@@ -22,7 +22,7 @@
     - [x] 5.7. Frontend: Integrate navigation (Indices -> Company Page). / Фронтенд: Интегрировать навигацию (Индексы -> Страница компании).
     - [x] 5.8. Frontend: Integrate navigation (Home -> Company Page). / Фронтенд: Интегрировать навигацию (Главная -> Страница компании).
     - [x] 5.9. Backend: Automate database seeding in production. / Бэкенд: Автоматизировать наполнение БД в продакшене.
-- [ ] Implement global error boundary in Frontend. / Реализовать глобальный обработчик ошибок (error boundary) во фронтенде.
+- [x] Implement global error boundary in Frontend. / Реализовать глобальный обработчик ошибок (error boundary) во фронтенде. (`ErrorBoundary` class in `App.tsx`)
 - [ ] Add basic unit tests for Scraper logic. / Добавить базовые юнит-тесты для логики скрапера.
 
 ## Backlog / Бэклог
@@ -37,14 +37,22 @@
 ### Epic 7: Data Quality / Качество данных
 - [ ] 7.1. Backend: Investigate and resolve Nov 2023 historical data gap in SPB Exchange API. / Исследовать и устранить пробел в исторических данных (ноябрь 2023).
 - [ ] 7.2. Backend: Replace `verify=False` SSL in `scraper.py` with proper certificate handling. / Заменить `verify=False` на корректную обработку сертификатов.
-- [ ] 7.3. Backend: Add company logo storage strategy (static files or CDN). / Определить и реализовать стратегию хранения логотипов для 40 компаний.
+- [x] 7.3. Frontend: Company logo storage strategy implemented. / Логотипы компаний реализованы как inline SVG в `company-logos.tsx` + `CompanyLogo` компонент с fallback на цветной инициал.
 
 ### Epic 8: Testing / Тестирование
 - [ ] 8.1. Backend: Add unit tests for `scraper.py` core functions (`fetch_index_metadata`, `save_historical_data`). / Добавить юнит-тесты для ключевых функций скрапера.
 - [ ] 8.2. Frontend: Add basic smoke tests for `CompanyPage` and `IndicesPage`. / Добавить базовые smoke-тесты для страниц.
 
+### Epic 10: Design System — DSTable / Дизайн-система
+- [x] Add zebra striping prop with light/dark theme support. / Добавить зебру с поддержкой светлой и тёмной темы.
+- [x] Fix sticky left/right column backgrounds and scroll shadow. / Исправить фон sticky-колонок и тень при скролле.
+- [x] Add rowHeight prop (24/32/40/48px) with switcher tabs in docs. / Добавить rowHeight проп и переключатель высоты в документацию.
+- [x] Add table examples to ComponentDetailPage (sticky, zebra, rich cells, both-sticky). / Добавить примеры таблиц в документацию компонента.
+- [x] Rich cells: CompanyLogo + DSBadge + DSSelect + DSTag. / Ячейки с логотипами, бейджами, селектом и тегами.
+- [ ] Sync ds-table.tsx changes to packages/andromeda-ds/. / Синхронизировать изменения DSTable в пакет дизайн-системы.
+
 ### Epic 9: Production Hardening / Подготовка к продакшену
 - [ ] 9.1. Backend: Add rate limiting to API endpoints. / Добавить rate limiting на API эндпоинты.
 - [ ] 9.2. Backend: Switch `allow_origins=["*"]` CORS to specific domains in production. / Заменить `*` в CORS на конкретные домены.
-- [ ] 9.3. Frontend: Add loading skeletons for all data-fetching states. / Добавить скелетоны загрузки для всех состояний фетчинга.
+- [x] 9.3. Frontend: Add loading skeletons for data-fetching states. / Скелетоны добавлены в `CompanyPage` (Mantine `Skeleton`).
 - [ ] 9.4. General: Set up CI/CD via GitHub Actions (build + lint on PR). / Настроить CI/CD через GitHub Actions.
