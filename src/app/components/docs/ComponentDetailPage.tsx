@@ -39,6 +39,7 @@ import { DSMenu, DSMenuGroup, DSMenuItem } from '../ui/ds-menu';
 import { DSLegend } from '../ui/ds-legend';
 import { DSCalendar } from '../ui/ds-calendar';
 import { DSConfirmDialog } from '../ui/ds-confirm-dialog';
+import { CompanyLogo } from '../chart-builder/CompanyLogo';
 import s from './ComponentDetailPage.module.css';
 
 /* ═══════════════════════════════════════════════════════
@@ -801,6 +802,7 @@ function EditableTableDemoSection() {
             <DSTab value="24">24px</DSTab>
             <DSTab value="32">32px</DSTab>
             <DSTab value="40">40px</DSTab>
+            <DSTab value="48">48px</DSTab>
           </DSTabs>
         </div>
         <div className={s.tableWrap}>
@@ -909,22 +911,6 @@ const STICKY_RIGHT_COLS: DSTableColumn[] = [
   },
 ];
 
-/* ── Company avatar (initials + color) for rich-cell demo ── */
-function CompanyAvatar({ ticker }: { ticker: string }) {
-  const PALETTE = ['#5A8CFF', '#45D3CE', '#089981', '#EA3943', '#F59E0B', '#A855F7', '#EC4899'];
-  const color = PALETTE[ticker.charCodeAt(0) % PALETTE.length];
-  return (
-    <div style={{
-      width: 28, height: 28, borderRadius: 6, flexShrink: 0,
-      background: color + '22', border: `1px solid ${color}55`,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 11, fontWeight: 700, color, fontFamily: 'Inter, sans-serif',
-      letterSpacing: '-0.5px',
-    }}>
-      {ticker.slice(0, 2)}
-    </div>
-  );
-}
 
 const CONSENSUS_MAP: Record<string, { color: 'green' | 'blue' | 'orange' | 'red'; label: string }> = {
   buy:         { color: 'green',  label: 'Покупать' },
@@ -963,7 +949,7 @@ function RichCellsTableSection() {
       id: 'company', header: 'Компания', align: 'left', width: 210, sticky: true,
       render: (_: any, row: any) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, overflow: 'hidden' }}>
-          <CompanyAvatar ticker={row.ticker} />
+          <CompanyLogo ticker={row.ticker} size={28} />
           <div style={{ minWidth: 0, overflow: 'hidden' }}>
             <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ds-text-primary)', lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {row.name}
@@ -1028,6 +1014,7 @@ function RichCellsTableSection() {
             <DSTab value="24">24px</DSTab>
             <DSTab value="32">32px</DSTab>
             <DSTab value="40">40px</DSTab>
+            <DSTab value="48">48px</DSTab>
           </DSTabs>
         </div>
         <div className={s.tableWrap}>
