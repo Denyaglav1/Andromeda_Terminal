@@ -23,6 +23,82 @@ import {
     DSCustomDropdownItem
 } from '@denyaglav1/design-system';
 
+// ── Описания методологий расчётных индексов ──────────────────────────────────
+
+const METHODOLOGY: Record<string, { title: string; formula: string; components: string; rate: string; params: string; source: string }> = {
+    SPBICAR: {
+        title: 'SPBICAR — European Automakers Index',
+        formula: 'I_t = I_{t-1} × [1 + Exp_{t-1} × (PP_t/PP_{t-1} − 1) − Exp_{t-1} × (R_{t-1} × DC/360)]',
+        components: 'Mercedes-Benz (MBG.DE) · BMW (BMW.DE) · Volkswagen (VOW3.DE) · Porsche (PAH3.DE) — равные веса 25%',
+        rate: '3М EURIBOR (ECB Data Portal)',
+        params: 'Целевая волатильность: 10% / Макс. экспозиция: 150% / Окно волатильности: 20 дней',
+        source: 'Методика СПБ Биржи, приказ №1376 от 21.09.2022',
+    },
+    SPBIDGT: {
+        title: 'SPBIDGT — Digital Economy Index',
+        formula: 'I_t = I_{t-1} × [1 + Exp_{t-1} × (PP_t/PP_{t-1} − 1) − Exp_{t-1} × ((R_{t-1} + 0.61%) × DC/365)]',
+        components: 'Астра · Делимобиль · HeadHunter · МТС · Ozon · Positive Technologies · ТКС Холдинг · VK · Whoosh · Яндекс — равные веса 10%',
+        rate: 'RUONIA (ЦБ РФ SOAP API) + 61 bps',
+        params: 'Целевая волатильность: 15% / Макс. экспозиция: 100% / Окно волатильности: 20 дней',
+        source: 'Методика СПБ Биржи, приказ №338/2 от 04.12.2025',
+    },
+};
+
+function MethodologyPopover({ ticker }: { ticker: string }) {
+    const m = METHODOLOGY[ticker];
+    if (!m) return null;
+    return (
+        <Popover position="bottom-end" shadow="md" width={420}>
+            <Popover.Target>
+                <Group style={{
+                    gap: 6, cursor: 'pointer', padding: '6px 12px', borderRadius: 6,
+                    border: '1px solid var(--ds-border-primary)', backgroundColor: 'var(--ds-bg-primary)',
+                    userSelect: 'none',
+                }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-gray-dark)" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <Text style={{ fontSize: 13, color: 'var(--ds-text-primary)' }}>Методика</Text>
+                </Group>
+            </Popover.Target>
+            <Popover.Dropdown style={{ backgroundColor: 'var(--ds-bg-secondary)', border: '1px solid var(--ds-border-primary)', borderRadius: 10, padding: 20 }}>
+                <Stack gap={14}>
+                    <Text style={{ fontSize: 14, fontWeight: 700, color: 'var(--ds-text-primary)' }}>{m.title}</Text>
+
+                    <Stack gap={6}>
+                        <Text style={{ fontSize: 11, fontWeight: 600, color: 'var(--ds-text-gray-dark)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Формула</Text>
+                        <Box style={{ background: 'var(--ds-bg-primary)', borderRadius: 6, padding: '8px 12px', fontFamily: 'monospace', fontSize: 11, color: 'var(--ds-text-primary)', lineHeight: 1.6, wordBreak: 'break-word' }}>
+                            {m.formula}
+                        </Box>
+                        <Text style={{ fontSize: 11, color: 'var(--ds-text-gray-dark)' }}>
+                            PP — портфельная цена · Exp — экспозиция · R — ставка финансирования · DC — кол-во дней
+                        </Text>
+                    </Stack>
+
+                    <Stack gap={4}>
+                        <Text style={{ fontSize: 11, fontWeight: 600, color: 'var(--ds-text-gray-dark)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Состав</Text>
+                        <Text style={{ fontSize: 12, color: 'var(--ds-text-primary)', lineHeight: 1.6 }}>{m.components}</Text>
+                    </Stack>
+
+                    <Stack gap={4}>
+                        <Text style={{ fontSize: 11, fontWeight: 600, color: 'var(--ds-text-gray-dark)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Параметры</Text>
+                        <Text style={{ fontSize: 12, color: 'var(--ds-text-primary)', lineHeight: 1.7 }}>
+                            {m.params}<br />
+                            Ставка финансирования: {m.rate}
+                        </Text>
+                    </Stack>
+
+                    <Text style={{ fontSize: 11, color: 'var(--ds-text-gray-dark)', borderTop: '1px solid var(--ds-border-primary)', paddingTop: 10 }}>
+                        {m.source}
+                    </Text>
+                </Stack>
+            </Popover.Dropdown>
+        </Popover>
+    );
+}
+
 export function IndicesPage() {
     const { indices, loading: listLoading } = useIndicesList();
     const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
@@ -421,7 +497,39 @@ export function IndicesPage() {
                                         <DSSegment value="ALL">Все</DSSegment>
                                     </DSSegmentButton>
 
-                                    {/* Line visibility toggles — only for SPBICAR */}
+                                    {/* Выбрать диапазон — перенесён рядом с таймфреймами */}
+                                    <Popover position="bottom-start" shadow="md">
+                                        <Popover.Target>
+                                            <Group style={{
+                                                gap: '8px',
+                                                cursor: 'pointer',
+                                                padding: '6px 12px',
+                                                borderRadius: 6,
+                                                border: '1px solid var(--ds-border-primary)',
+                                                backgroundColor: 'var(--ds-bg-primary)'
+                                            }}>
+                                                <Box style={{ color: 'var(--ds-text-gray-dark)' }}>
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                                    </svg>
+                                                </Box>
+                                                <Text style={{ fontSize: 13 }}>
+                                                    {selectedDate ? selectedDate.toLocaleDateString('ru-RU') : 'Диапазон'}
+                                                </Text>
+                                            </Group>
+                                        </Popover.Target>
+                                        <Popover.Dropdown p={0} style={{ border: 'none', backgroundColor: 'transparent' }}>
+                                            <DSCalendar
+                                                value={selectedDate}
+                                                onChange={(d) => { setSelectedDate(d); }}
+                                            />
+                                        </Popover.Dropdown>
+                                    </Popover>
+
+                                    {/* Line visibility toggles — only for calc indices */}
                                     {isCalcIndex && (
                                         <Group gap={2} style={{ border: '1px solid var(--ds-border-primary)', borderRadius: 8, padding: '2px', display: 'flex' }}>
                                             <Box
@@ -464,38 +572,8 @@ export function IndicesPage() {
                                     )}
                                 </Group>
 
-                                <Popover position="bottom-end" shadow="md">
-                                    <Popover.Target>
-                                        <Group style={{
-                                            gap: '8px',
-                                            cursor: 'pointer',
-                                            padding: '6px 12px',
-                                            borderRadius: 6,
-                                            border: '1px solid var(--ds-border-primary)',
-                                            backgroundColor: 'var(--ds-bg-primary)'
-                                        }}>
-                                            <Box style={{ color: 'var(--ds-text-gray-dark)' }}>
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                                    <line x1="16" y1="2" x2="16" y2="6" />
-                                                    <line x1="8" y1="2" x2="8" y2="6" />
-                                                    <line x1="3" y1="10" x2="21" y2="10" />
-                                                </svg>
-                                            </Box>
-                                            <Text style={{ fontSize: 13 }}>
-                                                {selectedDate ? selectedDate.toLocaleDateString('ru-RU') : 'Выбрать диапазон'}
-                                            </Text>
-                                        </Group>
-                                    </Popover.Target>
-                                    <Popover.Dropdown p={0} style={{ border: 'none', backgroundColor: 'transparent' }}>
-                                        <DSCalendar
-                                            value={selectedDate}
-                                            onChange={(d) => {
-                                                setSelectedDate(d);
-                                            }}
-                                        />
-                                    </Popover.Dropdown>
-                                </Popover>
+                                {/* Методика расчёта — только для расчётных индексов */}
+                                {isCalcIndex && <MethodologyPopover ticker={selectedTicker!} />}
                             </Group>
 
                             <Box style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
