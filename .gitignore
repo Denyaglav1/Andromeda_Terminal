@@ -31,6 +31,18 @@ storybook-static/
 # Temp files
 *.local
 sql_app.db
+sql_app.db-journal
 
 # Figma sync state
 .figma-sync-state.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# PDF documents (methodology files, etc.)
+*.pdf
+
+# Local documents
+DocumentsSPB/

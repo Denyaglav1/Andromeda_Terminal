@@ -150,22 +150,30 @@ async def lifespan(app: FastAPI):
         replace_existing=True,
     )
 
-    # Schedule SPBICAR calculation daily at 22:00 (after European markets close)
+    # ── Реестр калькуляторов индексов ──────────────────────────────────────────
+    # Чтобы добавить новый индекс — достаточно добавить его сюда.
+    INDEX_CALC_JOBS: list[tuple[str, callable]] = [
+        ("SPBICAR", _run_spbicar_calc),
+        ("SPBIDGT", _run_spbidgt_calc),
+    ]
+
+    def _run_all_index_calcs():
+        for name, fn in INDEX_CALC_JOBS:
+            try:
+                fn()
+            except Exception as exc:
+                print(f"[{datetime.datetime.now()}] Ошибка пересчёта {name}: {exc}")
+
+    # Пересчёт всех индексов каждые 15 минут
     scheduler.add_job(
-        _run_spbicar_calc,
-        'cron',
-        hour=22,
-        minute=0,
-        id='spbicar_calc',
+        _run_all_index_calcs,
+        'interval',
+        minutes=15,
+        id='index_calc_all',
         replace_existing=True,
     )
-    # Run once on startup
-    scheduler.add_job(
-        _run_spbicar_calc,
-        trigger='date',
-        id='spbicar_calc_initial',
-        replace_existing=True,
-    )
+    # Первый запуск сразу при старте
+    scheduler.add_job(_run_all_index_calcs, trigger='date', id='index_calc_all_init', replace_existing=True)
 
     # ── MOEX: котировки каждые 5 минут в торговые часы (10:00–18:50 МСК) ──
     scheduler.add_job(
@@ -177,18 +185,7 @@ async def lifespan(app: FastAPI):
         id='moex_quotes',
         replace_existing=True,
     )
-    # Первый запуск котировок сразу
     scheduler.add_job(_run_moex_quotes, trigger='date', id='moex_quotes_init', replace_existing=True)
-
-    # ── SPBIDGT: ежедневно в 22:30 (после закрытия рынка MOEX) ──
-    scheduler.add_job(
-        _run_spbidgt_calc,
-        'cron',
-        hour=22, minute=30,
-        id='spbidgt_calc',
-        replace_existing=True,
-    )
-    scheduler.add_job(_run_spbidgt_calc, trigger='date', id='spbidgt_calc_init', replace_existing=True)
 
     # ── MOEX: дневная история — раз в день в 19:30 ──
     scheduler.add_job(
@@ -198,7 +195,6 @@ async def lifespan(app: FastAPI):
         id='moex_history',
         replace_existing=True,
     )
-    # История — при первом старте
     scheduler.add_job(_run_moex_history, trigger='date', id='moex_history_init', replace_existing=True)
 
     # ── MOEX: дивиденды — раз в неделю в воскресенье ──
