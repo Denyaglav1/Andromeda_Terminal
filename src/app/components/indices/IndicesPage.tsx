@@ -583,8 +583,8 @@ export function IndicesPage() {
                                     <Box style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                                         <Loader color="var(--ds-blue-6)" />
                                     </Box>
-                                ) : isCalcIndex && mergedChartData && mergedChartData.length > 1 ? (
-                                    // ── DUAL-LINE CHART (SPBICAR) ──
+                                ) : isCalcIndex && timeframe !== '1D' && mergedChartData && mergedChartData.length > 1 ? (
+                                    // ── DUAL-LINE CHART (SPBICAR/SPBIDGT, не 1D — расчёт дневной) ──
                                     (() => {
                                         const activeSeries: { dataKey: string; name: string; color: string; strokeWidth: number }[] = [];
                                         if (showOfficial)    activeSeries.push({ dataKey: 'officialValue', name: 'Биржа',   color: '#EA3943', strokeWidth: 2 });
@@ -611,8 +611,8 @@ export function IndicesPage() {
                                             />
                                         );
                                     })()
-                                ) : !isCalcIndex && indexData && indexData.history && indexData.history.length > 1 ? (
-                                    // ── SINGLE-LINE CHART (other indices) ──
+                                ) : indexData && indexData.history && indexData.history.length > 1 ? (
+                                    // ── SINGLE-LINE CHART (обычные индексы или 1D для calc-индексов) ──
                                     <DSAreaChart
                                         key={`${selectedTicker}-${timeframe}-${indexData.history.length}`}
                                         data={indexData.history.map(h => ({
