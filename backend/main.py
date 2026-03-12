@@ -547,7 +547,9 @@ def get_index_calculated(
     if not points:
         return {"ticker": ticker, "calculated": [], "current": None}
 
-    days_map = {"1W": 7, "1M": 30, "3M": 90, "1Y": 365, "ALL": 99999}
+    # Двойной буфер чтобы расчётные данные перекрывали официальные
+    # (официальная история может возвращать данные за 2x дней из-за anchor_date логики)
+    days_map = {"1W": 21, "1M": 90, "3M": 180, "1Y": 730, "ALL": 99999}
     cutoff_days = days_map.get(timeframe, 99999)
     cutoff_dt = datetime.datetime.now() - datetime.timedelta(days=cutoff_days)
     filtered = [p for p in points if p.date >= cutoff_dt] or points
