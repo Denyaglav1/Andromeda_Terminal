@@ -131,8 +131,7 @@ export function IndicesPage() {
         const normalized = /[Z+]/.test(timestamp) ? timestamp : timestamp + 'Z';
         const date = new Date(normalized);
         if (tf === '1D') {
-            // Для дневного таймфрейма показываем DD.MM — intraday часовых данных нет
-            return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+            return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
         }
         return date.toLocaleDateString('ru-RU', {
             day: '2-digit',
