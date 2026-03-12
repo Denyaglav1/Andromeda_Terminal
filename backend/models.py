@@ -66,6 +66,69 @@ class IndexDocument(Base):
 
     ticker_info = relationship("IndexTicker", back_populates="documents")
 
+class IndexCalculatedPoint(Base):
+    """Stores index values calculated from first principles (methodology-based)."""
+    __tablename__ = "index_calculated"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    index_code = Column(String(20), index=True)   # e.g. "SPBICAR"
+    date       = Column(DateTime, index=True)
+    value      = Column(Float)                    # I_t — index value
+    pp         = Column(Float, nullable=True)     # PP_t — portfolio price
+    fact_vol   = Column(Float, nullable=True)     # FactVol_t — realised volatility
+    exp_factor = Column(Float, nullable=True)     # Exp_t — exposure factor
+
+
+class MoexQuote(Base):
+    """Текущие котировки акций с MOEX (одна строка на тикер, обновляется in-place)."""
+    __tablename__ = "moex_quotes"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    ticker      = Column(String(20), unique=True, index=True)
+    shortname   = Column(String, nullable=True)
+    isin        = Column(String, nullable=True)
+    last_price  = Column(Float, nullable=True)
+    open_price  = Column(Float, nullable=True)
+    high_price  = Column(Float, nullable=True)
+    low_price   = Column(Float, nullable=True)
+    prev_close  = Column(Float, nullable=True)
+    wap_price   = Column(Float, nullable=True)      # средневзвешенная
+    change      = Column(Float, nullable=True)      # абс. изменение vs пред. закрытие
+    change_pct  = Column(Float, nullable=True)      # % изменение
+    volume      = Column(Integer, nullable=True)    # объём в лотах
+    value_rub   = Column(Float, nullable=True)      # оборот в рублях
+    updated_at  = Column(DateTime, nullable=True)
+
+
+class MoexCandle(Base):
+    """OHLCV свечи с MOEX (дневные, часовые и т.д.)."""
+    __tablename__ = "moex_candles"
+
+    id        = Column(Integer, primary_key=True, index=True)
+    ticker    = Column(String(20), index=True)
+    interval  = Column(String(10), index=True)   # 'day', 'hour', '10min', etc.
+    begin_dt  = Column(DateTime, index=True)
+    open      = Column(Float, nullable=True)
+    high      = Column(Float, nullable=True)
+    low       = Column(Float, nullable=True)
+    close     = Column(Float, nullable=True)
+    volume    = Column(Integer, nullable=True)
+    value     = Column(Float, nullable=True)
+    wap       = Column(Float, nullable=True)
+
+
+class MoexDividend(Base):
+    """История дивидендов с MOEX."""
+    __tablename__ = "moex_dividends"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    ticker      = Column(String(20), index=True)
+    isin        = Column(String, nullable=True)
+    record_date = Column(DateTime, index=True)   # дата закрытия реестра
+    value       = Column(Float)                  # размер дивиденда
+    currency    = Column(String(10), default="RUB")
+
+
 class Company(Base):
     __tablename__ = "companies"
     id = Column(Integer, primary_key=True, index=True)

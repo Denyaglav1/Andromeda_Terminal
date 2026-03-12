@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
 
-import { getCompanyData, type CompanyData, type Financial, type Bond } from '../indices/api';
+import { getCompanyData, useMoexQuote, useMoexCandles, useMoexDividends, type CompanyData, type Financial, type Bond } from '../indices/api';
 import { DSTable, type DSTableColumn } from '@denyaglav1/design-system/components/ds-table';
 import { DSButton } from '@denyaglav1/design-system/components/ds-button';
 import { DSBadge } from '@denyaglav1/design-system/components/ds-badge';
@@ -134,6 +134,39 @@ export function CompanyPage() {
         }
     }, [ticker]);
 
+    // MOEX данные
+    const { data: quote } = useMoexQuote(ticker || null);
+    const { candles } = useMoexCandles(ticker || null, 'day');
+    const { dividends } = useMoexDividends(ticker || null);
+
+    // Последняя дата дивиденда в будущем
+    const nextDivDate = useMemo(() => {
+        const today = new Date().toISOString().split('T')[0];
+        const future = dividends.filter(d => d.record_date >= today);
+        return future.length > 0 ? future[future.length - 1].record_date : null;
+    }, [dividends]);
+
+    // Дивидендная доходность (сумма за 12 мес / текущая цена)
+    const divYield = useMemo(() => {
+        if (!quote?.last_price || !dividends.length) return null;
+        const ago = new Date(); ago.setFullYear(ago.getFullYear() - 1);
+        const sum = dividends
+            .filter(d => new Date(d.record_date) >= ago && d.currency === 'RUB')
+            .reduce((acc, d) => acc + d.value, 0);
+        return sum > 0 ? (sum / quote.last_price * 100).toFixed(2) : null;
+    }, [dividends, quote?.last_price]);
+
+    // Данные для графика из MOEX свечей (последние ~100 дней)
+    const chartData = useMemo(() => {
+        if (!candles.length) return null;
+        const recent = candles.slice(-100);
+        return {
+            dates: recent.map(c => c.date.slice(5)),   // MM-DD
+            prices: recent.map(c => c.close ?? 0),
+            volumes: recent.map(c => c.volume ?? 0),
+        };
+    }, [candles]);
+
     // Financials normalization
     const financialRows = useMemo(() => {
         if (!data?.financials) return [];
@@ -218,69 +251,119 @@ export function CompanyPage() {
                                 <div className={cl.cardHeader}>
                                     <Group gap="xl">
                                         <Group gap={8}>
-                                            <Text size="xs" fw={700}>SBER</Text>
+                                            <Text size="xs" fw={700}>{ticker?.toUpperCase()}</Text>
                                             <div style={{ width: 24, height: 2, background: '#5A8CFF' }} />
-                                            <Text size="xs" c="#8a94a6">747,5</Text>
-                                            <Text size="xs" c="#5A8CFF">305,4</Text>
+                                            {quote?.last_price != null && (
+                                                <Text size="xs" fw={600} c="#5A8CFF">
+                                                    {quote.last_price.toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽
+                                                </Text>
+                                            )}
+                                            {quote?.change_pct != null && (
+                                                <Text size="xs" c={quote.change_pct >= 0 ? '#10b981' : '#ef4444'}>
+                                                    {quote.change_pct >= 0 ? '+' : ''}{quote.change_pct.toFixed(2)}%
+                                                </Text>
+                                            )}
                                         </Group>
-                                        <Group gap={8}>
-                                            <Text size="xs" fw={700}>SBERP</Text>
-                                            <div style={{ width: 24, height: 2, background: '#ef4444' }} />
-                                            <Text size="xs" c="#8a94a6">305,1</Text>
-                                        </Group>
+                                        {quote?.updated_at && (
+                                            <Text size="xs" c="#4b5563">
+                                                {new Date(quote.updated_at + 'Z').toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                            </Text>
+                                        )}
                                     </Group>
                                     <ActionIcon variant="subtle" size="sm"><ChevronDown size={14} /></ActionIcon>
                                 </div>
                                 <div style={{ height: 400, position: 'relative' }}>
                                     <ReactECharts
+                                        key={chartData ? 'moex' : 'mock'}
                                         style={{ height: '100%' }}
                                         option={{
                                             backgroundColor: 'transparent',
                                             grid: { top: 20, left: 30, right: 60, bottom: 40 },
                                             xAxis: {
                                                 type: 'category',
-                                                data: ['15', '15', 'Сен', '15', 'Окт', '15', 'Ноя', '15', 'Дек', '15', '15', 'Янв', '15', 'Фев', '15', 'Мар', '15', '15', 'Апр', '15', 'Май', '15', 'Июн', '15', 'Июл', '15', 'Авг', '15', 'Сен', '15', 'Окт', '15', 'Ноя', '15', 'Дек', '15', '15'],
+                                                data: chartData?.dates ?? ['—'],
                                                 axisLabel: { color: '#4b5563', fontSize: 10 },
                                                 axisLine: { show: false }, axisTick: { show: false }
                                             },
                                             yAxis: [
                                                 { type: 'value', position: 'right', axisLabel: { color: '#8a94a6', fontSize: 10 }, splitLine: { lineStyle: { color: '#1a1f2b' } } },
-                                                { type: 'value', position: 'left', show: false }
+                                                { type: 'value', position: 'left', show: false, min: 0 }
                                             ],
                                             series: [
-                                                { type: 'line', data: [80, 85, 82, 90, 88, 75, 78, 85, 95, 92, 88, 82, 80, 75, 70, 72, 68, 65, 62, 58, 60, 55, 50, 48, 52, 55, 58, 60, 55, 52, 50, 48, 45, 42, 40, 38], smooth: true, lineStyle: { color: '#5A8CFF', width: 1.5 }, symbol: 'none' },
-                                                { type: 'line', data: [70, 72, 68, 75, 72, 60, 62, 70, 78, 75, 72, 65, 62, 58, 55, 57, 52, 50, 48, 45, 47, 42, 38, 35, 40, 42, 45, 47, 42, 40, 38, 35, 32, 30, 28, 25], smooth: true, lineStyle: { color: '#ef4444', width: 1.5 }, symbol: 'none' },
-                                                { type: 'bar', data: [10, 15, 12, 18, 14, 25, 20, 18, 15, 12, 10, 12, 15, 20, 25, 22, 18, 20, 22, 25, 20, 18, 22, 25, 20, 15, 12, 10, 12, 15, 18, 20, 25, 22, 20, 18], barWidth: 4, itemStyle: { color: 'rgba(16, 185, 129, 0.4)' } }
+                                                {
+                                                    type: 'line',
+                                                    data: chartData?.prices ?? [],
+                                                    smooth: true,
+                                                    lineStyle: { color: '#5A8CFF', width: 1.5 },
+                                                    areaStyle: { color: 'rgba(90,140,255,0.08)' },
+                                                    symbol: 'none',
+                                                },
+                                                {
+                                                    type: 'bar',
+                                                    yAxisIndex: 1,
+                                                    data: chartData?.volumes ?? [],
+                                                    barWidth: 3,
+                                                    itemStyle: { color: 'rgba(16,185,129,0.35)' },
+                                                },
                                             ]
                                         }}
                                     />
                                     {/* Overlay side table */}
-                                    <div style={{ position: 'absolute', top: 20, right: 10, width: 140, background: 'rgba(12,16,23,0.8)', padding: 8, borderRadius: 4, border: '1px solid #1a1f2b' }}>
+                                    <div style={{ position: 'absolute', top: 20, right: 10, width: 150, background: 'rgba(12,16,23,0.88)', padding: 8, borderRadius: 4, border: '1px solid #1a1f2b' }}>
+                                        {quote && (
+                                            <>
+                                                <div style={{ marginBottom: 6, display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                                                    <Text size="sm" fw={700} style={{ color: '#fff' }}>
+                                                        {quote.last_price?.toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₽
+                                                    </Text>
+                                                    <Text size="xs" style={{ color: quote.change_pct != null && quote.change_pct >= 0 ? '#10b981' : '#ef4444' }}>
+                                                        {quote.change_pct != null ? `${quote.change_pct >= 0 ? '+' : ''}${quote.change_pct.toFixed(2)}%` : ''}
+                                                    </Text>
+                                                </div>
+                                            </>
+                                        )}
                                         <table className={cl.indicatorsTable}>
-                                            <thead><tr><td className={cl.muted}>Показатели</td><td className={cl.muted}>SBER</td><td className={cl.muted}>SBERP</td></tr></thead>
+                                            <thead><tr><td className={cl.muted}>Показатели</td><td className={cl.muted}>{ticker?.toUpperCase()}</td></tr></thead>
                                             <tbody>
-                                                <tr><td>Px/Chg 1D</td><td className={cl.indicatorChangeNeg}>-0,13%</td><td className={cl.indicatorChangeNeg}>-0,25%</td></tr>
-                                                <tr><td>52 Wk H</td><td>392,77</td><td>326,78</td></tr>
-                                                <tr><td>52 Wk L</td><td>275,76</td><td>273,97</td></tr>
-                                                <tr><td>YTD Chg</td><td className={cl.indicatorChangeNeg}>-0,13%</td><td className={cl.indicatorChangeNeg}>-0,25%</td></tr>
-                                                <tr><td>Mkt Cap</td><td>6,6Т</td><td>335,8М</td></tr>
+                                                <tr>
+                                                    <td>Px/Chg 1D</td>
+                                                    <td className={quote?.change_pct != null && quote.change_pct < 0 ? cl.indicatorChangeNeg : ''}>
+                                                        {quote?.change_pct != null ? `${quote.change_pct >= 0 ? '+' : ''}${quote.change_pct.toFixed(2)}%` : '—'}
+                                                    </td>
+                                                </tr>
+                                                <tr><td>Prev Close</td><td>{quote?.prev_close?.toLocaleString('ru-RU') ?? '—'}</td></tr>
+                                                <tr><td>Open</td><td>{quote?.open_price?.toLocaleString('ru-RU') ?? '—'}</td></tr>
+                                                <tr><td>High</td><td>{quote?.high_price?.toLocaleString('ru-RU') ?? '—'}</td></tr>
+                                                <tr><td>Low</td><td>{quote?.low_price?.toLocaleString('ru-RU') ?? '—'}</td></tr>
+                                                <tr>
+                                                    <td>Volume</td>
+                                                    <td>{quote?.volume != null ? (quote.volume / 1_000_000).toFixed(1) + 'M' : '—'}</td>
+                                                </tr>
                                             </tbody>
                                         </table>
-                                        <div className={cl.sectionSubTitle}>Мультипликаторы</div>
-                                        <table className={cl.indicatorsTable}>
-                                            <tbody>
-                                                <tr><td>P/E</td><td>23,76</td><td>23,76</td></tr>
-                                                <tr><td>EV/EBITDA</td><td>23,76</td><td>23,76</td></tr>
-                                                <tr><td>ROE</td><td>23,76</td><td>23,76</td></tr>
-                                            </tbody>
-                                        </table>
-                                        <div className={cl.sectionSubTitle}>Дивиденды</div>
-                                        <table className={cl.indicatorsTable}>
-                                            <tbody>
-                                                <tr><td>Yield, %</td><td>23,76</td><td>23,76</td></tr>
-                                                <tr><td>Next Date</td><td>28.08.26</td><td>28.08.26</td></tr>
-                                            </tbody>
-                                        </table>
+                                        {data?.indicators && (
+                                            <>
+                                                <div className={cl.sectionSubTitle}>Мультипликаторы</div>
+                                                <table className={cl.indicatorsTable}>
+                                                    <tbody>
+                                                        <tr><td>P/E</td><td>{data.indicators.pe?.toFixed(2) ?? '—'}</td></tr>
+                                                        <tr><td>EV/EBITDA</td><td>{data.indicators.ev_ebitda?.toFixed(2) ?? '—'}</td></tr>
+                                                        <tr><td>ROE, %</td><td>{data.indicators.roe?.toFixed(1) ?? '—'}</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </>
+                                        )}
+                                        {(divYield || nextDivDate) && (
+                                            <>
+                                                <div className={cl.sectionSubTitle}>Дивиденды</div>
+                                                <table className={cl.indicatorsTable}>
+                                                    <tbody>
+                                                        <tr><td>Yield, %</td><td style={{ color: '#10b981' }}>{divYield ?? '—'}</td></tr>
+                                                        <tr><td>Next Date</td><td>{nextDivDate ? new Date(nextDivDate).toLocaleDateString('ru-RU') : '—'}</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>

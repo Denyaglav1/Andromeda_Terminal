@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Box, Group, Stack, Text, Grid, GridCol, Paper, Loader, Popover, Anchor } from '@mantine/core';
 import { Link } from 'react-router';
 import { Header } from '../Header';
-import { useIndicesList, useIndexData, useIndexComposition, useIndexDocuments, IndexDocument, IndexTicker } from './api';
+import { useIndicesList, useIndexData, useIndexComposition, useIndexDocuments, useIndexCalculated, IndexDocument, IndexTicker } from './api';
 import { FileText, Download, ExternalLink, Calendar, ChevronRight } from 'lucide-react';
 import {
     DSAreaChart,
@@ -33,6 +33,19 @@ export function IndicesPage() {
     const { composition, loading: compLoading } = useIndexComposition(selectedTicker);
     const { documents, loading: docsLoading } = useIndexDocuments(selectedTicker);
 
+    // Dual-line chart: per-line visibility toggles
+    const [showOfficial, setShowOfficial]     = useState(true);
+    const [showCalculated, setShowCalculated] = useState(true);
+    // Индексы с двойным графиком (биржа + расчёт)
+    const CALC_INDICES = ['SPBICAR', 'SPBIDGT'];
+    const isCalcIndex = selectedTicker !== null && CALC_INDICES.includes(selectedTicker);
+
+    // Always fetch calculated data for indices with calc support
+    const { data: calcData, loading: calcLoading } = useIndexCalculated(
+        isCalcIndex ? selectedTicker : null,
+        timeframe
+    );
+
     const [countryOpen, setCountryOpen] = useState(false);
     const [indexOpen, setIndexOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -55,6 +68,31 @@ export function IndicesPage() {
             setSelectedTicker(indices[0].ticker);
         }
     }, [indices, selectedTicker]);
+
+    // Merge official + calculated histories into one dataset keyed by date
+    const mergedChartData = useMemo(() => {
+        if (!isCalcIndex) return null;
+
+        const map = new Map<string, { officialValue: number | null; calcValue: number | null }>();
+
+        for (const h of indexData?.history ?? []) {
+            const d = h.timestamp.split('T')[0];
+            map.set(d, { officialValue: h.value ?? null, calcValue: null });
+        }
+        for (const c of calcData?.calculated ?? []) {
+            const d = c.date.split('T')[0];
+            const existing = map.get(d);
+            if (existing) {
+                existing.calcValue = c.value;
+            } else {
+                map.set(d, { officialValue: null, calcValue: c.value });
+            }
+        }
+
+        return Array.from(map.entries())
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([date, vals]) => ({ date, ...vals }));
+    }, [isCalcIndex, indexData?.history, calcData?.calculated]);
 
     const stats = indexData ? [
         { label: 'Значение открытия', val: indexData.current?.open },
@@ -159,7 +197,7 @@ export function IndicesPage() {
                                             : '—'}
                                     </Text>
 
-                                    {indexData.current && indexData.current.absolute_change !== null && (
+                                    {indexData.current && indexData.current.absolute_change !== null ? (
                                         <Group gap={8} align="center">
                                             <Box style={{ color: indexData.current.absolute_change >= 0 ? 'var(--ds-green-6)' : 'var(--ds-red-6)' }}>
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -191,7 +229,7 @@ export function IndicesPage() {
                                                 </DSBadge>
                                             </Text>
                                         </Group>
-                                    )}
+                                    ) : null}
                                 </Group>
                             </Stack>
 
@@ -207,7 +245,9 @@ export function IndicesPage() {
                                             <Stack style={{ gap: '8px' }}>
                                                 <Text style={{ fontSize: 13, color: 'var(--ds-text-gray-dark)', minHeight: 18 }}>{item.label}</Text>
                                                 <Text style={{ fontSize: 16, fontWeight: 500, fontFeatureSettings: "'lnum', 'tnum'", color: 'var(--ds-text-primary)' }}>
-                                                    {item.val !== undefined && item.val !== null ? item.val.toLocaleString('ru-RU', { minimumFractionDigits: 2 }) : '—'}
+                                                    {item.val !== undefined && item.val !== null
+                                                        ? item.val.toLocaleString('ru-RU', { minimumFractionDigits: 2 })
+                                                        : '—'}
                                                 </Text>
                                             </Stack>
                                         </GridCol>
@@ -366,19 +406,63 @@ export function IndicesPage() {
                         {/* RIGHT COLUMN: Chart */}
                         <Box style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, height: '100%', gap: '16px' }}>
                             <Group justify="space-between" align="center" style={{ flexShrink: 0 }}>
-                                <DSSegmentButton
-                                    value={timeframe}
-                                    onChange={setTimeframe}
-                                    size="sm"
-                                    variant="stroke"
-                                    activeStyle="outline"
-                                >
-                                    <DSSegment value="1D">День</DSSegment>
-                                    <DSSegment value="1W">Неделя</DSSegment>
-                                    <DSSegment value="1M">Месяц</DSSegment>
-                                    <DSSegment value="1Y">Год</DSSegment>
-                                    <DSSegment value="ALL">Все</DSSegment>
-                                </DSSegmentButton>
+                                <Group gap={12} align="center">
+                                    <DSSegmentButton
+                                        value={timeframe}
+                                        onChange={setTimeframe}
+                                        size="sm"
+                                        variant="stroke"
+                                        activeStyle="outline"
+                                    >
+                                        <DSSegment value="1D">День</DSSegment>
+                                        <DSSegment value="1W">Неделя</DSSegment>
+                                        <DSSegment value="1M">Месяц</DSSegment>
+                                        <DSSegment value="1Y">Год</DSSegment>
+                                        <DSSegment value="ALL">Все</DSSegment>
+                                    </DSSegmentButton>
+
+                                    {/* Line visibility toggles — only for SPBICAR */}
+                                    {isCalcIndex && (
+                                        <Group gap={2} style={{ border: '1px solid var(--ds-border-primary)', borderRadius: 8, padding: '2px', display: 'flex' }}>
+                                            <Box
+                                                onClick={() => setShowOfficial(v => !v)}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 6,
+                                                    padding: '4px 10px',
+                                                    borderRadius: 6,
+                                                    backgroundColor: showOfficial ? 'rgba(234,57,67,0.12)' : 'transparent',
+                                                    opacity: showOfficial ? 1 : 0.45,
+                                                    transition: 'all 150ms',
+                                                    userSelect: 'none',
+                                                }}
+                                            >
+                                                <Box style={{ width: 14, height: 3, borderRadius: 2, backgroundColor: '#EA3943' }} />
+                                                <Text size="xs" style={{ color: 'var(--ds-text-primary)', fontWeight: 600, fontSize: 12 }}>Биржа</Text>
+                                            </Box>
+                                            <Box
+                                                onClick={() => setShowCalculated(v => !v)}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 6,
+                                                    padding: '4px 10px',
+                                                    borderRadius: 6,
+                                                    backgroundColor: showCalculated ? 'rgba(41,112,255,0.12)' : 'transparent',
+                                                    opacity: showCalculated ? 1 : 0.45,
+                                                    transition: 'all 150ms',
+                                                    userSelect: 'none',
+                                                }}
+                                            >
+                                                <Box style={{ width: 14, height: 3, borderRadius: 2, backgroundColor: '#2970FF' }} />
+                                                <Text size="xs" style={{ color: 'var(--ds-text-primary)', fontWeight: 600, fontSize: 12 }}>Расчёт</Text>
+                                            </Box>
+                                        </Group>
+                                    )}
+                                </Group>
 
                                 <Popover position="bottom-end" shadow="md">
                                     <Popover.Target>
@@ -415,9 +499,42 @@ export function IndicesPage() {
                             </Group>
 
                             <Box style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-                                {!dataLoading && indexData && indexData.history && indexData.history.length > 1 ? (
+                                {(dataLoading || (isCalcIndex && calcLoading)) && !indexData ? (
+                                    <Box style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Loader color="var(--ds-blue-6)" />
+                                    </Box>
+                                ) : isCalcIndex && mergedChartData && mergedChartData.length > 1 ? (
+                                    // ── DUAL-LINE CHART (SPBICAR) ──
+                                    (() => {
+                                        const activeSeries: { dataKey: string; name: string; color: string; strokeWidth: number }[] = [];
+                                        if (showOfficial)    activeSeries.push({ dataKey: 'officialValue', name: 'Биржа',   color: '#EA3943', strokeWidth: 2 });
+                                        if (showCalculated)  activeSeries.push({ dataKey: 'calcValue',     name: 'Расчёт',  color: '#2970FF', strokeWidth: 2 });
+
+                                        if (activeSeries.length === 0) return (
+                                            <Box style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Text style={{ color: 'var(--ds-text-gray-dark)' }}>Выберите хотя бы одну линию</Text>
+                                            </Box>
+                                        );
+
+                                        return (
+                                            <DSAreaChart
+                                                key={`dual-${selectedTicker}-${timeframe}-${mergedChartData.length}-${showOfficial}-${showCalculated}`}
+                                                data={mergedChartData.map(d => ({
+                                                    ...d,
+                                                    formattedDate: formatDate(d.date, timeframe),
+                                                }))}
+                                                xKey="formattedDate"
+                                                series={activeSeries}
+                                                height="100%"
+                                                yAxisPosition="right"
+                                                yAxisLabelFormatter={(val: number) => Math.round(val).toString()}
+                                            />
+                                        );
+                                    })()
+                                ) : !isCalcIndex && indexData && indexData.history && indexData.history.length > 1 ? (
+                                    // ── SINGLE-LINE CHART (other indices) ──
                                     <DSAreaChart
-                                        key={`${selectedTicker} -${timeframe} -${indexData.history.length} `}
+                                        key={`${selectedTicker}-${timeframe}-${indexData.history.length}`}
                                         data={indexData.history.map(h => ({
                                             ...h,
                                             value: h.value || 0,

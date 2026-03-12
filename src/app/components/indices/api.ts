@@ -195,6 +195,156 @@ export function useIndexDocuments(ticker: string | null) {
     return { documents, loading };
 }
 
+export interface CalculatedPoint {
+    date: string;
+    value: number;
+    pp: number | null;
+    fact_vol: number | null;   // annualised %, e.g. 26.5
+    exp_factor: number | null; // %, e.g. 38.3
+}
+
+export interface IndexCalculatedData {
+    ticker: string;
+    current: {
+        value: number;
+        pp: number | null;
+        fact_vol: number | null;
+        exp_factor: number | null;
+        timestamp: string;
+        pct_change_period: number | null;
+    } | null;
+    calculated: CalculatedPoint[];
+}
+
+export function useIndexCalculated(ticker: string | null, timeframe: string = 'ALL') {
+    const [data, setData] = useState<IndexCalculatedData | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!ticker) return;
+        setLoading(true);
+        fetch(`${API_BASE}/indices/${ticker}/calculated?timeframe=${timeframe}`, { cache: 'no-store' })
+            .then(res => res.json())
+            .then(result => {
+                if (!result.error && Array.isArray(result.calculated)) setData(result);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(`Failed to fetch calculated data for ${ticker}`, err);
+                setLoading(false);
+            });
+    }, [ticker, timeframe]);
+
+    return { data, loading };
+}
+
+// ── MOEX API ──────────────────────────────────────────────────────────────────
+
+export interface MoexQuote {
+    ticker: string;
+    shortname: string | null;
+    isin: string | null;
+    last_price: number | null;
+    open_price: number | null;
+    high_price: number | null;
+    low_price: number | null;
+    prev_close: number | null;
+    wap_price: number | null;
+    change: number | null;       // абс. изменение
+    change_pct: number | null;   // % изменение
+    volume: number | null;
+    value_rub: number | null;
+    updated_at: string | null;
+}
+
+export interface MoexCandle {
+    date: string;
+    open: number | null;
+    high: number | null;
+    low: number | null;
+    close: number | null;
+    volume: number | null;
+    value: number | null;
+    wap: number | null;
+}
+
+export interface MoexDividend {
+    record_date: string;
+    value: number;
+    currency: string;
+}
+
+export function useMoexQuote(ticker: string | null) {
+    const [data, setData] = useState<MoexQuote | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!ticker) return;
+        setLoading(true);
+        fetch(`${API_BASE}/moex/quotes/${ticker.toUpperCase()}`, { cache: 'no-store' })
+            .then(r => r.json())
+            .then(result => {
+                if (!result.error) setData(result);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    }, [ticker]);
+
+    return { data, loading };
+}
+
+export function useMoexCandles(ticker: string | null, interval = 'day', dateFrom?: string, dateTill?: string) {
+    const [candles, setCandles] = useState<MoexCandle[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!ticker) return;
+        setLoading(true);
+        const params = new URLSearchParams({ interval });
+        if (dateFrom) params.set('date_from', dateFrom);
+        if (dateTill) params.set('date_till', dateTill);
+        fetch(`${API_BASE}/moex/candles/${ticker.toUpperCase()}?${params}`, { cache: 'no-store' })
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) setCandles(data);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    }, [ticker, interval, dateFrom, dateTill]);
+
+    return { candles, loading };
+}
+
+export function useMoexDividends(ticker: string | null) {
+    const [dividends, setDividends] = useState<MoexDividend[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!ticker) return;
+        setLoading(true);
+        fetch(`${API_BASE}/moex/dividends/${ticker.toUpperCase()}`, { cache: 'no-store' })
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) setDividends(data);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    }, [ticker]);
+
+    return { dividends, loading };
+}
+
+export async function moexSearch(q: string): Promise<any[]> {
+    if (q.length < 2) return [];
+    try {
+        const r = await fetch(`${API_BASE}/moex/search?q=${encodeURIComponent(q)}&limit=20`, { cache: 'no-store' });
+        const data = await r.json();
+        return Array.isArray(data) ? data : [];
+    } catch {
+        return [];
+    }
+}
+
 export async function getCompanyData(ticker: string): Promise<CompanyData | null> {
     try {
         const res = await fetch(`${API_BASE}/companies/${ticker}`, { cache: 'no-store' });

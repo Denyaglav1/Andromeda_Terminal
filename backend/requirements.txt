@@ -5,3 +5,5 @@ psycopg2-binary
 httpx
 apscheduler
 pydantic
+yfinance
+pandas

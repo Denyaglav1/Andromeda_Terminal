@@ -11,10 +11,102 @@ print(f"--- API STARTING/RELOADING AT {datetime.datetime.now()} ---")
 
 try:
     from backend import models, database, scraper, seed_companies
+    from backend.index_calculators import spbicar_calculator
+    from backend.index_calculators import spbidgt_calculator
+    from backend.moex import quotes as moex_quotes
+    from backend.moex import history as moex_history
+    from backend.moex import dividends as moex_dividends
 except ImportError:
-    import models, database, scraper, seed_companies
+    import models, database, scraper, seed_companies  # type: ignore
+    from index_calculators import spbicar_calculator  # type: ignore
+    from index_calculators import spbidgt_calculator  # type: ignore
+    from moex import quotes as moex_quotes             # type: ignore
+    from moex import history as moex_history           # type: ignore
+    from moex import dividends as moex_dividends       # type: ignore
 
 scheduler = BackgroundScheduler()
+
+
+MOEX_TICKERS: list[str] = [
+    "SBER", "GAZP", "LKOH", "YNDX", "GMKN", "NVTK", "ROSN", "MGNT",
+    "ALRS", "VTBR", "MTSS", "NLMK", "PHOR", "MOEX", "IRAO", "SNGS",
+    "PLZL", "MAGN", "CBOM", "TCSG", "AFKS", "HYDR", "PIKK", "FEES",
+    "TRNFP", "AFLT", "RTKM", "RENI", "FESH", "OZON", "POSI", "GLTR",
+    "SGZH", "SELG", "UPRO", "LSRG", "BSPB",
+    # Компоненты SPBIDGT (СПБ Цифровая Экономика)
+    "ASTR", "DELI", "HEAD", "T", "VKCO", "WUSH", "YDEX",
+]
+
+
+def _run_spbidgt_calc():
+    """Расчёт SPBIDGT и сохранение в БД."""
+    db = database.SessionLocal()
+    try:
+        saved = spbidgt_calculator.run_and_save(db)
+        print(f"[{datetime.datetime.now()}] SPBIDGT calc complete: {saved} rows saved")
+    except Exception as exc:
+        import traceback; traceback.print_exc()
+        print(f"[{datetime.datetime.now()}] SPBIDGT calc error: {exc}")
+    finally:
+        db.close()
+
+
+def _run_moex_quotes():
+    """Обновление котировок MOEX (весь рынок одним запросом)."""
+    db = database.SessionLocal()
+    try:
+        n = moex_quotes.run_quotes_update(db)
+        print(f"[{datetime.datetime.now()}] MOEX котировки: {n} обновлено")
+    except Exception as exc:
+        import traceback; traceback.print_exc()
+        print(f"[{datetime.datetime.now()}] MOEX quotes error: {exc}")
+    finally:
+        db.close()
+
+
+def _run_moex_history():
+    """Синхронизация дневной истории для всех тикеров."""
+    db = database.SessionLocal()
+    try:
+        total = 0
+        for ticker in MOEX_TICKERS:
+            try:
+                n = moex_history.sync_history(db, ticker, years_back=5)
+                total += n
+            except Exception as exc:
+                print(f"  history error {ticker}: {exc}")
+        print(f"[{datetime.datetime.now()}] MOEX история: {total} свечей добавлено")
+    except Exception as exc:
+        print(f"[{datetime.datetime.now()}] MOEX history error: {exc}")
+    finally:
+        db.close()
+
+
+def _run_moex_dividends():
+    """Синхронизация дивидендов для всех тикеров."""
+    db = database.SessionLocal()
+    try:
+        results = moex_dividends.sync_dividends_batch(db, MOEX_TICKERS)
+        total = sum(results.values())
+        print(f"[{datetime.datetime.now()}] MOEX дивиденды: {total} записей")
+    except Exception as exc:
+        print(f"[{datetime.datetime.now()}] MOEX dividends error: {exc}")
+    finally:
+        db.close()
+
+
+def _run_spbicar_calc():
+    """Wrapper for APScheduler: calculate SPBICAR and persist to DB."""
+    db = database.SessionLocal()
+    try:
+        saved = spbicar_calculator.run_and_save(db)
+        print(f"[{datetime.datetime.now()}] SPBICAR calc complete: {saved} rows saved")
+    except Exception as exc:
+        import traceback
+        print(f"[{datetime.datetime.now()}] SPBICAR calc error: {exc}")
+        traceback.print_exc()
+    finally:
+        db.close()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -53,10 +145,73 @@ async def lifespan(app: FastAPI):
     # Trigger one full scrape in background
     scheduler.add_job(
         scraper.run_scrape_job,
-        trigger='date', 
+        trigger='date',
         id='initial_scrape',
-        replace_existing=True
+        replace_existing=True,
     )
+
+    # Schedule SPBICAR calculation daily at 22:00 (after European markets close)
+    scheduler.add_job(
+        _run_spbicar_calc,
+        'cron',
+        hour=22,
+        minute=0,
+        id='spbicar_calc',
+        replace_existing=True,
+    )
+    # Run once on startup
+    scheduler.add_job(
+        _run_spbicar_calc,
+        trigger='date',
+        id='spbicar_calc_initial',
+        replace_existing=True,
+    )
+
+    # ── MOEX: котировки каждые 5 минут в торговые часы (10:00–18:50 МСК) ──
+    scheduler.add_job(
+        _run_moex_quotes,
+        'cron',
+        day_of_week='mon-fri',
+        hour='10-18',
+        minute='*/5',
+        id='moex_quotes',
+        replace_existing=True,
+    )
+    # Первый запуск котировок сразу
+    scheduler.add_job(_run_moex_quotes, trigger='date', id='moex_quotes_init', replace_existing=True)
+
+    # ── SPBIDGT: ежедневно в 22:30 (после закрытия рынка MOEX) ──
+    scheduler.add_job(
+        _run_spbidgt_calc,
+        'cron',
+        hour=22, minute=30,
+        id='spbidgt_calc',
+        replace_existing=True,
+    )
+    scheduler.add_job(_run_spbidgt_calc, trigger='date', id='spbidgt_calc_init', replace_existing=True)
+
+    # ── MOEX: дневная история — раз в день в 19:30 ──
+    scheduler.add_job(
+        _run_moex_history,
+        'cron',
+        hour=19, minute=30,
+        id='moex_history',
+        replace_existing=True,
+    )
+    # История — при первом старте
+    scheduler.add_job(_run_moex_history, trigger='date', id='moex_history_init', replace_existing=True)
+
+    # ── MOEX: дивиденды — раз в неделю в воскресенье ──
+    scheduler.add_job(
+        _run_moex_dividends,
+        'cron',
+        day_of_week='sun',
+        hour=10,
+        id='moex_dividends',
+        replace_existing=True,
+    )
+    scheduler.add_job(_run_moex_dividends, trigger='date', id='moex_dividends_init', replace_existing=True)
+
     scheduler.start()
     
     yield
@@ -87,6 +242,33 @@ def get_indices(db: Session = Depends(database.get_db)):
 @app.get("/health")
 def health_check():
     return {"status": "ok", "time": datetime.datetime.utcnow().isoformat()}
+
+
+@app.post("/api/admin/recalculate/{index_code}")
+def admin_recalculate(index_code: str, db: Session = Depends(database.get_db)):
+    """
+    Принудительный полный пересчёт индекса с нуля (сбрасывает старые данные).
+    POST /api/admin/recalculate/SPBICAR
+    POST /api/admin/recalculate/SPBIDGT
+    """
+    code = index_code.upper()
+    # Очищаем старые данные
+    deleted = db.query(models.IndexCalculatedPoint).filter(
+        models.IndexCalculatedPoint.index_code == code
+    ).delete()
+    db.commit()
+
+    calc_map = {
+        "SPBICAR": _run_spbicar_calc,
+        "SPBIDGT": _run_spbidgt_calc,
+    }
+    fn = calc_map.get(code)
+    if fn is None:
+        return {"error": f"Unknown index: {code}"}
+
+    # Запускаем в фоне через scheduler
+    scheduler.add_job(fn, trigger="date", id=f"{code.lower()}_recalc_forced", replace_existing=True)
+    return {"status": "scheduled", "index": code, "deleted_rows": deleted}
 
 @app.get("/api/indices/{ticker}")
 def get_index_data(ticker: str, timeframe: str = "1D", db: Session = Depends(database.get_db)):
@@ -186,6 +368,206 @@ def get_index_composition(ticker: str, db: Session = Depends(database.get_db)):
                      .all()
                      
     return constituents
+
+# ── MOEX API ──────────────────────────────────────────────────────────────────
+
+@app.get("/api/moex/quotes")
+def get_moex_quotes_all(db: Session = Depends(database.get_db)):
+    """Котировки всех сохранённых тикеров."""
+    rows = db.query(models.MoexQuote).all()
+    return [_quote_to_dict(q) for q in rows]
+
+
+@app.get("/api/moex/quotes/{ticker}")
+def get_moex_quote(ticker: str, db: Session = Depends(database.get_db)):
+    """Котировка одного тикера из БД (+ live-подтяжка если старше 1 мин)."""
+    ticker = ticker.upper()
+    row = db.query(models.MoexQuote).filter(models.MoexQuote.ticker == ticker).first()
+
+    # Если нет в БД или данные старше 2 минут — подтягиваем live
+    stale = True
+    if row and row.updated_at:
+        stale = (datetime.datetime.utcnow() - row.updated_at).total_seconds() > 120
+
+    if stale:
+        live = moex_quotes.fetch_quote(ticker)
+        if live:
+            moex_quotes.upsert_quotes(db, [live])
+            row = db.query(models.MoexQuote).filter(models.MoexQuote.ticker == ticker).first()
+
+    if not row:
+        return {"error": "Тикер не найден"}
+    return _quote_to_dict(row)
+
+
+@app.get("/api/moex/candles/{ticker}")
+def get_moex_candles(
+    ticker: str,
+    interval: str = "day",
+    date_from: str | None = None,
+    date_till: str | None = None,
+    db: Session = Depends(database.get_db),
+):
+    """
+    Свечи для тикера.
+    interval: day | hour | 10min | 1min | week | month
+    Дневные: из БД. Остальные: live из MOEX.
+    """
+    ticker = ticker.upper()
+
+    if interval == "day":
+        # Из БД
+        query = db.query(models.MoexCandle).filter(
+            models.MoexCandle.ticker == ticker,
+            models.MoexCandle.interval == "day",
+        )
+        if date_from:
+            try:
+                dt_from = datetime.datetime.strptime(date_from, "%Y-%m-%d")
+                query = query.filter(models.MoexCandle.begin_dt >= dt_from)
+            except ValueError:
+                pass
+        if date_till:
+            try:
+                dt_till = datetime.datetime.strptime(date_till, "%Y-%m-%d")
+                query = query.filter(models.MoexCandle.begin_dt <= dt_till)
+            except ValueError:
+                pass
+        candles = query.order_by(models.MoexCandle.begin_dt.asc()).all()
+        return [_candle_to_dict(c) for c in candles]
+    else:
+        # Live из MOEX
+        rows = moex_history.fetch_candles(ticker, interval, date_from, date_till)
+        return rows
+
+
+@app.get("/api/moex/dividends/{ticker}")
+def get_moex_dividends(ticker: str, db: Session = Depends(database.get_db)):
+    """История дивидендов для тикера."""
+    ticker = ticker.upper()
+    divs = (
+        db.query(models.MoexDividend)
+        .filter(models.MoexDividend.ticker == ticker)
+        .order_by(models.MoexDividend.record_date.desc())
+        .all()
+    )
+    return [
+        {
+            "record_date": d.record_date.date().isoformat() if d.record_date else None,
+            "value": d.value,
+            "currency": d.currency,
+        }
+        for d in divs
+    ]
+
+
+@app.get("/api/moex/search")
+def moex_search(q: str = "", limit: int = 20):
+    """Поиск инструментов на MOEX ISS."""
+    if not q or len(q) < 2:
+        return []
+    try:
+        from backend.moex.client import iss_get, iss_rows
+    except ImportError:
+        from moex.client import iss_get, iss_rows  # type: ignore
+    data = iss_get(
+        "/securities",
+        params={
+            "q": q,
+            "limit": limit,
+            "securities.columns": "secid,shortname,name,type,isin,group",
+            "iss.only": "securities",
+        },
+    )
+    return iss_rows(data, "securities")
+
+
+def _quote_to_dict(q: models.MoexQuote) -> dict:
+    return {
+        "ticker":      q.ticker,
+        "shortname":   q.shortname,
+        "isin":        q.isin,
+        "last_price":  q.last_price,
+        "open_price":  q.open_price,
+        "high_price":  q.high_price,
+        "low_price":   q.low_price,
+        "prev_close":  q.prev_close,
+        "wap_price":   q.wap_price,
+        "change":      q.change,
+        "change_pct":  q.change_pct,
+        "volume":      q.volume,
+        "value_rub":   q.value_rub,
+        "updated_at":  q.updated_at.isoformat() if q.updated_at else None,
+    }
+
+
+def _candle_to_dict(c: models.MoexCandle) -> dict:
+    return {
+        "date":     c.begin_dt.date().isoformat() if c.begin_dt else None,
+        "open":     c.open,
+        "high":     c.high,
+        "low":      c.low,
+        "close":    c.close,
+        "volume":   c.volume,
+        "value":    c.value,
+        "wap":      c.wap,
+    }
+
+
+@app.get("/api/indices/{ticker}/calculated")
+def get_index_calculated(
+    ticker: str,
+    timeframe: str = "ALL",
+    db: Session = Depends(database.get_db),
+):
+    """
+    Returns index values calculated from first principles (SPBICAR methodology).
+    Includes portfolio price (pp), realised volatility (fact_vol) and exposure factor (exp_factor).
+    """
+    points = (
+        db.query(models.IndexCalculatedPoint)
+        .filter(models.IndexCalculatedPoint.index_code == ticker.upper())
+        .order_by(models.IndexCalculatedPoint.date.asc())
+        .all()
+    )
+
+    if not points:
+        return {"ticker": ticker, "calculated": [], "current": None}
+
+    days_map = {"1W": 7, "1M": 30, "3M": 90, "1Y": 365, "ALL": 99999}
+    cutoff_days = days_map.get(timeframe, 99999)
+    cutoff_dt = datetime.datetime.now() - datetime.timedelta(days=cutoff_days)
+    filtered = [p for p in points if p.date >= cutoff_dt] or points
+
+    latest = filtered[-1]
+    first  = filtered[0]
+
+    pct_change = None
+    if first.value and latest.value and first.value != 0:
+        pct_change = round((latest.value / first.value - 1) * 100, 2)
+
+    return {
+        "ticker": ticker.upper(),
+        "current": {
+            "value":      latest.value,
+            "pp":         latest.pp,
+            "fact_vol":   round(latest.fact_vol * 100, 2) if latest.fact_vol else None,
+            "exp_factor": round(latest.exp_factor * 100, 2) if latest.exp_factor else None,
+            "timestamp":  latest.date.isoformat(),
+            "pct_change_period": pct_change,
+        },
+        "calculated": [
+            {
+                "date":       p.date.isoformat(),
+                "value":      p.value,
+                "pp":         p.pp,
+                "fact_vol":   round(p.fact_vol * 100, 4) if p.fact_vol else None,
+                "exp_factor": round(p.exp_factor * 100, 2) if p.exp_factor else None,
+            }
+            for p in filtered
+        ],
+    }
+
 
 @app.get("/api/indices/{ticker}/documents")
 def get_index_documents(ticker: str, db: Session = Depends(database.get_db)):
