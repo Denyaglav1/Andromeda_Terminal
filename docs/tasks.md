@@ -28,11 +28,11 @@
 ## Backlog / Бэклог
 
 ### Epic 6: CompanyPage — Real Data Integration / Реальные данные на странице компании
-- [ ] 6.1. Frontend: Replace hardcoded stock chart with real data from `/api/companies/{ticker}` or a future `/api/stocks/{ticker}` endpoint. / Заменить захардкоженный график акций на реальные данные.
+- [x] 6.1. Frontend: Real MOEX quote + price/volume chart (useMoexQuote, useMoexCandles). / Реальный график MOEX котировок.
 - [ ] 6.2. Frontend: Replace mock news (`MOCK_NEWS`) with real publications from API. / Заменить заглушку новостей реальными публикациями из API.
 - [ ] 6.3. Frontend: Replace mock ownership (`MOCK_OWNERSHIP`) with real data. / Заменить заглушку структуры владения реальными данными.
 - [ ] 6.4. Frontend: Wire up `SubHeader` back-navigation to use `navigate(-1)` or `/indices`. / Подключить навигацию "назад" в SubHeader.
-- [ ] 6.5. Frontend: Replace hardcoded indicator values in chart overlay with `data.indicators`. / Заменить хардкод мультипликаторов на данные из `data.indicators`.
+- [x] 6.5. Frontend: Real indicators from `data.indicators` + dividend yield from MOEX. / Мультипликаторы и дивиденды из реальных данных.
 
 ### Epic 7: Data Quality / Качество данных
 - [ ] 7.1. Backend: Investigate and resolve Nov 2023 historical data gap in SPB Exchange API. / Исследовать и устранить пробел в исторических данных (ноябрь 2023).
@@ -54,5 +54,19 @@
 ### Epic 9: Production Hardening / Подготовка к продакшену
 - [ ] 9.1. Backend: Add rate limiting to API endpoints. / Добавить rate limiting на API эндпоинты.
 - [ ] 9.2. Backend: Switch `allow_origins=["*"]` CORS to specific domains in production. / Заменить `*` в CORS на конкретные домены.
-- [x] 9.3. Frontend: Add loading skeletons for data-fetching states. / Скелетоны добавлены в `CompanyPage` (Mantine `Skeleton`).
-- [ ] 9.4. General: Set up CI/CD via GitHub Actions (build + lint on PR). / Настроить CI/CD через GitHub Actions.
+- [x] 9.3. Frontend: Add loading skeletons for data-fetching states.
+- [ ] 9.4. General: Set up CI/CD via GitHub Actions (build + lint on PR).
+
+### Epic 11: Index Calculators / Расчётные индексы
+- [x] 11.1. SPBICAR calculator (Yahoo Finance, EURIBOR, нормализация по последней точке).
+- [x] 11.2. SPBIDGT calculator (MOEX БД, RUONIA, predecessor mapping TCSG→T, YNDX→YDEX).
+- [x] 11.3. MOEX модуль: котировки, история, дивиденды (MoexQuote, MoexCandle, MoexDividend).
+- [x] 11.4. Dual-line chart на IndicesPage (Биржа / Расчёт) с toggles.
+- [x] 11.5. Нормализация к последней официальной точке (конец ряда совпадает).
+- [x] 11.6. SPBIDGT история расширена до 07.03.2023 (predecessor тикеры).
+- [x] 11.7. Intraday для SPBIDGT: накопление точек каждые 15 мин, dual-line на 1D.
+- [x] 11.8. Попап методики расчёта (Биржа/Расчёт, формула, состав).
+- [x] 11.9. scraper.py: utcnow() вместо bar_unixtime для корректного 1D таймфрейма.
+- [x] 11.10. INDEX_CALC_JOBS реестр — добавление нового индекса в одну строку.
+- [ ] 11.11. Добавить новые индексы (SPBIREC, SPBIOIL и др.) по запросу.
+- [ ] 11.12. SPBICAR: расширить историю как SPBIDGT (predecessor компоненты если нужно).
