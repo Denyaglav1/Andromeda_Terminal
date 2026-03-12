@@ -299,11 +299,21 @@ def get_index_data(ticker: str, timeframe: str = "1D", db: Session = Depends(dat
         # Timeframe filtering
         if timeframe == "1D":
             latest_day = latest_history[0].timestamp.date()
-            history = query.filter(models.IndexData.timestamp >= datetime.datetime.combine(latest_day, datetime.time.min))\
-                          .order_by(models.IndexData.timestamp.desc()).all()
-            
+            history = query.filter(
+                models.IndexData.timestamp >= datetime.datetime.combine(latest_day, datetime.time.min),
+                models.IndexData.timestamp <= datetime.datetime.combine(latest_day, datetime.time.max),
+            ).order_by(models.IndexData.timestamp.asc()).all()
+
+            # Fallback: если за последний день < 5 точек — берём предыдущий торговый день
             if len(history) < 5:
-                history = query.order_by(models.IndexData.timestamp.desc()).limit(50).all()
+                for delta in range(1, 8):
+                    prev_day = latest_day - datetime.timedelta(days=delta)
+                    history = query.filter(
+                        models.IndexData.timestamp >= datetime.datetime.combine(prev_day, datetime.time.min),
+                        models.IndexData.timestamp <= datetime.datetime.combine(prev_day, datetime.time.max),
+                    ).order_by(models.IndexData.timestamp.asc()).all()
+                    if len(history) >= 5:
+                        break
         else:
             days_map = {"1W": 7, "1M": 30, "1Y": 365, "ALL": 3650}
             date_limit = anchor_date - datetime.timedelta(days=days_map.get(timeframe, 30))
