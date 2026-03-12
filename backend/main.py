@@ -304,15 +304,15 @@ def get_index_data(ticker: str, timeframe: str = "1D", db: Session = Depends(dat
                 models.IndexData.timestamp <= datetime.datetime.combine(latest_day, datetime.time.max),
             ).order_by(models.IndexData.timestamp.asc()).all()
 
-            # Fallback: если за последний день < 5 точек — берём предыдущий торговый день
-            if len(history) < 5:
+            # Fallback: если за последний день нет данных — ищем предыдущий торговый день
+            if len(history) == 0:
                 for delta in range(1, 8):
                     prev_day = latest_day - datetime.timedelta(days=delta)
                     history = query.filter(
                         models.IndexData.timestamp >= datetime.datetime.combine(prev_day, datetime.time.min),
                         models.IndexData.timestamp <= datetime.datetime.combine(prev_day, datetime.time.max),
                     ).order_by(models.IndexData.timestamp.asc()).all()
-                    if len(history) >= 5:
+                    if len(history) >= 1:
                         break
         else:
             days_map = {"1W": 7, "1M": 30, "1Y": 365, "ALL": 3650}
