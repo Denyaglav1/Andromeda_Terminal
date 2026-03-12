@@ -127,9 +127,12 @@ export function IndicesPage() {
     const [searchQuery, setSearchQuery] = useState('');
 
     const formatDate = (timestamp: string, tf: string) => {
-        const date = new Date(timestamp);
+        // Нормализуем timestamp: если нет Z/+offset — трактуем как UTC
+        const normalized = /[Z+]/.test(timestamp) ? timestamp : timestamp + 'Z';
+        const date = new Date(normalized);
         if (tf === '1D') {
-            return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            // Для дневного таймфрейма показываем DD.MM — intraday часовых данных нет
+            return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
         }
         return date.toLocaleDateString('ru-RU', {
             day: '2-digit',
