@@ -240,6 +240,13 @@ def health_check():
     return {"status": "ok", "time": datetime.datetime.utcnow().isoformat()}
 
 
+@app.post("/api/admin/scrape")
+def admin_scrape():
+    """Ручной запуск скрапера официальных данных индексов."""
+    scheduler.add_job(scraper.run_scrape_job, trigger='date', id='manual_scrape', replace_existing=True)
+    return {"status": "scheduled"}
+
+
 @app.post("/api/admin/recalculate/{index_code}")
 def admin_recalculate(index_code: str, db: Session = Depends(database.get_db)):
     """
