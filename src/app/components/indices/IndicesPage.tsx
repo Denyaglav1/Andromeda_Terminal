@@ -586,19 +586,42 @@ export function IndicesPage() {
                                     <Box style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                                         <Loader color="var(--ds-blue-6)" />
                                     </Box>
-                                ) : isCalcIndex && (timeframe !== '1D' || hasMoexIntraday) && mergedChartData && mergedChartData.length > 1 ? (
-                                    // ── DUAL-LINE CHART (SPBIDGT всегда, SPBICAR только не-1D) ──
+                                ) : isCalcIndex && hasMoexIntraday && timeframe === '1D' && indexData && indexData.history && indexData.history.length > 1 ? (
+                                    // ── INTRADAY DUAL-LINE (SPBIDGT 1D): Биржа intraday + Расчёт горизонтально ──
+                                    (() => {
+                                        const lastCalc = calcData?.calculated?.[calcData.calculated.length - 1]?.value ?? null;
+                                        const intradayData = indexData.history.map(h => ({
+                                            formattedDate: formatDate(h.timestamp, '1D'),
+                                            officialValue: h.value || 0,
+                                            calcValue: lastCalc,
+                                        }));
+                                        const activeSeries: { dataKey: string; name: string; color: string; strokeWidth: number }[] = [];
+                                        if (showOfficial)   activeSeries.push({ dataKey: 'officialValue', name: 'Биржа',  color: '#EA3943', strokeWidth: 2 });
+                                        if (showCalculated && lastCalc !== null) activeSeries.push({ dataKey: 'calcValue', name: 'Расчёт', color: '#2970FF', strokeWidth: 1.5 });
+                                        if (activeSeries.length === 0) return null;
+                                        return (
+                                            <DSAreaChart
+                                                key={`1d-intraday-${selectedTicker}-${intradayData.length}-${showOfficial}-${showCalculated}`}
+                                                data={intradayData}
+                                                xKey="formattedDate"
+                                                series={activeSeries}
+                                                height="100%"
+                                                yAxisPosition="right"
+                                                yAxisLabelFormatter={(val: number) => Math.round(val).toString()}
+                                            />
+                                        );
+                                    })()
+                                ) : isCalcIndex && timeframe !== '1D' && mergedChartData && mergedChartData.length > 1 ? (
+                                    // ── DUAL-LINE CHART (SPBICAR/SPBIDGT не-1D) ──
                                     (() => {
                                         const activeSeries: { dataKey: string; name: string; color: string; strokeWidth: number }[] = [];
                                         if (showOfficial)    activeSeries.push({ dataKey: 'officialValue', name: 'Биржа',   color: '#EA3943', strokeWidth: 2 });
                                         if (showCalculated)  activeSeries.push({ dataKey: 'calcValue',     name: 'Расчёт',  color: '#2970FF', strokeWidth: 2 });
-
                                         if (activeSeries.length === 0) return (
                                             <Box style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                                                 <Text style={{ color: 'var(--ds-text-gray-dark)' }}>Выберите хотя бы одну линию</Text>
                                             </Box>
                                         );
-
                                         return (
                                             <DSAreaChart
                                                 key={`dual-${selectedTicker}-${timeframe}-${mergedChartData.length}-${showOfficial}-${showCalculated}`}
