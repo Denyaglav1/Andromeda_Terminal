@@ -114,7 +114,10 @@ export function IndicesPage() {
     const [showCalculated, setShowCalculated] = useState(true);
     // Индексы с двойным графиком (биржа + расчёт)
     const CALC_INDICES = ['SPBICAR', 'SPBIDGT'];
+    // MOEX-индексы с intraday котировками — показывают dual-line даже на 1D
+    const MOEX_CALC_INDICES = ['SPBIDGT'];
     const isCalcIndex = selectedTicker !== null && CALC_INDICES.includes(selectedTicker);
+    const hasMoexIntraday = selectedTicker !== null && MOEX_CALC_INDICES.includes(selectedTicker);
 
     // Always fetch calculated data for indices with calc support
     const { data: calcData, loading: calcLoading } = useIndexCalculated(
@@ -583,8 +586,8 @@ export function IndicesPage() {
                                     <Box style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                                         <Loader color="var(--ds-blue-6)" />
                                     </Box>
-                                ) : isCalcIndex && timeframe !== '1D' && mergedChartData && mergedChartData.length > 1 ? (
-                                    // ── DUAL-LINE CHART (SPBICAR/SPBIDGT, не 1D — расчёт дневной) ──
+                                ) : isCalcIndex && (timeframe !== '1D' || hasMoexIntraday) && mergedChartData && mergedChartData.length > 1 ? (
+                                    // ── DUAL-LINE CHART (SPBIDGT всегда, SPBICAR только не-1D) ──
                                     (() => {
                                         const activeSeries: { dataKey: string; name: string; color: string; strokeWidth: number }[] = [];
                                         if (showOfficial)    activeSeries.push({ dataKey: 'officialValue', name: 'Биржа',   color: '#EA3943', strokeWidth: 2 });

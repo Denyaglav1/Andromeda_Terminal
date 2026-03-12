@@ -714,13 +714,21 @@ def run_and_save(db: Session) -> int:
             IndexCalculatedPoint.date >= delete_from,
         ).delete()
 
+    today = datetime.date.today()
+    now_ts = datetime.datetime.utcnow()
+
     saved = 0
     for _, row in result_df.iterrows():
         if pd.isna(row["value"]):
             continue
+        row_date = row["date"].to_pydatetime()
+        # Последняя точка (сегодня) получает реальное время UTC
+        # чтобы 1D-таймфрейм показывал её с правильным временем.
+        if row_date.date() == today:
+            row_date = now_ts
         db.add(IndexCalculatedPoint(
             index_code=INDEX_CODE,
-            date=row["date"].to_pydatetime(),
+            date=row_date,
             value=float(row["value"]),
             pp=_safe_float(row["pp"]),
             fact_vol=_safe_float(row["fact_vol"]),
