@@ -277,6 +277,17 @@ def _prices_from_db(db, start: datetime.date, end: datetime.date) -> dict[str, p
                 combined = combined[~combined.index.duplicated(keep="last")]
                 series = combined
 
+        # Intraday: если последняя свеча старше сегодня — добавляем текущую котировку
+        today = datetime.date.today()
+        if not series.empty and series.index[-1].date() < today:
+            quote_row = db.query(models.MoexQuote).filter(
+                models.MoexQuote.ticker == ticker
+            ).first()
+            if quote_row and quote_row.last_price:
+                intraday_dt = pd.Timestamp(datetime.datetime.combine(today, datetime.time(18, 30)))
+                intraday = pd.Series([float(quote_row.last_price)], index=[intraday_dt], name=ticker)
+                series = pd.concat([series, intraday])
+
         if not series.empty:
             result[ticker] = series
 
