@@ -707,15 +707,21 @@ def run_and_save(db: Session) -> int:
     if result_df.empty:
         return 0
 
+    today = datetime.date.today()
+    now_ts = datetime.datetime.utcnow()
+
     if last:
         delete_from = datetime.datetime.combine(calc_start, datetime.time.min)
+        # Удаляем пересчитанный период, но НЕ сегодняшние точки —
+        # за сегодня накапливаем каждые 15 минут чтобы показывать intraday динамику.
+        delete_till = datetime.datetime.combine(
+            today - datetime.timedelta(days=1), datetime.time.max
+        )
         db.query(IndexCalculatedPoint).filter(
             IndexCalculatedPoint.index_code == INDEX_CODE,
             IndexCalculatedPoint.date >= delete_from,
+            IndexCalculatedPoint.date <= delete_till,
         ).delete()
-
-    today = datetime.date.today()
-    now_ts = datetime.datetime.utcnow()
 
     saved = 0
     for _, row in result_df.iterrows():

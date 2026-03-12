@@ -587,21 +587,32 @@ export function IndicesPage() {
                                         <Loader color="var(--ds-blue-6)" />
                                     </Box>
                                 ) : isCalcIndex && hasMoexIntraday && timeframe === '1D' && indexData && indexData.history && indexData.history.length > 1 ? (
-                                    // ── INTRADAY DUAL-LINE (SPBIDGT 1D): Биржа intraday + Расчёт горизонтально ──
+                                    // ── INTRADAY DUAL-LINE (SPBIDGT 1D): Биржа + Расчёт каждые 15 мин ──
                                     (() => {
-                                        const lastCalc = calcData?.calculated?.[calcData.calculated.length - 1]?.value ?? null;
-                                        const intradayData = indexData.history.map(h => ({
-                                            formattedDate: formatDate(h.timestamp, '1D'),
-                                            officialValue: h.value || 0,
-                                            calcValue: lastCalc,
-                                        }));
+                                        // Для каждой точки Биржи ищем ближайшую расчётную точку по времени
+                                        const calcPts = calcData?.calculated ?? [];
+                                        const intradayData = indexData.history.map(h => {
+                                            const hTime = new Date(/[Z+]/.test(h.timestamp) ? h.timestamp : h.timestamp + 'Z').getTime();
+                                            let closestCalc: number | null = null;
+                                            let minDiff = Infinity;
+                                            for (const c of calcPts) {
+                                                const cTime = new Date(/[Z+]/.test(c.date) ? c.date : c.date + 'Z').getTime();
+                                                const diff = Math.abs(hTime - cTime);
+                                                if (diff < minDiff) { minDiff = diff; closestCalc = c.value; }
+                                            }
+                                            return {
+                                                formattedDate: formatDate(h.timestamp, '1D'),
+                                                officialValue: h.value || 0,
+                                                calcValue: closestCalc,
+                                            };
+                                        });
                                         const activeSeries: { dataKey: string; name: string; color: string; strokeWidth: number }[] = [];
                                         if (showOfficial)   activeSeries.push({ dataKey: 'officialValue', name: 'Биржа',  color: '#EA3943', strokeWidth: 2 });
-                                        if (showCalculated && lastCalc !== null) activeSeries.push({ dataKey: 'calcValue', name: 'Расчёт', color: '#2970FF', strokeWidth: 1.5 });
+                                        if (showCalculated && calcPts.length > 0) activeSeries.push({ dataKey: 'calcValue', name: 'Расчёт', color: '#2970FF', strokeWidth: 1.5 });
                                         if (activeSeries.length === 0) return null;
                                         return (
                                             <DSAreaChart
-                                                key={`1d-intraday-${selectedTicker}-${intradayData.length}-${showOfficial}-${showCalculated}`}
+                                                key={`1d-intraday-${selectedTicker}-${intradayData.length}-${calcPts.length}-${showOfficial}-${showCalculated}`}
                                                 data={intradayData}
                                                 xKey="formattedDate"
                                                 series={activeSeries}
