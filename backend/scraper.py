@@ -77,7 +77,10 @@ def save_current_metadata(db: Session, ticker_id: int, meta: dict):
     last_bar = meta.get("last_bar", {})
     bar_time = last_bar.get("bar_unixtime") if isinstance(last_bar, dict) else None
     
-    data_ts = datetime.datetime.fromtimestamp(bar_time) if bar_time else datetime.datetime.utcnow()
+    # Используем время записи (utcnow) чтобы 1D фильтрация работала корректно.
+    # bar_unixtime из API — это дата последнего торгового дня биржи,
+    # которая может отставать от текущей даты.
+    data_ts = datetime.datetime.utcnow()
 
     def safe_get_float(d, key):
         val = d.get(key)
