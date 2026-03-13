@@ -88,14 +88,14 @@ const OTHER_SERVICES = [
 ];
 
 const BOND_RESEARCH = [
-  { code: 'BS',     label: 'Скринер облигаций' },
-  { code: 'HS',     label: 'Анализ спреда' },
-  { code: 'RBCALC', label: 'RGBI калькулятор' },
-  { code: 'BN',     label: 'Новые выпуски' },
-  { code: 'BD',     label: 'Динамика облигаций' },
-  { code: 'BTOP',   label: 'Лидеры роста и снижения' },
-  { code: 'BFR',    label: 'Первичный рынок ОФЗ' },
-  { code: 'BINS',   label: 'Кредитные спреды' },
+  { code: 'BS',     label: 'Скринер облигаций',    href: undefined },
+  { code: 'HS',     label: 'Анализ спреда',         href: undefined },
+  { code: 'RBCALC', label: 'RGBI калькулятор',      href: undefined },
+  { code: 'BN',     label: 'Новые выпуски',         href: '/bond-research/bn' },
+  { code: 'BD',     label: 'Динамика облигаций',    href: undefined },
+  { code: 'BTOP',   label: 'Лидеры роста и снижения', href: undefined },
+  { code: 'BFR',    label: 'Первичный рынок ОФЗ',   href: undefined },
+  { code: 'BINS',   label: 'Кредитные спреды',      href: undefined },
 ];
 
 function ServiceMenuItem({
@@ -294,6 +294,7 @@ function ServicesDropdown() {
                   key={item.code}
                   code={item.code}
                   label={item.label}
+                  onClick={item.href ? () => { setOpen(false); navigate(item.href!); } : undefined}
                 />
               ))}
             </Box>

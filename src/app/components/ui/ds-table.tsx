@@ -131,6 +131,10 @@ export interface DSTableProps<T = any> {
   zebra?: boolean;
   /** Override row height in px. Overrides compact. */
   rowHeight?: number;
+  /** Dynamic row style callback (e.g. for highlight rows) */
+  getRowStyle?: (row: T, rowIndex: number) => CSSProperties | undefined;
+  /** Dynamic row className callback */
+  getRowClassName?: (row: T, rowIndex: number) => string;
 }
 
 /* ═══════════ Helpers ═══════════ */
@@ -191,6 +195,8 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
   hoverHighlight = true,
   zebra = false,
   rowHeight: rowHeightProp,
+  getRowStyle,
+  getRowClassName,
 }: DSTableProps<T>) {
   /* Scroll tracking for sticky column shadow */
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -431,17 +437,21 @@ export function DSTable<T extends Record<string, any> = Record<string, any>>({
   };
 
   /* Data row */
-  const renderRow = (row: T, rowIdx: number, _isLast: boolean) => (
-    <div key={row[rowKeyField] ?? rowIdx}
-      className={cx(tblStyles.row, onRowClick && tblStyles.rowClickable)}
-      style={gridStyle}
-      onClick={onRowClick ? () => onRowClick(row, rowIdx) : undefined}
-      onMouseEnter={onRowHover ? () => onRowHover(row, rowIdx) : undefined}
-      onMouseLeave={onRowHover ? () => onRowHover(null, rowIdx) : undefined}
-    >
-      {columns.map((col, ci) => renderCell(col, row, rowIdx, ci))}
-    </div>
-  );
+  const renderRow = (row: T, rowIdx: number, _isLast: boolean) => {
+    const dynRowStyle = getRowStyle ? getRowStyle(row, rowIdx) : undefined;
+    const dynRowCls = getRowClassName ? getRowClassName(row, rowIdx) : '';
+    return (
+      <div key={row[rowKeyField] ?? rowIdx}
+        className={cx(tblStyles.row, onRowClick && tblStyles.rowClickable, dynRowCls)}
+        style={{ ...gridStyle, ...dynRowStyle }}
+        onClick={onRowClick ? () => onRowClick(row, rowIdx) : undefined}
+        onMouseEnter={onRowHover ? () => onRowHover(row, rowIdx) : undefined}
+        onMouseLeave={onRowHover ? () => onRowHover(null, rowIdx) : undefined}
+      >
+        {columns.map((col, ci) => renderCell(col, row, rowIdx, ci))}
+      </div>
+    );
+  };
 
   /* Group title */
   const renderGroupTitle = (group: DSTableRowGroup<T>) => {

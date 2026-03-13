@@ -12,6 +12,7 @@ import { LandingPage } from './components/LandingPage';
 import { HomePage } from './components/HomePage';
 import { IndicesPage } from './components/indices/IndicesPage';
 import { CompanyPage } from './components/companies/CompanyPage';
+import { BNPage } from './components/bond-research/BNPage';
 
 const LazyTicketsPage = React.lazy(() =>
   import('./components/tickets/TicketsPage').then(m => ({ default: m.TicketsPage }))
@@ -92,5 +93,9 @@ export const router = createBrowserRouter([
   {
     path: '/companies/:ticker',
     Component: CompanyPage,
+  },
+  {
+    path: '/bond-research/bn',
+    Component: BNPage,
   },
 ]);

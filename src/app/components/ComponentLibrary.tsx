@@ -15,6 +15,7 @@ import {
   DSCustomDropdownPanel,
   DSCustomDropdownHeader,
   DSCustomDropdownContent,
+  DSCustomDropdownGroup,
   DSCustomDropdownItem,
 } from './ui/ds-custom-dropdown';
 import { DSTooltip, DSTooltipContent } from './ui/ds-tooltip';
@@ -30,6 +31,7 @@ import { DSMenu, DSMenuGroup, DSMenuItem } from './ui/ds-menu';
 import { DSLegend } from './ui/ds-legend';
 import { DSCalendar } from './ui/ds-calendar';
 import { DSConfirmDialog } from './ui/ds-confirm-dialog';
+import { DSFilterSelect, DSFilterTagBar, type FilterTag } from './ui/ds-custom-dropdown';
 import clStyles from './ComponentLibrary.module.css';
 
 /* ═══════════════════════════════════════════════════════
@@ -78,9 +80,9 @@ const COMPONENTS: ComponentEntry[] = [
   {
     id: 'ds-custom-dropdown',
     name: 'Custom Dropdown',
-    description: 'Составной dropdown с заголовком, поиском, сегмент-фильтрами, группированными элементами и футером',
+    description: 'Единый composable dropdown-модуль: base dropdown, filter trigger (pill), filter select (checkbox | range | date), filter tag bar. Все варианты в одном файле с общими токенами.',
     category: 'inputs',
-    props: ['isOpen', 'onOpenChange', 'trigger', 'header', 'search', 'segments', 'groups', 'footer'],
+    props: ['DSCustomDropdown', 'DSCustomDropdownTrigger', 'DSCustomDropdownFilterTrigger', 'DSCustomDropdownPanel', 'DSCustomDropdownHeader', 'DSCustomDropdownContent', 'DSCustomDropdownItem', 'DSCustomDropdownFooter', 'DSFilterSelect', 'DSFilterTagBar'],
   },
   {
     id: 'ds-tabs',
@@ -271,53 +273,46 @@ function SelectPreview() {
 function CustomDropdownPreview() {
   const [open, setOpen] = useState(false);
   const [sel, setSel] = useState<string>('Revenue');
-  const [search, setSearch] = useState('');
-  const [tab, setTab] = useState('Все');
-
-  const SEGS = [
-    { value: 'Все', label: 'Все' },
-    { value: 'PnL', label: 'PnL' },
-    { value: 'CF', label: 'CF' },
-  ];
-
-  const items = ['Revenue', 'EBITDA', 'Net Income', 'Free cash flow']
-    .filter(it => tab === 'Все' || (tab === 'PnL' ? ['Revenue', 'EBITDA', 'Net Income'].includes(it) : it === 'Free cash flow'))
-    .filter(it => !search.trim() || it.toLowerCase().includes(search.toLowerCase().trim()));
+  const [checkVal, setCheckVal] = useState<string[]>([]);
+  const [tags, setTags] = useState<FilterTag[]>([
+    { id: 'r1', label: 'AAA', onRemove: () => setTags(t => t.filter(x => x.id !== 'r1')) },
+    { id: 'r2', label: 'AA', onRemove: () => setTags(t => t.filter(x => x.id !== 'r2')) },
+  ]);
 
   return (
-    <div className={clStyles.wMax240}>
-      <DSCustomDropdown isOpen={open} onOpenChange={setOpen}>
-        <DSCustomDropdownTrigger placeholder="Выберите показатель">
-          {sel || undefined}
-        </DSCustomDropdownTrigger>
-        <DSCustomDropdownPanel minWidth={280}>
-          <DSCustomDropdownHeader
-            title="Выберите показатель"
-            showSearch
-            searchValue={search}
-            onSearchChange={setSearch}
-            segments={SEGS}
-            segmentValue={tab}
-            onSegmentChange={setTab}
-          />
-          <DSCustomDropdownContent maxHeight={180}>
-            <div className={clStyles.flexColP1}>
-              {items.map(item => (
-                <DSCustomDropdownItem
-                  key={item}
-                  selected={sel === item}
-                  onClick={() => { setSel(item); setOpen(false); }}
-                >
-                  {item}
-                </DSCustomDropdownItem>
-              ))}
-              {items.length === 0 && (
-                <div className={clStyles.emptyDropdown}>Ничего не найдено</div>
-              )}
-            </div>
-          </DSCustomDropdownContent>
-        </DSCustomDropdownPanel>
-      </DSCustomDropdown>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
+      {/* Base dropdown */}
+      <div className={clStyles.wMax240}>
+        <DSCustomDropdown isOpen={open} onOpenChange={setOpen}>
+          <DSCustomDropdownTrigger placeholder="Выберите показатель">
+            {sel || undefined}
+          </DSCustomDropdownTrigger>
+          <DSCustomDropdownPanel minWidth={240}>
+            <DSCustomDropdownContent maxHeight={160}>
+              <DSCustomDropdownGroup>
+                {['Revenue', 'EBITDA', 'Net Income'].map(item => (
+                  <DSCustomDropdownItem key={item} selected={sel === item}
+                    onClick={() => { setSel(item); setOpen(false); }}>
+                    {item}
+                  </DSCustomDropdownItem>
+                ))}
+              </DSCustomDropdownGroup>
+            </DSCustomDropdownContent>
+          </DSCustomDropdownPanel>
+        </DSCustomDropdown>
+      </div>
+      {/* Filter pills */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        <DSFilterSelect type="checkbox" label="Рейтинг"
+          options={[{ value: 'AAA', label: 'AAA' }, { value: 'AA', label: 'AA' }, { value: 'A', label: 'A' }]}
+          value={checkVal} onApply={setCheckVal} onClear={() => setCheckVal([])} />
+        <DSFilterSelect type="range" label="Доходность" min={0} max={30} step={0.5} unit="%"
+          value={null} onApply={() => {}} onClear={() => {}} />
+        <DSFilterSelect type="date" label="Дата"
+          value={[null, null]} onApply={() => {}} onClear={() => {}} />
+      </div>
+      {/* Tag bar */}
+      {tags.length > 0 && <DSFilterTagBar tags={tags} onClearAll={() => setTags([])} />}
     </div>
   );
 }
@@ -579,6 +574,7 @@ function ConfirmDialogPreview() {
     </div>
   );
 }
+
 
 const PREVIEW_MAP: Record<string, React.FC> = {
   'ds-button': ButtonPreview,

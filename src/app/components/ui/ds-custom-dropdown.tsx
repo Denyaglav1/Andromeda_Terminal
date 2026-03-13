@@ -9,6 +9,9 @@ import React, {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import * as RadixSlider from '@radix-ui/react-slider';
+import { DSCalendar } from './ds-calendar';
+import { DSTag } from './ds-tag';
 
 /* ═══════════════════════════════════════════
    DSCustomDropdown — Composable Dropdown (Mantine migration)
@@ -567,5 +570,454 @@ export function DSCustomDropdownFooterButton({ children, variant = 'ghost', onCl
     >
       {children}
     </button>
+  );
+}
+
+/* ═══════ Filter Trigger ═══════
+   Compact pill-style trigger for filter dropdowns.
+   States: default | open | active (has value) | active+open
+   ══════════════════════════════ */
+
+export interface DSCustomDropdownFilterTriggerProps {
+  label: string;
+  activeLabel?: string | null;
+  onClear?: () => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+export function DSCustomDropdownFilterTrigger({
+  label, activeLabel, onClear, disabled = false, className,
+}: DSCustomDropdownFilterTriggerProps) {
+  const { isOpen, setIsOpen, triggerRef } = useContext(DropdownContext);
+  const [hovered, setHovered] = useState(false);
+  const isActive = !!activeLabel;
+
+  return (
+    <button
+      ref={triggerRef}
+      type="button"
+      disabled={disabled}
+      onClick={() => !disabled && setIsOpen(!isOpen)}
+      onMouseEnter={() => !disabled && setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={className}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 4,
+        height: 32, padding: '0 10px', borderRadius: 6,
+        border: isActive ? '1px solid var(--ds-blue-6-a30)' : '1px solid var(--ds-border-primary)',
+        backgroundColor: isActive
+          ? 'var(--ds-blue-6-a10)'
+          : (isOpen || hovered) ? 'var(--ds-control-hover)' : 'transparent',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.4 : 1,
+        transition: 'background-color 100ms ease, border-color 100ms ease',
+        outline: 'none', whiteSpace: 'nowrap', flexShrink: 0,
+      }}
+    >
+      <span style={{
+        fontSize: 12, lineHeight: '16px',
+        color: isActive ? 'var(--ds-blue-6)' : 'var(--ds-text-primary)',
+        fontWeight: isActive ? 600 : 400, ...tnum,
+      }}>
+        {label}{activeLabel ? `: ${activeLabel}` : ''}
+      </span>
+
+      {isActive && onClear && (
+        <span
+          role="button"
+          tabIndex={-1}
+          onClick={e => { e.stopPropagation(); onClear(); }}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 14, height: 14, borderRadius: '50%', cursor: 'pointer',
+            color: 'var(--ds-blue-6)', marginLeft: 2, flexShrink: 0,
+          }}
+        >
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+            <path d="M1.5 1.5L6.5 6.5M6.5 1.5L1.5 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </span>
+      )}
+
+      <span style={{
+        display: 'flex', alignItems: 'center',
+        color: isActive ? 'var(--ds-blue-6)' : 'var(--ds-text-gray-dark)',
+        transition: 'transform 150ms ease', transform: isOpen ? 'rotate(180deg)' : 'none',
+        marginLeft: isActive ? 0 : 2, flexShrink: 0,
+      }}>
+        <ChevronDownIcon size={10} />
+      </span>
+    </button>
+  );
+}
+
+/* ═══════ Range Content ═══════
+   Slider (two thumbs) + two numeric inputs for range filters.
+   Manages its own draft state; calls onApply / onReset.
+   ══════════════════════════════ */
+
+export interface DSCustomDropdownRangeContentProps {
+  min: number;
+  max: number;
+  defaultValue?: [number, number] | null;
+  step?: number;
+  unit?: string;
+  formatValue?: (v: number) => string;
+  onApply: (value: [number, number]) => void;
+  onReset: () => void;
+  className?: string;
+}
+
+export function DSCustomDropdownRangeContent({
+  min, max, defaultValue, step = 1, unit, formatValue, onApply, onReset, className,
+}: DSCustomDropdownRangeContentProps) {
+  const { setIsOpen } = useContext(DropdownContext);
+  const [range, setRange] = useState<[number, number]>(defaultValue ?? [min, max]);
+  const fmt = formatValue ?? String;
+
+  const handleFrom = (raw: string) => {
+    const n = Number(raw);
+    if (!isNaN(n)) setRange([Math.max(min, Math.min(n, range[1])), range[1]]);
+  };
+  const handleTo = (raw: string) => {
+    const n = Number(raw);
+    if (!isNaN(n)) setRange([range[0], Math.min(max, Math.max(n, range[0]))]);
+  };
+
+  const inputStyle: React.CSSProperties = {
+    flex: 1, height: 32, borderRadius: 6,
+    border: '1px solid var(--ds-border-primary)',
+    backgroundColor: 'var(--ds-bg-primary)', color: 'var(--ds-text-primary)',
+    fontSize: 12, padding: '0 8px', outline: 'none', ...tnum,
+  };
+
+  return (
+    <div className={className} style={{ display: 'flex', flexDirection: 'column', width: 280, padding: '16px 16px 12px', gap: 14 }}>
+      <RadixSlider.Root
+        min={min} max={max} step={step}
+        value={range}
+        onValueChange={v => setRange(v as [number, number])}
+        style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%', height: 20, cursor: 'pointer', userSelect: 'none' }}
+      >
+        <RadixSlider.Track style={{ position: 'relative', flexGrow: 1, height: 4, borderRadius: 2, backgroundColor: 'var(--ds-border-primary)' }}>
+          <RadixSlider.Range style={{ position: 'absolute', height: '100%', borderRadius: 2, backgroundColor: 'var(--ds-blue-6)' }} />
+        </RadixSlider.Track>
+        {[0, 1].map(i => (
+          <RadixSlider.Thumb key={i} style={{
+            display: 'block', width: 14, height: 14, borderRadius: '50%',
+            backgroundColor: 'var(--ds-blue-6)', border: '2px solid var(--ds-bg-secondary)',
+            outline: 'none', cursor: 'grab', boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+          }} />
+        ))}
+      </RadixSlider.Root>
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <input type="number" value={range[0]} min={min} max={range[1]} step={step}
+          onChange={e => handleFrom(e.target.value)} style={inputStyle} />
+        <span style={{ fontSize: 12, color: 'var(--ds-text-gray-dark)', flexShrink: 0 }}>—</span>
+        <input type="number" value={range[1]} min={range[0]} max={max} step={step}
+          onChange={e => handleTo(e.target.value)} style={inputStyle} />
+        {unit && <span style={{ fontSize: 11, color: 'var(--ds-text-gray-dark)', flexShrink: 0 }}>{unit}</span>}
+      </div>
+
+      <div style={{ fontSize: 11, color: 'var(--ds-text-gray-dark)', textAlign: 'center', ...tnum }}>
+        {fmt(range[0])} — {fmt(range[1])}{unit ? ` ${unit}` : ''}
+      </div>
+
+      <DSCustomDropdownFooter>
+        <DSCustomDropdownFooterButton variant="ghost" onClick={() => { setRange([min, max]); onReset(); }}>
+          Сбросить
+        </DSCustomDropdownFooterButton>
+        <DSCustomDropdownFooterButton variant="primary" onClick={() => { onApply(range); setIsOpen(false); }}>
+          Применить
+        </DSCustomDropdownFooterButton>
+      </DSCustomDropdownFooter>
+    </div>
+  );
+}
+
+/* ═══════ Date Content ═══════
+   Two calendars (from / to) for date range filters.
+   Manages its own draft state; calls onApply / onReset.
+   ══════════════════════════════ */
+
+export interface DSCustomDropdownDateContentProps {
+  defaultValue?: [Date | null, Date | null];
+  onApply: (value: [Date | null, Date | null]) => void;
+  onReset: () => void;
+  className?: string;
+}
+
+export function DSCustomDropdownDateContent({
+  defaultValue, onApply, onReset, className,
+}: DSCustomDropdownDateContentProps) {
+  const { setIsOpen } = useContext(DropdownContext);
+  const [from, setFrom] = useState<Date | null>(defaultValue?.[0] ?? null);
+  const [to, setTo] = useState<Date | null>(defaultValue?.[1] ?? null);
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase',
+    color: 'var(--ds-text-gray-dark)', padding: '8px 8px 4px',
+  };
+
+  return (
+    <div className={className} style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex' }}>
+        <div>
+          <div style={labelStyle}>От</div>
+          <DSCalendar value={from} onChange={setFrom} max={to ?? undefined} />
+        </div>
+        <div style={{ width: 1, backgroundColor: 'var(--ds-border-primary)', alignSelf: 'stretch' }} />
+        <div>
+          <div style={labelStyle}>До</div>
+          <DSCalendar value={to} onChange={setTo} min={from ?? undefined} />
+        </div>
+      </div>
+      <DSCustomDropdownFooter>
+        <DSCustomDropdownFooterButton variant="ghost" onClick={() => { setFrom(null); setTo(null); onReset(); }}>
+          Сбросить
+        </DSCustomDropdownFooterButton>
+        <DSCustomDropdownFooterButton variant="primary" onClick={() => { onApply([from, to]); setIsOpen(false); }}>
+          Применить
+        </DSCustomDropdownFooterButton>
+      </DSCustomDropdownFooter>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DSFilterSelect — Unified filter dropdown (checkbox | range | date)
+   Built entirely on DSCustomDropdown sub-components.
+   Trigger: DSCustomDropdownFilterTrigger (pill, inline-flex, h=32)
+   Panel:   DSCustomDropdownPanel (Portal)
+   Content: checkbox→DSCustomDropdownItem, range→RangeContent, date→DateContent
+   Footer:  DSCustomDropdownFooter + DSCustomDropdownFooterButton
+   ═══════════════════════════════════════════════════════════════════ */
+
+export interface FilterOption {
+  value: string;
+  label: string;
+}
+
+export interface CheckboxFilterProps {
+  type: 'checkbox';
+  label: string;
+  options: FilterOption[];
+  value: string[];
+  onApply: (value: string[]) => void;
+  onClear: () => void;
+  disabled?: boolean;
+}
+
+export interface RangeFilterProps {
+  type: 'range';
+  label: string;
+  min: number;
+  max: number;
+  value: [number, number] | null;
+  onApply: (value: [number, number]) => void;
+  onClear: () => void;
+  unit?: string;
+  step?: number;
+  formatValue?: (v: number) => string;
+  disabled?: boolean;
+}
+
+export interface DateFilterProps {
+  type: 'date';
+  label: string;
+  value: [Date | null, Date | null];
+  onApply: (value: [Date | null, Date | null]) => void;
+  onClear: () => void;
+  disabled?: boolean;
+}
+
+export type DSFilterSelectProps = CheckboxFilterProps | RangeFilterProps | DateFilterProps;
+
+/* ── Helpers ── */
+
+function filterFormatDate(d: Date | null): string {
+  if (!d) return '—';
+  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getFullYear()).slice(2)}`;
+}
+
+function getFilterActiveLabel(props: DSFilterSelectProps): string | null {
+  if (props.type === 'checkbox') {
+    return props.value.length ? String(props.value.length) : null;
+  }
+  if (props.type === 'range') {
+    if (!props.value) return null;
+    const fmt = props.formatValue ?? String;
+    const unit = props.unit ? ` ${props.unit}` : '';
+    return `${fmt(props.value[0])}–${fmt(props.value[1])}${unit}`;
+  }
+  if (props.type === 'date') {
+    const [from, to] = props.value;
+    if (!from && !to) return null;
+    return `${filterFormatDate(from)}–${filterFormatDate(to)}`;
+  }
+  return null;
+}
+
+/* ── Checkbox content with draft state ── */
+
+function FilterCheckboxContent({ props, onClose }: { props: CheckboxFilterProps; onClose: () => void }) {
+  const [draft, setDraft] = useState<string[]>(props.value);
+  const toggle = (v: string) =>
+    setDraft(prev => prev.includes(v) ? prev.filter(x => x !== v) : [...prev, v]);
+
+  return (
+    <>
+      <DSCustomDropdownContent maxHeight={300}>
+        <DSCustomDropdownGroup>
+          {props.options.map(opt => (
+            <DSCustomDropdownItem
+              key={opt.value}
+              checkbox
+              checked={draft.includes(opt.value)}
+              onClick={() => toggle(opt.value)}
+            >
+              {opt.label}
+            </DSCustomDropdownItem>
+          ))}
+        </DSCustomDropdownGroup>
+      </DSCustomDropdownContent>
+      <DSCustomDropdownFooter>
+        <DSCustomDropdownFooterButton variant="ghost" onClick={() => setDraft([])}>
+          Сбросить
+        </DSCustomDropdownFooterButton>
+        <DSCustomDropdownFooterButton variant="primary" onClick={() => { props.onApply(draft); onClose(); }}>
+          Применить
+        </DSCustomDropdownFooterButton>
+      </DSCustomDropdownFooter>
+    </>
+  );
+}
+
+/* ── Main component ── */
+
+export function DSFilterSelect(props: DSFilterSelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const activeLabel = getFilterActiveLabel(props);
+
+  // For checkbox: show label as value + count; for range/date: show formatted range as value
+  const isActive = activeLabel !== null;
+  const triggerChildren = props.type === 'checkbox'
+    ? (props.value.length > 0 ? props.label : undefined)
+    : (activeLabel ?? undefined);
+  const triggerCount = props.type === 'checkbox' && props.value.length > 0
+    ? props.value.length
+    : undefined;
+
+  return (
+    <DSCustomDropdown isOpen={isOpen} onOpenChange={setIsOpen}>
+      <DSCustomDropdownTrigger
+        placeholder={props.label}
+        count={triggerCount}
+        onClear={isActive ? () => { props.onClear(); setIsOpen(false); } : undefined}
+        disabled={props.disabled}
+      >
+        {triggerChildren}
+      </DSCustomDropdownTrigger>
+      <DSCustomDropdownPanel minWidth={props.type === 'date' ? undefined : 220}>
+        {props.type === 'checkbox' && (
+          <FilterCheckboxContent props={props} onClose={() => setIsOpen(false)} />
+        )}
+        {props.type === 'range' && (
+          <DSCustomDropdownRangeContent
+            min={props.min} max={props.max}
+            defaultValue={props.value ?? undefined}
+            step={props.step} unit={props.unit} formatValue={props.formatValue}
+            onApply={props.onApply} onReset={props.onClear}
+          />
+        )}
+        {props.type === 'date' && (
+          <DSCustomDropdownDateContent
+            defaultValue={props.value}
+            onApply={props.onApply} onReset={props.onClear}
+          />
+        )}
+      </DSCustomDropdownPanel>
+    </DSCustomDropdown>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DSFilterTagBar — Active filter tags row
+   Uses DSTag (color="blue", closable) for individual tags.
+   "Ещё N" collapses overflow beyond maxVisible.
+   Styles unified with DSCustomDropdown tokens (h=24, borderRadius=6, fontSize=12).
+   ═══════════════════════════════════════════════════════════════════ */
+
+export interface FilterTag {
+  id: string;
+  label: string;
+  onRemove: () => void;
+}
+
+export interface DSFilterTagBarProps {
+  tags: FilterTag[];
+  onClearAll: () => void;
+  maxVisible?: number;
+}
+
+export function DSFilterTagBar({ tags, onClearAll, maxVisible = 7 }: DSFilterTagBarProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [clearHovered, setClearHovered] = useState(false);
+
+  if (!tags.length) return null;
+
+  const visibleTags = expanded ? tags : tags.slice(0, maxVisible);
+  const hiddenCount = tags.length - maxVisible;
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', padding: '4px 0' }}>
+      {/* Clear all button */}
+      <button
+        type="button"
+        onClick={onClearAll}
+        onMouseEnter={() => setClearHovered(true)}
+        onMouseLeave={() => setClearHovered(false)}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          height: 24, padding: '0 10px', borderRadius: 6,
+          border: '1px solid var(--ds-border-primary)',
+          backgroundColor: clearHovered ? 'var(--ds-control-hover)' : 'transparent',
+          color: 'var(--ds-text-gray-dark)',
+          fontSize: 12, fontWeight: 500, cursor: 'pointer', outline: 'none',
+          transition: 'background-color 100ms ease', flexShrink: 0,
+        }}
+      >
+        <SmallCloseIcon size={7} />
+        Очистить
+      </button>
+
+      {/* Active filter tags */}
+      {visibleTags.map(tag => (
+        <DSTag key={tag.id} color="blue" size="md" closable onClose={tag.onRemove}>
+          {tag.label}
+        </DSTag>
+      ))}
+
+      {/* Show more button */}
+      {!expanded && hiddenCount > 0 && (
+        <button
+          type="button"
+          onClick={() => setExpanded(true)}
+          style={{
+            display: 'inline-flex', alignItems: 'center',
+            height: 24, padding: '0 10px', borderRadius: 6,
+            backgroundColor: 'var(--ds-bg-primary)',
+            border: '1px solid var(--ds-border-primary)',
+            color: 'var(--ds-text-gray-dark)',
+            fontSize: 12, fontWeight: 500, cursor: 'pointer', outline: 'none',
+            transition: 'background-color 100ms ease', flexShrink: 0,
+          }}
+        >
+          Ещё {hiddenCount}
+        </button>
+      )}
+    </div>
   );
 }
