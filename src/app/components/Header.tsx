@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Box, Group, Text, UnstyledButton, Paper, Stack, useMantineColorScheme } from '@mantine/core';
+import { Box, Group, Text, UnstyledButton, Paper, useMantineColorScheme } from '@mantine/core';
 import svgPaths from '../../imports/svg-yl7s4hfuce';
 
 /* ═══════════════════════════════════════════════════════
@@ -66,7 +66,6 @@ const NAV_ITEMS = [
 ];
 
 const s = {
-  // Shared style tokens
   bg: 'var(--ds-bg-primary)',
   bgAlt: 'var(--ds-bg-secondary)',
   border: 'var(--ds-border-primary)',
@@ -77,6 +76,101 @@ const s = {
   blue8: 'var(--ds-blue-8)',
   green6: 'var(--ds-green-6)',
 } as const;
+
+const OTHER_SERVICES = [
+  { code: 'CS',   label: 'Скринер облигаций' },
+  { code: 'ES',   label: 'Скринер акций' },
+  { code: 'QB',   label: 'Маркетмейкеры', hasSubmenu: true },
+  { code: 'NEWS', label: 'Мировые новости' },
+  { code: 'EVT',  label: 'Календарь событий' },
+  { code: 'ECON', label: 'Показатели по странам' },
+  { code: 'ENRG', label: 'Нефтегазовая статистика' },
+];
+
+const BOND_RESEARCH = [
+  { code: 'BS',     label: 'Скринер облигаций' },
+  { code: 'HS',     label: 'Анализ спреда' },
+  { code: 'RBCALC', label: 'RGBI калькулятор' },
+  { code: 'BN',     label: 'Новые выпуски' },
+  { code: 'BD',     label: 'Динамика облигаций' },
+  { code: 'BTOP',   label: 'Лидеры роста и снижения' },
+  { code: 'BFR',    label: 'Первичный рынок ОФЗ' },
+  { code: 'BINS',   label: 'Кредитные спреды' },
+];
+
+function ServiceMenuItem({
+  code, label, hasSubmenu = false, onClick,
+}: {
+  code: string; label: string; hasSubmenu?: boolean; onClick?: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <UnstyledButton
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={onClick}
+      style={{
+        width: '100%',
+        padding: '7px 10px',
+        borderRadius: 6,
+        backgroundColor: hovered ? 'var(--ds-control-hover)' : 'transparent',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        textAlign: 'left',
+        transition: 'background-color 100ms ease',
+        cursor: 'pointer',
+      }}
+    >
+      <Box>
+        <Text style={{ fontSize: 13, fontWeight: 600, lineHeight: '17px', color: 'var(--mantine-color-text)' }}>
+          {code}
+        </Text>
+        <Text style={{ fontSize: 11, lineHeight: '14px', color: s.textSubtle, marginTop: 1 }}>
+          {label}
+        </Text>
+      </Box>
+      {hasSubmenu && (
+        <svg width="5" height="9" viewBox="0 0 5 9" fill="none" style={{ flexShrink: 0, marginLeft: 4 }}>
+          <path d="M1 1L4 4.5L1 8" stroke="var(--ds-text-gray-dark)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
+    </UnstyledButton>
+  );
+}
+
+function NavMenuItem({ item, onClick }: { item: typeof NAV_ITEMS[0]; onClick: () => void }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <UnstyledButton
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={onClick}
+      style={{
+        width: '100%',
+        padding: '7px 10px',
+        borderRadius: 6,
+        backgroundColor: hovered ? 'var(--ds-control-hover)' : 'transparent',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 10,
+        textAlign: 'left',
+        transition: 'background-color 100ms ease',
+        cursor: 'pointer',
+      }}
+    >
+      <Box style={{ marginTop: 2, color: s.blue5, flexShrink: 0 }}>{item.icon}</Box>
+      <Box>
+        <Text style={{ fontSize: 13, fontWeight: 600, lineHeight: '17px', color: 'var(--mantine-color-text)' }}>
+          {item.label}
+        </Text>
+        <Text style={{ fontSize: 11, lineHeight: '14px', color: s.textSubtle, marginTop: 1 }}>
+          {item.description}
+        </Text>
+      </Box>
+    </UnstyledButton>
+  );
+}
 
 function ServicesDropdown() {
   const [open, setOpen] = useState(false);
@@ -92,12 +186,37 @@ function ServicesDropdown() {
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [open]);
+
+  const sectionLabel: React.CSSProperties = {
+    fontSize: 10,
+    fontWeight: 600,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: s.textSubtle,
+    padding: '10px 10px 6px',
+    display: 'block',
+  };
+
+  const columnDivider: React.CSSProperties = {
+    width: 1,
+    backgroundColor: s.border,
+    alignSelf: 'stretch',
+    flexShrink: 0,
+  };
+
   return (
     <Box ref={ref} style={{ position: 'relative' }}>
+      {/* Trigger button */}
       <UnstyledButton
         onClick={() => setOpen(o => !o)}
         style={{
-          backgroundColor: open ? 'rgba(42,46,57,0.5)' : s.bgAlt,
+          backgroundColor: open ? 'var(--ds-dark-4)' : s.bgAlt,
           display: 'flex',
           gap: 8,
           height: 40,
@@ -110,7 +229,6 @@ function ServicesDropdown() {
           outline: open ? `1px solid rgba(90,140,255,0.3)` : 'none',
         }}
       >
-        {/* 4-square grid icon */}
         <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 1.78, width: 14.2, height: 14.2, alignItems: 'flex-start' }}>
           {[0, 1, 2, 3].map(i => (
             <Box
@@ -135,59 +253,64 @@ function ServicesDropdown() {
         </svg>
       </UnstyledButton>
 
+      {/* Dropdown panel */}
       {open && (
         <Paper
-          radius="lg"
+          radius="md"
           shadow="xl"
           style={{
             position: 'absolute',
             top: '100%',
             left: 0,
             marginTop: 6,
-            zIndex: 50,
-            width: 280,
+            zIndex: 100,
             backgroundColor: s.bgAlt,
             border: `1px solid ${s.border}`,
             overflow: 'hidden',
           }}
         >
-          <Box p={6}>
-            {NAV_ITEMS.map(item => (
-              <UnstyledButton
-                key={item.id}
-                onClick={() => { setOpen(false); navigate(item.href); }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 12,
-                  padding: '10px 12px',
-                  borderRadius: 8,
-                  textAlign: 'left',
-                  transition: 'background-color 150ms ease',
-                }}
-              >
-                <Box style={{ marginTop: 2, color: s.blue5, flexShrink: 0 }}>{item.icon}</Box>
-                <Box style={{ flex: 1, minWidth: 0 }}>
-                  <Text style={{ fontSize: 12, fontWeight: 600, color: s.textPrimary }}>
-                    {item.label}
-                  </Text>
-                  <Text style={{ fontSize: 10, color: s.textSubtle, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {item.description}
-                  </Text>
-                </Box>
-              </UnstyledButton>
-            ))}
-          </Box>
-          <Box style={{ borderTop: `1px solid ${s.border}`, padding: '8px 16px' }}>
-            <Text
-              component={Link}
-              to="/"
-              onClick={() => setOpen(false)}
-              style={{ fontSize: 10, color: s.textSubtle, textDecoration: 'none' }}
-            >
-              На главную
-            </Text>
+          {/* Three columns */}
+          <Box style={{ display: 'flex', alignItems: 'stretch' }}>
+            {/* Column 1 — Прочие сервисы */}
+            <Box style={{ width: 210, padding: '0 6px 8px' }}>
+              <Text style={sectionLabel}>Прочие сервисы</Text>
+              {OTHER_SERVICES.map(item => (
+                <ServiceMenuItem
+                  key={item.code}
+                  code={item.code}
+                  label={item.label}
+                  hasSubmenu={'hasSubmenu' in item ? item.hasSubmenu : false}
+                />
+              ))}
+            </Box>
+
+            <Box style={columnDivider} />
+
+            {/* Column 2 — Bond Research */}
+            <Box style={{ width: 210, padding: '0 6px 8px' }}>
+              <Text style={sectionLabel}>Bond Research</Text>
+              {BOND_RESEARCH.map(item => (
+                <ServiceMenuItem
+                  key={item.code}
+                  code={item.code}
+                  label={item.label}
+                />
+              ))}
+            </Box>
+
+            <Box style={columnDivider} />
+
+            {/* Column 3 — Навигация (existing NAV_ITEMS) */}
+            <Box style={{ width: 230, padding: '0 6px 8px' }}>
+              <Text style={sectionLabel}>Навигация</Text>
+              {NAV_ITEMS.map(item => (
+                <NavMenuItem
+                  key={item.id}
+                  item={item}
+                  onClick={() => { setOpen(false); navigate(item.href); }}
+                />
+              ))}
+            </Box>
           </Box>
         </Paper>
       )}
