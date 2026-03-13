@@ -550,7 +550,6 @@ function CustomDropdownDetails() {
 
   /* ── DSFilterSelect demos ── */
   const [cbVal, setCbVal] = useState<string[]>([]);
-  const [rangeVal, setRangeVal] = useState<[number, number] | null>(null);
   const [dateVal, setDateVal] = useState<[Date | null, Date | null]>([null, null]);
 
   /* ── Standalone Range demo ── */
@@ -625,6 +624,17 @@ function CustomDropdownDetails() {
             </DSCustomDropdown>
           </div>
         </DocPreview>
+        <DocPropsTable rows={[
+          ['isOpen', 'boolean', '—', 'DSCustomDropdown: управляет открытым состоянием'],
+          ['onOpenChange', '(open: boolean) => void', '—', 'DSCustomDropdown: вызывается при открытии / закрытии'],
+          ['inline', 'boolean', 'false', 'DSCustomDropdown: inline-flex контейнер — ширина по содержимому'],
+          ['placeholder', 'string', '"Placeholder"', 'DSCustomDropdownTrigger: текст когда нет значения'],
+          ['label', 'string', '—', 'DSCustomDropdownTrigger: подпись над триггером'],
+          ['count', 'number', '—', 'DSCustomDropdownTrigger: число выбранных (после «:»)'],
+          ['onClear', '() => void', '—', 'DSCustomDropdownTrigger: показывает ×, вызывается при клике'],
+          ['minWidth', 'number', '—', 'DSCustomDropdownPanel: мин. ширина (по умолч. = ширина триггера)'],
+          ['maxHeight', 'number', '380', 'DSCustomDropdownPanel: макс. высота для авто-flip вверх'],
+        ]} />
       </DocSection>
 
       <DocSection title="With Subtitles" description="Item с subtitle — подпись меньшим шрифтом. Сегменты прокручиваются свайпом.">
@@ -652,6 +662,18 @@ function CustomDropdownDetails() {
             </DSCustomDropdown>
           </div>
         </DocPreview>
+        <DocPropsTable rows={[
+          ['subtitle', 'string', '—', 'DSCustomDropdownItem: подпись меньшим шрифтом под основным текстом'],
+          ['selected', 'boolean', 'false', 'DSCustomDropdownItem: подсветка выбранного пункта (blue-a30)'],
+          ['checkbox', 'boolean', 'false', 'DSCustomDropdownItem: чекбокс слева'],
+          ['expandable', 'boolean', 'false', 'DSCustomDropdownItem: стрелка для раскрытия DSCustomDropdownNested'],
+          ['badge', 'string', '—', 'DSCustomDropdownItem: серый бейдж справа'],
+          ['title', 'string', '—', 'DSCustomDropdownGroup: заголовок группы'],
+          ['title', 'string', '—', 'DSCustomDropdownHeader: заголовок с кнопкой закрыть'],
+          ['showSearch', 'boolean', 'false', 'DSCustomDropdownHeader: строка поиска'],
+          ['segments', 'DSCustomDropdownSegment[]', '—', 'DSCustomDropdownHeader: горизонтальные сегменты (tabs)'],
+          ['maxHeight', 'number', '280', 'DSCustomDropdownContent: макс. высота прокручиваемой области'],
+        ]} />
       </DocSection>
 
       {/* ══════ 2. Filter Trigger ══════ */}
@@ -700,20 +722,30 @@ function CustomDropdownDetails() {
             options={RATING_OPTS} value={cbVal}
             onApply={setCbVal} onClear={() => setCbVal([])} />
         </DocPreview>
+        <DocPropsTable rows={[
+          ['type', "'checkbox'", '—', 'Тип фильтра'],
+          ['label', 'string', '—', 'Название фильтра (плейсхолдер триггера)'],
+          ['options', 'FilterOption[]', '—', 'Опции — { value: string; label: string }[]'],
+          ['value', 'string[]', '—', 'Выбранные значения'],
+          ['onApply', '(v: string[]) => void', '—', 'Вызывается при «Применить»'],
+          ['onClear', '() => void', '—', 'Вызывается при «Сбросить» или × на триггере'],
+          ['disabled', 'boolean', 'false', 'Отключает компонент'],
+        ]} />
       </DocSection>
 
-      <DocSection title="Filter Select — Range" description="DSFilterSelect type=range: двойной слайдер Radix + числовые inputs. Показывает активный диапазон.">
-        <DocPreview>
-          <DSFilterSelect type="range" label="Доходность" min={0} max={30} step={0.5} unit="%"
-            value={rangeVal} onApply={setRangeVal} onClear={() => setRangeVal(null)} />
-        </DocPreview>
-      </DocSection>
-
-      <DocSection title="Filter Select — Date" description="DSFilterSelect type=date: два DSCalendar (От / До) с ограничением min/max.">
+      <DocSection title="Filter Select — Date" description="DSFilterSelect type=date: два DSCalendar (От / До) с полями ввода дд.мм.гггг. Ограничение min/max между календарями.">
         <DocPreview>
           <DSFilterSelect type="date" label="Размещение"
             value={dateVal} onApply={setDateVal} onClear={() => setDateVal([null, null])} />
         </DocPreview>
+        <DocPropsTable rows={[
+          ['type', "'date'", '—', 'Тип фильтра'],
+          ['label', 'string', '—', 'Название фильтра (плейсхолдер триггера)'],
+          ['value', '[Date|null, Date|null]', '—', 'Выбранный диапазон дат [from, to]'],
+          ['onApply', '(v: [Date|null, Date|null]) => void', '—', 'Вызывается при «Применить»'],
+          ['onClear', '() => void', '—', 'Вызывается при «Сбросить» или × на триггере'],
+          ['disabled', 'boolean', 'false', 'Отключает компонент'],
+        ]} />
       </DocSection>
 
       <DocSection title="Filter Select — Props">
@@ -724,7 +756,7 @@ function CustomDropdownDetails() {
           ['onApply', '(value) => void', '—', 'Вызывается при нажатии «Применить»'],
           ['onClear', '() => void', '—', 'Вызывается при нажатии «Сбросить» или × на триггере'],
           ['options', 'FilterOption[]', '—', 'Только для checkbox. Массив { value, label }'],
-          ['min / max', 'number', '—', 'Только для range. Границы слайдера'],
+          ['min / max', 'number', '—', 'Только для range (в DSCustomDropdownRangeContent). Границы слайдера'],
           ['step', 'number', '1', 'Только для range. Шаг слайдера'],
           ['unit', 'string', '—', 'Только для range. Единица измерения (%, лет, млн…)'],
           ['formatValue', '(v: number) => string', '—', 'Только для range. Форматтер значений'],
@@ -786,7 +818,7 @@ function CustomDropdownDetails() {
       {/* ══════ 6. All Sub-Components ══════ */}
       <DocSection title="Все Sub-компоненты">
         <DocSpecTable rows={[
-          { prop: 'DSCustomDropdown', value: 'Root — context, click-outside, Escape', token: 'isOpen, onOpenChange' },
+          { prop: 'DSCustomDropdown', value: 'Root — context, click-outside, Escape', token: 'isOpen, onOpenChange, inline' },
           { prop: 'DSCustomDropdownTrigger', value: 'Full-width trigger с label + chevron + clear badge', token: 'placeholder, label, count, onClear, disabled' },
           { prop: 'DSCustomDropdownFilterTrigger', value: 'Compact pill trigger для фильтров, h=32', token: 'label, activeLabel, onClear, disabled' },
           { prop: 'DSCustomDropdownPanel', value: 'Portal panel (fixed pos), открывается вверх если нет места', token: 'minWidth, maxHeight' },
@@ -801,7 +833,7 @@ function CustomDropdownDetails() {
           { prop: 'DSCustomDropdownFooter', value: 'Нижняя панель с тенью', token: 'children' },
           { prop: 'DSCustomDropdownFooterButton', value: 'Кнопка footer: ghost (border) / primary (blue)', token: "variant: 'ghost' | 'primary', disabled" },
           { prop: 'DSCustomDropdownRangeContent', value: 'Range slider (Radix) + inputs + footer', token: 'min, max, defaultValue, step, unit, formatValue, onApply, onReset' },
-          { prop: 'DSCustomDropdownDateContent', value: 'Два DSCalendar (От/До) + footer', token: 'defaultValue, onApply, onReset' },
+          { prop: 'DSCustomDropdownDateContent', value: 'Два DSCalendar + date inputs (дд.мм.гггг) + footer', token: 'defaultValue, onApply, onReset' },
           { prop: 'DSFilterSelect', value: 'Готовый фильтр-дропдаун (checkbox | range | date)', token: 'type, label, value, onApply, onClear, options, min, max, step, unit, formatValue, disabled' },
           { prop: 'DSFilterTagBar', value: 'Строка активных тегов фильтров', token: 'tags, onClearAll, maxVisible' },
         ]} />

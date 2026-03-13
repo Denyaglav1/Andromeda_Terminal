@@ -102,9 +102,11 @@ export interface DSCustomDropdownProps {
   onOpenChange: (open: boolean) => void;
   children: ReactNode;
   className?: string;
+  /** inline-flex контейнер — ширина по содержимому */
+  inline?: boolean;
 }
 
-export function DSCustomDropdown({ isOpen, onOpenChange, children, className }: DSCustomDropdownProps) {
+export function DSCustomDropdown({ isOpen, onOpenChange, children, className, inline = false }: DSCustomDropdownProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -127,7 +129,7 @@ export function DSCustomDropdown({ isOpen, onOpenChange, children, className }: 
 
   return (
     <DropdownContext.Provider value={{ isOpen, setIsOpen: onOpenChange, triggerRef, panelRef }}>
-      <div className={className} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>{children}</div>
+      <div className={className} style={{ display: inline ? 'inline-flex' : 'flex', flexDirection: 'column', gap: 4 }}>{children}</div>
     </DropdownContext.Provider>
   );
 }
@@ -175,7 +177,7 @@ export function DSCustomDropdownTrigger({ children, placeholder = 'Placeholder',
         }}
       >
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', overflow: 'hidden', paddingLeft: 8 }}>
-          <span style={{ fontSize: 12, lineHeight: '16px', fontWeight: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: hasValue ? 'var(--ds-text-primary)' : 'rgba(103,124,156,0.3)', ...tnum }}>
+          <span style={{ fontSize: 12, lineHeight: '16px', fontWeight: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: hasValue ? 'var(--ds-text-primary)' : 'var(--ds-text-gray)', ...tnum }}>
             {hasValue ? children : placeholder}
           </span>
           {count !== undefined && count > 0 && (
@@ -693,7 +695,7 @@ export function DSCustomDropdownRangeContent({
   };
 
   return (
-    <div className={className} style={{ display: 'flex', flexDirection: 'column', width: 280, padding: '16px 16px 12px', gap: 14 }}>
+    <div className={className} style={{ display: 'flex', flexDirection: 'column', padding: '16px 16px 0', gap: 14, backgroundColor: 'var(--ds-bg-secondary)' }}>
       <RadixSlider.Root
         min={min} max={max} step={step}
         value={range}
@@ -756,26 +758,68 @@ export function DSCustomDropdownDateContent({
   const [from, setFrom] = useState<Date | null>(defaultValue?.[0] ?? null);
   const [to, setTo] = useState<Date | null>(defaultValue?.[1] ?? null);
 
-  const labelStyle: React.CSSProperties = {
-    fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase',
-    color: 'var(--ds-text-gray-dark)', padding: '8px 8px 4px',
+  function fmtDate(d: Date | null): string {
+    if (!d) return '';
+    return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+  }
+
+  function parseDate(s: string): Date | null {
+    const m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if (!m) return null;
+    const d = new Date(+m[3], +m[2] - 1, +m[1]);
+    if (d.getDate() !== +m[1] || d.getMonth() !== +m[2] - 1) return null;
+    return d;
+  }
+
+  const [fromText, setFromText] = useState(() => fmtDate(defaultValue?.[0] ?? null));
+  const [toText, setToText] = useState(() => fmtDate(defaultValue?.[1] ?? null));
+
+  useEffect(() => { setFromText(fmtDate(from)); }, [from]);
+  useEffect(() => { setToText(fmtDate(to)); }, [to]);
+
+  const dateInputStyle: React.CSSProperties = {
+    width: '100%', height: 32, borderRadius: 6, border: '1px solid var(--ds-border-primary)',
+    backgroundColor: 'var(--ds-bg-primary)', color: 'var(--ds-text-primary)',
+    fontSize: 12, padding: '0 8px', outline: 'none', boxSizing: 'border-box', ...tnum,
   };
 
   return (
-    <div className={className} style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className={className} style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'var(--ds-bg-secondary)' }}>
       <div style={{ display: 'flex' }}>
-        <div>
-          <div style={labelStyle}>От</div>
-          <DSCalendar value={from} onChange={setFrom} max={to ?? undefined} />
+        <div style={{ display: 'flex', flexDirection: 'column', padding: '8px 12px 12px', gap: 8 }}>
+          <input
+            type="text"
+            value={fromText}
+            onChange={e => {
+              setFromText(e.target.value);
+              const d = parseDate(e.target.value);
+              if (d) setFrom(d);
+              else if (!e.target.value) setFrom(null);
+            }}
+            placeholder="дд.мм.гггг"
+            style={dateInputStyle}
+          />
+          <DSCalendar value={from} onChange={d => setFrom(d)} max={to ?? undefined} />
         </div>
         <div style={{ width: 1, backgroundColor: 'var(--ds-border-primary)', alignSelf: 'stretch' }} />
-        <div>
-          <div style={labelStyle}>До</div>
-          <DSCalendar value={to} onChange={setTo} min={from ?? undefined} />
+        <div style={{ display: 'flex', flexDirection: 'column', padding: '8px 12px 12px', gap: 8 }}>
+          <input
+            type="text"
+            value={toText}
+            onChange={e => {
+              setToText(e.target.value);
+              const d = parseDate(e.target.value);
+              if (d) setTo(d);
+              else if (!e.target.value) setTo(null);
+            }}
+            placeholder="дд.мм.гггг"
+            style={dateInputStyle}
+          />
+          <DSCalendar value={to} onChange={d => setTo(d)} min={from ?? undefined} />
         </div>
       </div>
       <DSCustomDropdownFooter>
-        <DSCustomDropdownFooterButton variant="ghost" onClick={() => { setFrom(null); setTo(null); onReset(); }}>
+        <DSCustomDropdownFooterButton variant="ghost" onClick={() => { setFrom(null); setTo(null); setFromText(''); setToText(''); onReset(); }}>
           Сбросить
         </DSCustomDropdownFooterButton>
         <DSCustomDropdownFooterButton variant="primary" onClick={() => { onApply([from, to]); setIsOpen(false); }}>
@@ -911,7 +955,7 @@ export function DSFilterSelect(props: DSFilterSelectProps) {
     : undefined;
 
   return (
-    <DSCustomDropdown isOpen={isOpen} onOpenChange={setIsOpen}>
+    <DSCustomDropdown isOpen={isOpen} onOpenChange={setIsOpen} inline>
       <DSCustomDropdownTrigger
         placeholder={props.label}
         count={triggerCount}
@@ -920,7 +964,7 @@ export function DSFilterSelect(props: DSFilterSelectProps) {
       >
         {triggerChildren}
       </DSCustomDropdownTrigger>
-      <DSCustomDropdownPanel minWidth={props.type === 'date' ? undefined : 220}>
+      <DSCustomDropdownPanel minWidth={props.type === 'range' ? 280 : props.type === 'date' ? undefined : 220}>
         {props.type === 'checkbox' && (
           <FilterCheckboxContent props={props} onClose={() => setIsOpen(false)} />
         )}
