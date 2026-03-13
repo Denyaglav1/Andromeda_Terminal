@@ -33,8 +33,8 @@ RUN pnpm run build
 # Stage 2: Serve the static files using Nginx
 FROM nginx:1.27.4-alpine
 
-# Copy Nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy Nginx configuration file (Railway-specific, without Kubernetes DNS resolver)
+COPY nginx.railway.conf /etc/nginx/nginx.conf
 
 # Copy built files from the builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
